@@ -1,0 +1,13 @@
+{
+    "name": "@replyon/trpc",
+    "version": "0.0.0",
+    "private": true,
+    "main": "./src/index.ts",
+    "scripts": {
+        "dev": ""
+    },
+    "devDependencies": {
+        "@types/node": "^20.10.6",
+        "typescript": "^5.3.3"
+    }
+}
