@@ -1,6 +1,18 @@
-import "@/styles/globals.css";
+import { SEO } from "@/components/seo";
 import type { AppProps } from "next/app";
+import type { PropsWithChildren } from "react";
 
-export default function App({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />;
-}
+const Providers = ({ children }: PropsWithChildren) => {
+    return <></>;
+};
+
+const App = ({ Component, pageProps }: AppProps) => {
+    return (
+        <>
+            <SEO />
+            <Component {...pageProps} />
+        </>
+    );
+};
+
+export default App;
