@@ -5,13 +5,13 @@
     "compilerOptions": {
         "target": "es5",
         "lib": ["dom", "dom.iterable", "esnext"],
+        "isolatedModules": true,
         "allowJs": true,
         "skipLibCheck": true,
         "noEmit": true,
         "incremental": true,
         "esModuleInterop": true,
         "module": "esnext",
-        "moduleResolution": "node",
         "jsx": "preserve",
         "resolveJsonModule": true
     },

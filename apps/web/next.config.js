@@ -1,4 +1,6 @@
+require("./src/env");
+
 /** @type {import('next').NextConfig} */
-export default {
+module.exports = {
     reactStrictMode: false,
 };

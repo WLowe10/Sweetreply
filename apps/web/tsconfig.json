@@ -1,15 +1,29 @@
 {
-	"extends": "@replyon/tsconfig/nextjs.json",
-	"compilerOptions": {
-		"declaration": false,
-		"declarationMap": false,
-	  "baseUrl": "./src",
-	  "paths": {
-		"@/*": ["./*"],
-	  },
-	  "typeRoots": ["src/types", "./node_modules/@types"],
-	  "types": ["node"]
-	},
-	"include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
-	"exclude": ["node_modules/**/*", "src/generated/**/*"]
-  }
+  "extends": "@replyon/tsconfig/nextjs.json",
+  "compilerOptions": {
+    "declaration": false,
+    "declarationMap": false,
+    "baseUrl": "./src",
+    "paths": {
+      "@/*": [
+        "./*"
+      ]
+    },
+    "typeRoots": [
+      "src/types",
+      "./node_modules/@types"
+    ],
+    "types": [
+      "node"
+    ],
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules/**/*",
+    "src/generated/**/*"
+  ]
+}
