@@ -2,8 +2,10 @@ import { pgTable, uuid, text, timestamp } from "drizzle-orm/pg-core";
 
 export const user = pgTable("auth_user", {
     id: uuid("id").primaryKey().defaultRandom(),
-    role: text("role", { enum: ["user", "admin"] }).notNull(),
-    name: text("name").notNull(),
+    role: text("role", { enum: ["user", "admin"] })
+        .default("user")
+        .notNull(),
+    name: text("name").unique().notNull(),
     email: text("email").notNull(),
     emailVerified: timestamp("email_verified", {
         withTimezone: true,
@@ -16,3 +18,5 @@ export const user = pgTable("auth_user", {
         .defaultNow()
         .notNull(),
 });
+
+export type UserType = typeof user.$inferInsert;

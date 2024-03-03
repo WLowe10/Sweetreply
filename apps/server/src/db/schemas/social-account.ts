@@ -9,3 +9,5 @@ export const socialAccount = pgTable("social_account", {
         .notNull(),
     updatedAt: timestamp("updated_at", { withTimezone: true }),
 });
+
+export type SocialAccount = typeof socialAccount.$inferSelect;

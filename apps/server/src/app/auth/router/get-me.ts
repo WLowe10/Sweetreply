@@ -1,5 +1,5 @@
-import { publicProcedure } from "@/trpc"; // should be authenticatedProcedure
+import { protectedProcedure } from "@/trpc"; // should be authenticatedProcedure
 
-export const getMeHandler = publicProcedure.query(({ ctx }) => {
-    return "sign-up success!";
+export const getMeHandler = protectedProcedure.query(({ ctx }) => {
+    return ctx.user;
 });

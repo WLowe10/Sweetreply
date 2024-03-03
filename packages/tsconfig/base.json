@@ -8,7 +8,7 @@
         "incremental": false,
         "lib": ["es2022", "DOM", "DOM.Iterable"],
         "module": "NodeNext",
-        "moduleResolution": "Node",
+        "moduleResolution": "NodeNext",
         "noUncheckedIndexedAccess": true,
         "resolveJsonModule": true,
         "skipLibCheck": true,

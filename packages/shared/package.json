@@ -1,0 +1,11 @@
+{
+    "name": "@replyon/shared",
+    "version": "0.0.0",
+    "private": true,
+    "exports": {
+        "./schemas/auth": "./schemas/auth/index.ts"
+    },
+    "dependencies": {
+        "zod": "^3.22.4"
+    }
+}

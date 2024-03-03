@@ -1,29 +1,26 @@
 {
-  "extends": "@replyon/tsconfig/nextjs.json",
-  "compilerOptions": {
-    "declaration": false,
-    "declarationMap": false,
-    "baseUrl": "./src",
-    "paths": {
-      "@/*": [
-        "./*"
-      ]
+    "extends": "@replyon/tsconfig/nextjs.json",
+    "compilerOptions": {
+        "skipLibCheck": false,
+        "declarationMap": false,
+        "module": "NodeNext",
+        "baseUrl": "./src",
+        "paths": {
+            "@/*": ["./*"],
+            "@server/app-router": ["../../server/src/app/index.ts"]
+        },
+        "typeRoots": [
+            "src/types",
+            "./node_modules/@types",
+            "../server/src/app/index.ts"
+        ],
+        "types": ["node"]
     },
-    "typeRoots": [
-      "src/types",
-      "./node_modules/@types"
-    ],
-    "types": [
-      "node"
-    ],
-  },
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx"
-  ],
-  "exclude": [
-    "node_modules/**/*",
-    "src/generated/**/*"
-  ]
+    "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+    "exclude": ["node_modules/**/*", "src/generated/**/*"]
+    // "references": [
+    //     {
+    //         "path": "../server"
+    //     }
+    // ]
 }

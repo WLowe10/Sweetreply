@@ -1,18 +1,21 @@
 import "dotenv/config";
 import express from "express";
 import helmet from "helmet";
+import cors from "cors";
 import * as trpcExpress from "@trpc/server/adapters/express";
 import { env } from "./env";
 import { createContext } from "./trpc";
+import { startJobs } from "./jobs";
 import { appRouter } from "./app";
 import { logger } from "./lib/logger";
-import { isDev } from "./lib/utils";
 
 async function bootstrap() {
     const app = express();
 
+    startJobs();
+
     app.use(helmet());
-    // app.use(cors()); // ? i think helmet already includes cors
+    app.use(cors());
 
     app.use(
         "/trpc",
@@ -21,8 +24,6 @@ async function bootstrap() {
             createContext,
         })
     );
-
-    console.log("is-dev", isDev());
 
     app.listen(env.PORT || 3000, () => {
         logger.info(`Server started on port ${env.PORT || 3000}`);

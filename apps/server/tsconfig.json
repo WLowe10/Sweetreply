@@ -1,12 +1,15 @@
 {
-	"extends": "@replyon/tsconfig/base.json",
-	"compilerOptions": {
-		"outDir": "dist",
-		"declaration": false,
-		"declarationMap": false,
-		"baseUrl": "./src",
-		"paths": {
-			"@/*": ["./*"]
-		},
-	},
+    "extends": "@replyon/tsconfig/base.json",
+    "compilerOptions": {
+        "outDir": "dist",
+        "types": ["node"],
+        "declaration": false,
+        "declarationMap": false,
+        "typeRoots": ["./node_modules/@types"],
+        "skipLibCheck": true,
+        "baseUrl": "./src",
+        "paths": {
+            "@/*": ["./*"]
+        }
+    }
 }

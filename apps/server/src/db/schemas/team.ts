@@ -13,3 +13,6 @@ export const teamMember = pgTable("team_member", {
     teamId: uuid("team_id").references(() => team.id, { onDelete: "cascade" }),
     joinedAt: timestamp("joined_at", { withTimezone: true }),
 });
+
+export type TeamType = typeof team.$inferSelect;
+export type TeamMemberType = typeof teamMember.$inferSelect;

@@ -1,13 +1,13 @@
-import { db } from "@/db";
 import { logger } from "@/lib/logger";
+import type { UserType } from "@/db";
 import type { CreateExpressContextOptions } from "@trpc/server/adapters/express";
 import type { Request, Response } from "express";
 
 export type ContextType = {
     req: Request;
     res: Response;
-    db: typeof db;
     logger: typeof logger;
+    user: UserType | null;
 };
 
 export function createContext({
@@ -17,7 +17,7 @@ export function createContext({
     return {
         req,
         res,
-        db,
         logger,
+        user: null,
     };
 }

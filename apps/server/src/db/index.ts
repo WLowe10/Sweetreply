@@ -14,6 +14,8 @@ const pool = new Pool({
     database: env.DB_NAME,
 });
 
-export const db = drizzle(pool, {
-    schema: schemas,
-});
+// export const db = drizzle(pool, {
+//     schema: schemas,
+// });
+
+export const db = drizzle(pool);

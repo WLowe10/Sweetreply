@@ -1,12 +1,7 @@
 import { trpc } from "@/trpc";
-import Head from "next/head";
 
 export default function HomePage() {
-    const getMeQuery = trpc.;
+    const getMeQuery = trpc.getDate.useQuery();
 
-    return (
-        <main>
-            hello world
-        </main>
-    );
+    return <main>hello world: {getMeQuery.data?.date.getFullYear()}</main>;
 }

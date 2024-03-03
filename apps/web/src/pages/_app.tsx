@@ -3,8 +3,10 @@ import { trpc } from "@/trpc";
 import type { AppProps } from "next/app";
 import type { PropsWithChildren } from "react";
 
+import "../styles/globals.css";
+
 const Providers = ({ children }: PropsWithChildren) => {
-    return <></>;
+    return <>{children}</>;
 };
 
 const App = ({ Component, pageProps }: AppProps) => {
