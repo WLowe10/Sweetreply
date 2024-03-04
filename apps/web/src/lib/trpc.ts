@@ -2,8 +2,8 @@ import { createTRPCNext } from "@trpc/next";
 import { httpBatchLink } from "@trpc/react-query";
 import { QueryClient } from "@tanstack/react-query";
 import superjson from "superjson";
-import { env } from "./env";
-import type { AppRouter } from "@server/app-router";
+import { env } from "../env";
+import type { AppRouter } from "@server/router";
 
 const queryClient = new QueryClient();
 

@@ -6,7 +6,6 @@
         "declaration": false,
         "declarationMap": false,
         "typeRoots": ["./node_modules/@types"],
-        "skipLibCheck": true,
         "baseUrl": "./src",
         "paths": {
             "@/*": ["./*"]

@@ -6,7 +6,7 @@ import * as trpcExpress from "@trpc/server/adapters/express";
 import { env } from "./env";
 import { createContext } from "./trpc";
 import { startJobs } from "./jobs";
-import { appRouter } from "./app";
+import { appRouter } from "./router";
 import { logger } from "./lib/logger";
 
 async function bootstrap() {

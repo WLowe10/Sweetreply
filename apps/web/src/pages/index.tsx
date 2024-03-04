@@ -1,7 +1,5 @@
-import { trpc } from "@/trpc";
+import { trpc } from "@/lib/trpc";
 
 export default function HomePage() {
-    const getMeQuery = trpc.getDate.useQuery();
-
-    return <main>hello world: {getMeQuery.data?.date.getFullYear()}</main>;
+    return <main>hello world</main>;
 }
