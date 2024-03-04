@@ -8,7 +8,8 @@
         "baseUrl": "./src",
         "noEmit": true,
         "paths": {
-            "@/*": ["./*", "../../server/src/*"],
+            "@/*": ["./*"],
+            "~/*": ["../../server/src/*"],
             "@server/router": ["../../server/src/router.ts"]
         },
         "typeRoots": ["src/types", "./node_modules/@types"],

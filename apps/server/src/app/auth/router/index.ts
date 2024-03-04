@@ -1,4 +1,4 @@
-import { router } from "@/trpc";
+import { router } from "~/trpc";
 import { signUpHandler } from "./sign-up";
 import { getMeHandler } from "./get-me";
 import { signInHandler } from "./sign-in";

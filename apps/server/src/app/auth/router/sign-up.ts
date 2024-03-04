@@ -1,5 +1,5 @@
-import { publicProcedure } from "@/trpc";
-import { db, user } from "@/db";
+import { publicProcedure } from "~/trpc";
+import { db, user } from "~/db";
 import { eq } from "drizzle-orm";
 import { signUpInputSchema } from "@replyon/shared/schemas/auth";
 
