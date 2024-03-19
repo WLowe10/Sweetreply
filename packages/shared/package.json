@@ -2,9 +2,10 @@
     "name": "@replyon/shared",
     "version": "0.0.0",
     "private": true,
-    "exports": {
-        "./schemas/auth": "./schemas/auth/index.ts"
-    },
+    "files": [
+        "schemas",
+        "lib"
+    ],
     "dependencies": {
         "zod": "^3.22.4"
     }

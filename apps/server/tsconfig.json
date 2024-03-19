@@ -3,10 +3,13 @@
     "compilerOptions": {
         "outDir": "dist",
         "types": ["node"],
-        "declaration": false,
-        "declarationMap": false,
-        "typeRoots": ["./node_modules/@types"],
+
         "baseUrl": "./src",
+        "jsx": "react-jsx",
+        "module": "CommonJS",
+        "esModuleInterop": true,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
         "paths": {
             "~/*": ["./*"]
         }

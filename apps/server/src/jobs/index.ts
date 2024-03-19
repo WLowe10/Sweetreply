@@ -1,16 +1,10 @@
-import { CronJob } from "cron";
-
-const deleteExpiredSessionsJob = CronJob.from({
-    cronTime: "* * * * * *",
-    onTick: () => {
-        console.log("Job executed");
-    },
-});
+import { deleteExpiredSessionsJob } from "./delete-expired-sessions";
+import type { CronJob } from "cron";
 
 const jobs: CronJob[] = [deleteExpiredSessionsJob];
 
 export function startJobs() {
-    // for (const job of jobs) {
-    //     job.start();
-    // }
+    for (const job of jobs) {
+        job.start();
+    }
 }

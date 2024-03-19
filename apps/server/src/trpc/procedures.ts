@@ -1,37 +1,44 @@
-import { TRPCError } from "@trpc/server";
-import { publicProcedure } from "./trpc";
+import { trpc, publicProcedure } from "./trpc";
+import { authMiddleware } from "./middleware";
+import { UserRole } from "@replyon/prisma";
+import {
+    alreadySignedIn,
+    mustBeAdmin,
+    mustBeVerified,
+} from "~/lib/auth/errors";
 
-export const protectedProcedure = publicProcedure.use(({ ctx, next }) => {
-    const { req, res } = ctx;
+// ensures that the requester is not authenticated
+export const unauthenticatedProcedure = publicProcedure.use(
+    trpc.middleware(async ({ ctx, next }) => {
+        const user = await ctx.authService.getUserFromRequest(ctx.req);
 
-    const isAuthenticated = true;
+        if (user) {
+            throw alreadySignedIn();
+        }
 
-    if (!isAuthenticated) {
-        throw new TRPCError({
-            code: "UNAUTHORIZED",
-            message: "Please sign in",
-        });
-    }
+        return next();
+    })
+);
 
-    return next({
-        ctx: {
-            user: {
-                id: "1",
-            },
-        },
-    });
-});
+// ensures that the requester is authenticated and verified
+export const authenticatedProcedure = publicProcedure.use(
+    authMiddleware.unstable_pipe(({ ctx, next }) => {
+        if (!ctx.user.email_verified) {
+            throw mustBeVerified();
+        }
 
-export const unauthenticatedProcedure = publicProcedure.use(({ ctx, next }) => {
-    return next();
-});
+        return next();
+    })
+);
 
-export const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
-    if (ctx.user.id !== "admin") {
-        throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Not found",
-        });
+// ensures that the requester is authenticated, but not necessarily verified
+export const authenticatedUnverifiedProcedure =
+    publicProcedure.use(authMiddleware);
+
+// ensures that the user is an admin
+export const adminProcedure = authenticatedProcedure.use(({ ctx, next }) => {
+    if (ctx.user.role !== UserRole.admin) {
+        throw mustBeAdmin();
     }
 
     return next();

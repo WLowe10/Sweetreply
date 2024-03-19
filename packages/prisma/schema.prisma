@@ -1,0 +1,85 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+generator zod {
+    provider              = "zod-prisma"
+    output                = "./zod"
+    relationModel         = true
+    modelCase             = "camelCase"
+    modelSuffix           = "Model"
+    prismaJsonNullability = true
+}
+
+generator dbml {
+    provider = "prisma-dbml-generator"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+    admin
+    user
+}
+
+// consider prisma default date time
+
+model User {
+    id String @id @default(uuid())
+
+    created_at     DateTime  @default(now())
+    updated_at     DateTime? @updatedAt
+    email_verified DateTime?
+
+    role          UserRole     @default(user)
+    name          String
+    email         String       @unique
+    password_hash String
+    avatar_url    String?
+    team_members  TeamMember[]
+    teams         Team[]
+
+    @@map(name: "user")
+}
+
+model Team {
+    id String @id @default(uuid())
+
+    name               String
+    // slug               String  @unique
+    image_url          String?
+    seat_limit         Int?
+    stripe_customer_id String
+
+    created_at DateTime  @default(now())
+    updated_at DateTime? @updatedAt
+
+    owner_id String
+    owner    User   @relation(fields: [owner_id], references: [id], onDelete: Cascade)
+
+    team_members TeamMember[]
+
+    @@map(name: "team")
+}
+
+enum TeamMemberRole {
+    OWNER
+    ADMIN
+    MEMBER
+}
+
+model TeamMember {
+    role TeamMemberRole @default(MEMBER)
+
+    team_id   String
+    team      Team      @relation(fields: [team_id], references: [id], onDelete: Cascade)
+    user_id   String
+    user      User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+    joined_at DateTime?
+
+    @@id([team_id, user_id])
+    @@map(name: "team_member")
+}
