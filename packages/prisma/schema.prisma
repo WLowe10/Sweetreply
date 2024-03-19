@@ -35,7 +35,8 @@ model User {
     email_verified DateTime?
 
     role          UserRole     @default(user)
-    name          String
+    first_name    String
+    last_name     String
     email         String       @unique
     password_hash String
     avatar_url    String?

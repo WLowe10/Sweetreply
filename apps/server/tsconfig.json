@@ -1,17 +1,17 @@
 {
-    "extends": "@replyon/tsconfig/base.json",
-    "compilerOptions": {
-        "outDir": "dist",
-        "types": ["node"],
-
-        "baseUrl": "./src",
-        "jsx": "react-jsx",
-        "module": "CommonJS",
-        "esModuleInterop": true,
-        "emitDecoratorMetadata": true,
-        "experimentalDecorators": true,
-        "paths": {
-            "~/*": ["./*"]
-        }
-    }
+	"extends": "@replyon/tsconfig/base.json",
+	"compilerOptions": {
+		"outDir": "dist",
+		"types": ["node"],
+		"baseUrl": "./src",
+		"jsx": "react-jsx",
+		"module": "CommonJS",
+		"esModuleInterop": true,
+		"emitDecoratorMetadata": true,
+		"experimentalDecorators": true,
+		"composite": true,
+		"paths": {
+			"~/*": ["./*"]
+		}
+	}
 }

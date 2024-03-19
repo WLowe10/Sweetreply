@@ -3,14 +3,20 @@ import { env } from "~/env";
 import { TRPCError } from "@trpc/server";
 
 export const signUpHandler = unauthenticatedProcedure.mutation(({ ctx }) => {
-    if (env.AUTH_REGISTRATION_DISABLED) {
-        throw new TRPCError({
-            code: "FORBIDDEN",
-            message: "Registration is currenlty disabled.",
-        });
-    }
+	if (env.AUTH_REGISTRATION_DISABLED) {
+		throw new TRPCError({
+			code: "FORBIDDEN",
+			message: "Registration is currenlty disabled.",
+		});
+	}
 
-    // create user
+	// ctx.emailService.sendWelcomeEmail({
+	// 	data: {
+	// 		firstName: "John",
+	// 	},
+	// });
 
-    // and log
+	// create user
+
+	// and log
 });

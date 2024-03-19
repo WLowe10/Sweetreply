@@ -10,5 +10,5 @@ const baseAWSConfig = {
     },
 } as const;
 
-export const S3 = new AWSS3(baseAWSConfig);
-export const SES = new AWSSES(baseAWSConfig);
+export const s3 = new AWSS3(baseAWSConfig);
+export const ses = new AWSSES(baseAWSConfig);
