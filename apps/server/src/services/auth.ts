@@ -1,26 +1,44 @@
-import { prisma } from "~/lib/db";
+import { SESSION_ID_TOKEN } from "@/lib/auth/constants";
+import { prisma } from "@/lib/db";
 import { User } from "@replyon/prisma";
 import argon2 from "argon2";
 import type { Request } from "express";
 
 export class AuthService {
-    public getUser(id: string): Promise<User | null> {
-        return prisma.user.findUnique({
-            where: {
-                id: id,
-            },
-        });
-    }
+	public getUser(userId: string): Promise<User | null> {
+		return prisma.user.findUnique({
+			where: {
+				id: userId,
+			},
+		});
+	}
 
-    public getUserFromRequest(req: Request): Promise<User | null> {
-        const sessionId = req.cookies["sid"];
+	public getUserByEmail(email: string): Promise<User | null> {
+		return prisma.user.findUnique({
+			where: {
+				email,
+			},
+		});
+	}
 
-        return this.getUser("");
-    }
+	public getUserFromRequest(req: Request): Promise<User | null> {
+		const sessionId = req.cookies[SESSION_ID_TOKEN];
 
-    public createUser() {}
+		return this.getUser("");
+	}
 
-    public createSession() {}
+	public updateUser(id: string, data: Partial<User>) {
+		return prisma.user.update({
+			where: {
+				id,
+			},
+			data,
+		});
+	}
+
+	public createUser(data: Partial<User>) {}
+
+	public createSession() {}
 }
 
 export const authService = new AuthService();

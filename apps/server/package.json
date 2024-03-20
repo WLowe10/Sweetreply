@@ -16,6 +16,7 @@
 		"@replyon/shared": "workspace:*",
 		"@trpc/server": "^10.45.1",
 		"argon2": "^0.40.1",
+		"cookie-parser": "^1.4.6",
 		"cors": "^2.8.5",
 		"cron": "^3.1.6",
 		"dotenv": "^16.4.5",
@@ -35,6 +36,7 @@
 	},
 	"devDependencies": {
 		"@replyon/tsconfig": "workspace:*",
+		"@types/cookie-parser": "^1.4.7",
 		"@types/cors": "^2.8.17",
 		"@types/express": "^4.17.21",
 		"@types/node": "^20",

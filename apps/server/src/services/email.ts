@@ -1,6 +1,6 @@
 import { render } from "@faire/mjml-react/utils/render";
 import { createElement } from "react";
-import { ses } from "~/lib/client/aws";
+import { ses } from "@/lib/client/aws";
 import { WelcomeEmail, subject as welcomeEmailSubject, type WelcomeEmailProps } from "../email/templates/welcome";
 
 export type SendEmailData = {

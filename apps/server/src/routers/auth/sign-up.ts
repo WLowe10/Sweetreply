@@ -1,5 +1,5 @@
-import { unauthenticatedProcedure } from "~/trpc";
-import { env } from "~/env";
+import { unauthenticatedProcedure } from "@/trpc";
+import { env } from "@/env";
 import { TRPCError } from "@trpc/server";
 
 export const signUpHandler = unauthenticatedProcedure.mutation(({ ctx }) => {

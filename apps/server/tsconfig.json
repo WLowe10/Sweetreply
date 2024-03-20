@@ -1,5 +1,6 @@
 {
 	"extends": "@replyon/tsconfig/base.json",
+	"exclude": ["node_modules", "dist"],
 	"compilerOptions": {
 		"outDir": "dist",
 		"types": ["node"],
@@ -11,7 +12,7 @@
 		"experimentalDecorators": true,
 		"composite": true,
 		"paths": {
-			"~/*": ["./*"]
+			"@/*": ["./*"]
 		}
 	}
 }

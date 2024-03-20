@@ -1,4 +1,4 @@
 {
-	"extends": "@cybership/tsconfig/base.json",
+	"extends": "@replyon/tsconfig/base.json",
 	"include": ["**/*.ts"]
 }
