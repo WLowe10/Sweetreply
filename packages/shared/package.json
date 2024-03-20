@@ -1,12 +1,13 @@
 {
-    "name": "@replyon/shared",
-    "version": "0.0.0",
-    "private": true,
-    "files": [
-        "schemas",
-        "lib"
-    ],
-    "dependencies": {
-        "zod": "^3.22.4"
-    }
+	"name": "@replyon/shared",
+	"version": "0.0.0",
+	"private": true,
+	"files": [
+		"schemas",
+		"lib"
+	],
+	"dependencies": {
+		"@replyon/prisma": "workspace:*",
+		"zod": "^3.22.4"
+	}
 }

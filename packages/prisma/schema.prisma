@@ -28,21 +28,24 @@ enum UserRole {
 // consider prisma default date time
 
 model User {
-    id String @id @default(uuid())
+    id                             String    @id @default(uuid())
+    role                           UserRole  @default(user)
+    email                          String    @unique
+    first_name                     String
+    last_name                      String
+    password_hash                  String
+    avatar_url                     String?
+    created_at                     DateTime  @default(now())
+    updated_at                     DateTime? @updatedAt
+    verified_at                    DateTime?
+    verification_requested_at      DateTime?
+    password_reset_requested_at    DateTime?
+    password_reset_code            String?
+    password_reset_code_expires_at DateTime?
 
-    created_at     DateTime  @default(now())
-    updated_at     DateTime? @updatedAt
-    email_verified DateTime?
-
-    role          UserRole     @default(user)
-    email         String       @unique
-    first_name    String
-    last_name     String
-    password_hash String
-    avatar_url    String?
-    team_members  TeamMember[]
-    teams         Team[]
-    Session       Session[]
+    team_members TeamMember[]
+    teams        Team[]
+    Session      Session[]
 
     @@map(name: "user")
 }

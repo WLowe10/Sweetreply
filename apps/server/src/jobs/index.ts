@@ -1,10 +1,10 @@
-import { deleteExpiredSessionsJob } from "./delete-expired-sessions";
+import { cleanUpJob } from "./clean-up";
 import type { CronJob } from "cron";
 
-const jobs: CronJob[] = [deleteExpiredSessionsJob];
+const jobs: CronJob[] = [cleanUpJob];
 
 export function startJobs() {
-    for (const job of jobs) {
-        job.start();
-    }
+	for (const job of jobs) {
+		job.start();
+	}
 }

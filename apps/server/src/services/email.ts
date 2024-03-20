@@ -2,9 +2,19 @@ import { render } from "@faire/mjml-react/utils/render";
 import { createElement } from "react";
 import { ses } from "@/lib/client/aws";
 import { WelcomeEmail, subject as welcomeEmailSubject, type WelcomeEmailProps } from "../email/templates/welcome";
+import {
+	VerifyAccountEmail,
+	subject as verifyAccountEmailSubject,
+	type VerifyAccountEmailProps,
+} from "../email/templates/verify-account";
+import {
+	PasswordResetEmail,
+	subject as passwordResetEmailSubject,
+	type PasswordResetEmailProps,
+} from "../email/templates/password-reset";
 
 export type SendEmailData = {
-	to: string[];
+	to: string | string[];
 	source?: string;
 	replyTo?: string[];
 	subject: string;
@@ -12,7 +22,7 @@ export type SendEmailData = {
 };
 
 export type SendTemplateEmailData<T = object> = {
-	to: string[];
+	to: string | string[];
 	data: T;
 };
 
@@ -23,16 +33,15 @@ export type RenderedTemplateType = {
 
 export class EmailService {
 	public sendEmail(email: SendEmailData) {
-		// ? figure this out
-
 		const source = email.source || `"Replyon" <account@replyon.com>`;
 		const replyTo = email.replyTo || [`"Replyon Support" <wes@replyon.com>`];
+		const to = Array.isArray(email.to) ? email.to : [email.to];
 
 		return ses.sendEmail({
 			Source: source,
 			ReplyToAddresses: replyTo,
 			Destination: {
-				ToAddresses: email.to,
+				ToAddresses: to,
 			},
 			Message: {
 				Subject: {
@@ -66,10 +75,38 @@ export class EmailService {
 		};
 	}
 
-	public sendWelcomeEmail(data: SendTemplateEmailData<WelcomeEmailProps>) {
+	public sendWelcome(data: SendTemplateEmailData<WelcomeEmailProps>) {
 		const { html, subject } = this.renderTemplate({
 			template: WelcomeEmail,
 			subject: welcomeEmailSubject,
+			data: data.data,
+		});
+
+		return this.sendEmail({
+			to: data.to,
+			subject,
+			body: html,
+		});
+	}
+
+	public sendVerification(data: SendTemplateEmailData<VerifyAccountEmailProps>) {
+		const { html, subject } = this.renderTemplate({
+			template: VerifyAccountEmail,
+			subject: verifyAccountEmailSubject,
+			data: data.data,
+		});
+
+		return this.sendEmail({
+			to: data.to,
+			subject,
+			body: html,
+		});
+	}
+
+	public sendPasswordReset(data: SendTemplateEmailData<PasswordResetEmailProps>) {
+		const { html, subject } = this.renderTemplate({
+			template: PasswordResetEmail,
+			subject: passwordResetEmailSubject,
 			data: data.data,
 		});
 

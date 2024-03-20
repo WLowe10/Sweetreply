@@ -5,7 +5,7 @@ import { createElement } from "react";
 import { render } from "@faire/mjml-react/utils/render";
 import { WelcomeEmail } from "../../src/email/templates/welcome";
 import { VerifyAccountEmail } from "../../src/email/templates/verify-account";
-import { ResetPasswordEmail } from "../../src/email/templates/reset-password";
+import { PasswordResetEmail } from "../../src/email/templates/password-reset";
 import { TeamInvitationEmail } from "../../src/email/templates/team-invitation";
 
 const outDir = path.resolve(process.cwd(), "out", "email");
@@ -48,9 +48,9 @@ generateEmailPreview({
 
 generateEmailPreview({
 	name: "reset-password",
-	component: ResetPasswordEmail,
+	component: PasswordResetEmail,
 	props: {
-		resetPasswordLink: "",
+		code: "",
 	},
 });
 
