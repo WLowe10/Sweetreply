@@ -5,6 +5,7 @@
 		"outDir": "dist",
 		"types": ["node"],
 		"baseUrl": "./src",
+		"target": "ESNext",
 		"jsx": "react-jsx",
 		"module": "CommonJS",
 		"esModuleInterop": true,

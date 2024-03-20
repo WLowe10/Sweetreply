@@ -1,7 +1,10 @@
-import { trpc, publicProcedure } from "./trpc";
+import { trpc } from "./trpc";
 import { authMiddleware } from "./middleware";
 import { UserRole } from "@replyon/prisma";
 import { alreadySignedIn, mustBeAdmin, mustBeVerified } from "@/lib/auth/errors";
+
+// base procedure
+export const publicProcedure = trpc.procedure;
 
 // ensures that the requester is not authenticated
 export const unauthenticatedProcedure = publicProcedure.use(

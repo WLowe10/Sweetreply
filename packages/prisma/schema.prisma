@@ -42,8 +42,16 @@ model User {
     avatar_url    String?
     team_members  TeamMember[]
     teams         Team[]
+    Session       Session[]
 
     @@map(name: "user")
+}
+
+model Session {
+    id         String   @id @default(uuid())
+    user_id    String
+    expires_at DateTime
+    user       User     @relation(fields: [user_id], references: [id])
 }
 
 model Team {

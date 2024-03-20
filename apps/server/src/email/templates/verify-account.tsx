@@ -9,7 +9,7 @@ export type VerifyAccountEmailProps = {
 export const subject = "Verify Your Email";
 
 export const VerifyAccountEmail = ({ verifyCode }: VerifyAccountEmailProps) => {
-	const verifyLink = "";
+	const verifyLink = ""; // should link to api, which redirects to frontend
 
 	return (
 		<Container>
