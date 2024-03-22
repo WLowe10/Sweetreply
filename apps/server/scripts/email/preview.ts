@@ -24,8 +24,11 @@ function generateEmailPreview<T extends React.FC<any>>({
 	component: T;
 }) {
 	const { html } = render(createElement(component, props));
+	const filePath = path.resolve(outDir, `${name}.html`);
 
-	fs.writeFileSync(path.resolve(outDir, `${name}.html`), html);
+	fs.writeFileSync(filePath, html);
+
+	console.log(`${name} preview generated at ${filePath}`);
 }
 
 const start = Date.now();
@@ -34,6 +37,7 @@ generateEmailPreview({
 	name: "welcome",
 	component: WelcomeEmail,
 	props: {
+		verifyCode: "",
 		firstName: "John",
 	},
 });
@@ -50,7 +54,7 @@ generateEmailPreview({
 	name: "reset-password",
 	component: PasswordResetEmail,
 	props: {
-		code: "",
+		resetCode: "",
 	},
 });
 

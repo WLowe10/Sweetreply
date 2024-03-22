@@ -1,7 +1,10 @@
-const { z } = require("zod");
+// const { createEnv } = require("@t3-oss/env-nextjs");
+// const { z } = require("zod");
 
-const envSchema = z.object({
-	NEXT_PUBLIC_API_URL: z.string(),
-});
+// module.exports.env = createEnv({
+// 	client: {
+// 		NEXT_PUBLIC_API_URL: z.string(),
+// 	},
+// });
 
-module.exports.env = envSchema.parse(process.env);
+module.exports.env = {};

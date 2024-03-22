@@ -5,5 +5,5 @@ export type AppConfig = {
 
 export const appConfig: AppConfig = {
 	name: "Replyon",
-	iconUrl: "",
+	iconUrl: "https://m.media-amazon.com/images/I/51SfemEj3kL.jpg",
 } as const;
