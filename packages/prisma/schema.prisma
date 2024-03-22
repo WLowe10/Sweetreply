@@ -47,7 +47,7 @@ model User {
     teams        Team[]
     Session      Session[]
 
-    @@map(name: "user")
+    @@map(name: "auth_user")
 }
 
 model Session {
@@ -55,6 +55,8 @@ model Session {
     user_id    String
     expires_at DateTime
     user       User     @relation(fields: [user_id], references: [id])
+
+    @@map(name: "session")
 }
 
 model Team {

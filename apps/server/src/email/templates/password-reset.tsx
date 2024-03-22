@@ -1,6 +1,6 @@
 import { MjmlSpacer, MjmlText } from "@faire/mjml-react";
 import { Button, Container, Footer, Header } from "../components";
-import { APP_NAME } from "@replyon/shared/lib/constants";
+import { appConfig } from "@replyon/shared/lib/constants";
 import { buildFrontendUrl } from "@/lib/utils";
 
 export const subject = "Reset your password";
@@ -15,7 +15,7 @@ export const PasswordResetEmail = ({ resetCode }: PasswordResetEmailProps) => {
 	return (
 		<Container>
 			<Header>Reset Your Password</Header>
-			<MjmlText>Reset the password for your {APP_NAME} account by clicking the link below.</MjmlText>
+			<MjmlText>Reset the password for your {appConfig.name} account by clicking the link below.</MjmlText>
 			<MjmlSpacer />
 			<Button href={resetPasswordLink}> Reset Password</Button>
 			<MjmlSpacer />

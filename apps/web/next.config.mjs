@@ -1,7 +1,7 @@
-require("./src/env");
+import "./src/env.js";
 
 /** @type {import('next').NextConfig} */
-module.exports = {
+export default {
 	reactStrictMode: false,
 	transpilePackages: ["@replyon/shared"],
 };

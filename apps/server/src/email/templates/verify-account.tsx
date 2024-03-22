@@ -1,6 +1,6 @@
 import { MjmlSpacer, MjmlText } from "@faire/mjml-react";
 import { Container, Button, Footer, Header } from "../components";
-import { APP_NAME } from "@replyon/shared/lib/constants";
+import { appConfig } from "@replyon/shared/lib/constants";
 
 export type VerifyAccountEmailProps = {
 	verifyCode: string;
@@ -18,7 +18,9 @@ export const VerifyAccountEmail = ({ verifyCode }: VerifyAccountEmailProps) => {
 			<MjmlSpacer />
 			<Button href={verifyLink}>Verify Email Address</Button>
 			<MjmlSpacer />
-			<Footer>If you did not request to verify your {APP_NAME} account, you can safely ignore this email.</Footer>
+			<Footer>
+				If you did not request to verify your {appConfig.name} account, you can safely ignore this email.
+			</Footer>
 		</Container>
 	);
 };

@@ -1,16 +1,12 @@
 import { MjmlImage, MjmlSpacer, MjmlText } from "@faire/mjml-react";
 import { env } from "../../env";
+import { appConfig } from "@replyon/shared/lib/constants";
 import type { PropsWithChildren } from "react";
 
 export const Header = ({ children }: PropsWithChildren) => {
 	return (
 		<>
-			<MjmlImage
-				href="https://cybership.io"
-				target="_blank"
-				width="64px"
-				// src={`${env.CYBER_CLOUDFRONT_URL}/assets/logo.jpg`}
-			/>
+			<MjmlImage target="_blank" width="64px" href={env.FRONTEND_URL} src={appConfig.iconUrl} />
 			<MjmlText fontWeight="bold" fontSize="20px" align="center">
 				{children}
 			</MjmlText>

@@ -1,6 +1,6 @@
 import { MjmlSpacer, MjmlText } from "@faire/mjml-react";
 import { Container, Header, Footer, Button } from "../components";
-import { APP_NAME } from "@replyon/shared/lib/constants";
+import { appConfig } from "@replyon/shared/lib/constants";
 
 export type WelcomeEmailProps = {
 	firstName: string;
@@ -16,7 +16,7 @@ export const WelcomeEmail = ({ firstName }: WelcomeEmailProps) => {
 		<Container>
 			<Header>Welcome to the team</Header>
 			<MjmlText>
-				Welcome {firstName}! We are so exited for you to try out {APP_NAME}
+				Welcome {firstName}! We are so exited for you to try out {appConfig.name}
 			</MjmlText>
 			<MjmlSpacer />
 			<Button href={verifyLink}>Verify Email</Button>
