@@ -16,6 +16,11 @@ export const signUpInputSchema = baseUserSchema.pick({
 	last_name: true,
 });
 
+export const signInInputSchema = signUpInputSchema.pick({
+	email: true,
+	password: true,
+});
+
 export const updateMeInputSchema = baseUserSchema.pick({
 	first_name: true,
 	last_name: true,

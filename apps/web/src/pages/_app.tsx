@@ -11,7 +11,6 @@ const Providers = ({ children }: PropsWithChildren) => {
 };
 
 const App = ({ Component, pageProps }: AppProps) => {
-	console.log(process.env.NEXT_PUBLIC_API_URL);
 	return (
 		<Providers>
 			<SEO />

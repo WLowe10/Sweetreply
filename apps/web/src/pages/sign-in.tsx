@@ -6,6 +6,17 @@ import Link from "next/link";
 
 // this route should not be accessed if the user is already signed in
 
+const Subtitle = () => {
+	return (
+		<Text>
+			Don't have an account?{" "}
+			<Anchor component={Link} href="/sign-up">
+				Sign up
+			</Anchor>
+		</Text>
+	);
+};
+
 export default function SignInPage() {
 	// const { signIn, isLoading, error } = useSignIn();
 	const signIn = () => {};
@@ -57,14 +68,3 @@ export default function SignInPage() {
 		</AuthPageLayout>
 	);
 }
-
-const Subtitle = () => {
-	return (
-		<Text>
-			Don't have an account?{" "}
-			<Anchor component={Link} href="/sign-up">
-				Sign up
-			</Anchor>
-		</Text>
-	);
-};
