@@ -6,7 +6,8 @@
 		"dev": "tsx watch ./src/main.ts",
 		"build": "tsc",
 		"email:preview": "tsx watch ./scripts/email/preview.ts",
-		"type-check": "tsc --pretty --noEmit"
+		"type-check": "tsc --pretty --noEmit",
+		"openapi:generate": "tsx ./scripts/openapi/generate.ts"
 	},
 	"dependencies": {
 		"@aws-sdk/client-s3": "^3.536.0",
@@ -33,6 +34,7 @@
 		"routing-controllers": "^0.10.4",
 		"stripe": "^14.21.0",
 		"superjson": "1.13.3",
+		"trpc-openapi": "^1.2.0",
 		"tsc-alias": "^1.8.8",
 		"zod": "^3.22.4"
 	},

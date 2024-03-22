@@ -12,6 +12,7 @@ import { appRouter } from "./routers";
 import { logger } from "./lib/logger";
 import { useExpressServer } from "routing-controllers";
 import { StripeController } from "./controllers/stripe";
+import { createOpenApiExpressMiddleware } from "trpc-openapi";
 
 async function bootstrap() {
 	const app = express();
@@ -37,6 +38,8 @@ async function bootstrap() {
 	useExpressServer(app, {
 		controllers: [StripeController],
 	});
+
+	app.use("/api", createOpenApiExpressMiddleware({ router: appRouter, createContext }));
 
 	app.use(
 		"/trpc",
