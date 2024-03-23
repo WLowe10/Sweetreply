@@ -28,6 +28,11 @@ export const authConstants = {
 } as const;
 
 export class AuthService {
+	/**
+	 * Retrieve user by ID.
+	 * @param userId - The ID of the user.
+	 * @returns A Promise resolving to the user, or null if not found.
+	 */
 	public getUser(userId: string): Promise<User | null> {
 		return prisma.user.findUnique({
 			where: {
@@ -36,6 +41,11 @@ export class AuthService {
 		});
 	}
 
+	/**
+	 * Retrieve user by their email.
+	 * @param email - The email of the user.
+	 * @returns A Promise resolving to the user, or null if not found.
+	 */
 	public async getUserByEmail(email: string): Promise<User | null> {
 		const normalizedEmail = email.toLowerCase();
 
@@ -46,7 +56,13 @@ export class AuthService {
 		});
 	}
 
-	public updateUser(id: string, data: Partial<User>) {
+	/**
+	 * Updates user by their id.
+	 * @param id - The id of the user.
+	 * @param data - The data to update.
+	 * @returns A Promise resolving to the updated user, or null if not found.
+	 */
+	public updateUser(id: string, data: Partial<User>): Promise<User | null> {
 		return prisma.user.update({
 			where: {
 				id,
@@ -55,6 +71,11 @@ export class AuthService {
 		});
 	}
 
+	/**
+	 * Creates a new user if possible and sends a welcome email
+	 * @param data - The registration data of the new user.
+	 * @returns A Promise resolving to the user
+	 */
 	public async registerUser(data: SignUpType): Promise<User> {
 		const normalizedEmail = data.email.toLowerCase();
 
@@ -97,6 +118,11 @@ export class AuthService {
 		return newUser;
 	}
 
+	/**
+	 * Retrieve a session by the ID
+	 * @param sessionId - The ID of the session
+	 * @returns A Promise resolving to the session, or null if not found
+	 */
 	public getSession(sessionId: string): Promise<Session | null> {
 		return prisma.session.findUnique({
 			where: {
@@ -105,7 +131,13 @@ export class AuthService {
 		});
 	}
 
-	public updateSession(sessionId: string, data: Partial<Session>) {
+	/**
+	 * Updates session by its id.
+	 * @param sessionId - The id of the user.
+	 * @param data - The data to update.
+	 * @returns A Promise resolving to the updated session, or null if not found.
+	 */
+	public updateSession(sessionId: string, data: Partial<Session>): Promise<Session | null> {
 		return prisma.session.update({
 			where: {
 				id: sessionId,
@@ -114,6 +146,11 @@ export class AuthService {
 		});
 	}
 
+	/**
+	 * Creates a new session for a user.
+	 * @param userId - The id of the user.
+	 * @returns A Promise resolving to the new session
+	 */
 	public createSessionForUser(userId: string): Promise<Session> {
 		const expiresAt = new Date(Date.now() + authConstants.SESSION_EXPIRATION);
 
@@ -125,6 +162,10 @@ export class AuthService {
 		});
 	}
 
+	/**
+	 * Deletes a session
+	 * @param sessionId - The id of the session.
+	 */
 	public async deleteSession(sessionId: string): Promise<void> {
 		await prisma.session.delete({
 			where: {
@@ -133,6 +174,10 @@ export class AuthService {
 		});
 	}
 
+	/**
+	 * Deletes all of a user's session
+	 * @param userId - The id of user.
+	 */
 	public async deleteUserSessions(userId: string): Promise<void> {
 		await prisma.session.deleteMany({
 			where: {
@@ -141,6 +186,9 @@ export class AuthService {
 		});
 	}
 
+	/**
+	 * Deletes all sessions that are expired
+	 */
 	public async deleteExpiredSessions() {
 		await prisma.session.deleteMany({
 			where: {
@@ -151,6 +199,11 @@ export class AuthService {
 		});
 	}
 
+	/**
+	 * Validates a session, either renwing it or deleting it if it's expired
+	 * @param sessionId
+	 * @returns A Promise result resolving to the user and session
+	 */
 	public async validateSession(sessionId: string): ResultAsync<{ user: User; session: Session }, null> {
 		const session = await this.getSession(sessionId);
 
@@ -160,6 +213,7 @@ export class AuthService {
 
 		if (session.expires_at < new Date()) {
 			await this.deleteSession(sessionId);
+
 			return err(null);
 		}
 
@@ -169,26 +223,22 @@ export class AuthService {
 			return err(null);
 		}
 
-		const updatedSession = await this.updateSession(sessionId, {
+		const updatedSession = await this.updateSession(session.id, {
 			expires_at: new Date(Date.now() + authConstants.SESSION_EXPIRATION),
 		});
+
+		if (!updatedSession) {
+			return err(null);
+		}
 
 		return ok({ user, session: updatedSession });
 	}
 
-	public async deleteExpiredPasswordResetCodes() {
-		await prisma.user.updateMany({
-			where: {
-				password_reset_code_expires_at: {
-					lte: new Date(),
-				},
-			},
-			data: {
-				password_reset_code: null,
-			},
-		});
-	}
-
+	/**
+	 * Validates an email verification token
+	 * @param token The token to validate
+	 * @returns boolean
+	 */
 	public validateEmailVerificationToken(token: string): boolean {
 		try {
 			jwt.verify(token, env.EMAIL_VERIFICATION_SECRET);
@@ -199,11 +249,16 @@ export class AuthService {
 		}
 	}
 
-	public async dispatchPasswordReset(userId: string, opts?: { ignoreRateLimit: boolean }) {
+	/**
+	 * Sends a password reset email
+	 * @param userId The user to send the email to
+	 * @param opts Options
+	 */
+	public async dispatchPasswordReset(userId: string, opts?: { ignoreRateLimit: boolean }): Promise<void> {
 		const user = await this.getUser(userId);
 
 		if (!user) {
-			return err(null);
+			return;
 		}
 
 		if (!opts?.ignoreRateLimit && user.password_reset_requested_at) {
@@ -235,7 +290,12 @@ export class AuthService {
 		});
 	}
 
-	public async dispatchVerification(userId: string, opts?: { ignoreRateLimit: boolean }) {
+	/**
+	 * Sends an account verification email
+	 * @param userId The user to send the email to
+	 * @param opts Options
+	 */
+	public async dispatchVerification(userId: string, opts?: { ignoreRateLimit: boolean }): Promise<void> {
 		const user = await this.getUser(userId);
 
 		if (!user) {
@@ -269,7 +329,13 @@ export class AuthService {
 		});
 	}
 
-	public async changePassword(code: string, newPassword: string) {
+	/**
+	 * Changes the password of a user and deletes their old sessions
+	 * @param code The password reset code
+	 * @param newPassword The new password
+	 * @returns The updated user
+	 */
+	public async changePassword(code: string, newPassword: string): Promise<User | null> {
 		const user = await prisma.user.findUnique({
 			where: {
 				password_reset_code: code,
@@ -294,6 +360,17 @@ export class AuthService {
 			});
 		}
 
+		const passwordIsSame = await argon2.verify(user.password_hash, newPassword);
+
+		if (passwordIsSame) {
+			throw new TRPCError({
+				code: "BAD_REQUEST",
+				message: "Your password cannot be the same as your old password",
+			});
+		}
+
+		await this.deleteUserSessions(user.id);
+
 		return this.updateUser(user.id, {
 			password_hash: await argon2.hash(newPassword),
 			password_reset_code: null,
@@ -303,6 +380,11 @@ export class AuthService {
 
 	// helpers
 
+	/**
+	 * Gets user from request
+	 * @param req The request object
+	 * @returns The user if found, otherwise null
+	 */
 	public async getUserFromRequest(req: Request): Promise<User | null> {
 		const sessionId = this.getSessionIdFromRequest(req);
 
@@ -319,6 +401,11 @@ export class AuthService {
 		return this.getUser(session.user_id);
 	}
 
+	/**
+	 * Validates a request. Internally wraps validateSession
+	 * @param req The request object
+	 * @returns A result containing the user and session
+	 */
 	public async validateRequest(req: Request): ResultAsync<{ user: User; session: Session }, null> {
 		const sessionId = this.getSessionIdFromRequest(req);
 
@@ -329,6 +416,11 @@ export class AuthService {
 		return this.validateSession(sessionId);
 	}
 
+	/**
+	 * Validates a sign-in payload.
+	 * @param data The sign-in payload
+	 * @returns The user if validated, otherwise null
+	 */
 	public async validateSignIn(data: SignInType): Promise<User | null> {
 		const user = await this.getUserByEmail(data.email);
 
@@ -345,10 +437,19 @@ export class AuthService {
 		return user;
 	}
 
-	public getSessionIdFromRequest(req: Request) {
+	/**
+	 * Gets the session id from a request object
+	 * @param req The request object
+	 * @returns The session id if found
+	 */
+	public getSessionIdFromRequest(req: Request): string | undefined {
 		return req.signedCookies[authConstants.SESSION_ID_TOKEN];
 	}
 
+	/**
+	 * Attaches a new session cookie to a response
+	 * @param res The response object
+	 */
 	public sendSessionCookie(res: Response, sessionId: string): void {
 		// todo
 
@@ -363,6 +464,10 @@ export class AuthService {
 		});
 	}
 
+	/**
+	 * Clears a session cookie
+	 * @param res The response object
+	 */
 	public sendBlankSessionCookie(res: Response): void {
 		res.clearCookie(authConstants.SESSION_ID_TOKEN);
 	}
