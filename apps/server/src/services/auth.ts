@@ -15,7 +15,7 @@ import { emailAlreadyRegistered } from "@/lib/auth/errors";
 import { env } from "@/env";
 import { TRPCError } from "@trpc/server";
 import { isDev } from "@/lib/utils";
-import type { Session, User } from "@replyon/prisma";
+import { UserRole, type Session, type User } from "@replyon/prisma";
 import type { SignUpType, SignInType } from "@replyon/shared/schemas/auth";
 import type { Request, Response } from "express";
 

@@ -25,6 +25,11 @@ export const forgotPasswordInputSchema = signInInputSchema.pick({
 	email: true,
 });
 
+export const changePasswordInputSchema = z.object({
+	code: z.string(),
+	newPassword: baseUserSchema.shape.password,
+});
+
 export const updateMeInputSchema = baseUserSchema
 	.pick({
 		first_name: true,

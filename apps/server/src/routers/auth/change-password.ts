@@ -1,13 +1,8 @@
 import { authenticatedUnverifiedProcedure } from "@/trpc";
-import { z } from "zod";
-
-const resetPasswordInputSchema = z.object({
-	code: z.string(),
-	newPassword: z.string(),
-});
+import { changePasswordInputSchema } from "@replyon/shared/schemas/auth";
 
 export const changePasswordHandler = authenticatedUnverifiedProcedure
-	.input(resetPasswordInputSchema)
+	.input(changePasswordInputSchema)
 	.mutation(async ({ input, ctx }) => {
 		const { code } = input;
 

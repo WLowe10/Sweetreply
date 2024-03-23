@@ -1,4 +1,5 @@
 import { authenticatedUnverifiedProcedure } from "@/trpc";
+import { UserRole } from "@replyon/prisma";
 import { TRPCError } from "@trpc/server";
 
 export const requestVerificationHandler = authenticatedUnverifiedProcedure.mutation(async ({ ctx }) => {
@@ -9,5 +10,7 @@ export const requestVerificationHandler = authenticatedUnverifiedProcedure.mutat
 		});
 	}
 
-	await ctx.authService.dispatchVerification(ctx.user.id);
+	await ctx.authService.dispatchVerification(ctx.user.id, {
+		ignoreRateLimit: ctx.user.role === UserRole.admin,
+	});
 });
