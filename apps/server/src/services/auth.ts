@@ -29,9 +29,11 @@ export class AuthService {
 	}
 
 	public async getUserByEmail(email: string): Promise<User | null> {
+		const normalizedEmail = email.toLowerCase();
+
 		return await prisma.user.findUnique({
 			where: {
-				email,
+				email: normalizedEmail,
 			},
 		});
 	}
@@ -46,7 +48,9 @@ export class AuthService {
 	}
 
 	public async registerUser(data: SignUpType): Promise<User> {
-		const existingUser = await this.getUserByEmail(data.email);
+		const normalizedEmail = data.email.toLowerCase();
+
+		const existingUser = await this.getUserByEmail(normalizedEmail);
 
 		if (existingUser) {
 			throw emailAlreadyRegistered();
@@ -56,7 +60,7 @@ export class AuthService {
 
 		const newUser = await prisma.user.create({
 			data: {
-				email: data.email,
+				email: normalizedEmail,
 				password_hash: hashedPassword,
 				first_name: data.first_name,
 				last_name: data.last_name,
