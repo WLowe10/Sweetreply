@@ -3,6 +3,7 @@ import fs from "fs";
 import path from "path";
 import { generateOpenApiDocument } from "trpc-openapi";
 import { appRouter } from "../../src/routers";
+import { appConfig } from "@replyon/shared/lib/constants";
 
 const outDir = path.resolve(process.cwd(), "out", "openapi");
 
@@ -11,12 +12,10 @@ if (!fs.existsSync(outDir)) {
 }
 
 export const openAPIDocument = generateOpenApiDocument(appRouter, {
-	title: "Example CRUD API",
+	title: `${appConfig.name} REST API`,
 	description: "OpenAPI compliant REST API built using tRPC with Express",
 	version: "1.0.0",
 	baseUrl: "http://localhost:3000/api",
-	docsUrl: "https://github.com/jlalmes/trpc-openapi",
-	tags: ["auth", "users", "posts"],
 });
 
 const outPath = path.resolve(outDir, "openapi.json");
