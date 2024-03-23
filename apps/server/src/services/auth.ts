@@ -1,23 +1,31 @@
-import { authConstants } from "@/lib/auth/constants";
-import { prisma } from "@/lib/db";
-import { emailService } from "./email";
-import jwt from "jsonwebtoken";
-import argon2 from "argon2";
-import { nanoid } from "nanoid";
-import { ok, err, type ResultAsync } from "@replyon/shared/lib/result";
-import type { Session, User } from "@replyon/prisma";
-import type { SignUpType } from "@replyon/shared/schemas/auth";
-import type { Request } from "express";
-import { emailAlreadyRegistered } from "@/lib/auth/errors";
-import { env } from "@/env";
-import { TRPCError } from "@trpc/server";
-
 /**
  * Don't touch this service unless you have a valid reason to!
  * A lot of work went into studying authentication to arrive at this point
  *
  * - Wes Lowe
  */
+
+import jwt from "jsonwebtoken";
+import argon2 from "argon2";
+import { prisma } from "@/lib/db";
+import { emailService } from "./email";
+import { nanoid } from "nanoid";
+import { ok, err, type ResultAsync } from "@replyon/shared/lib/result";
+import { emailAlreadyRegistered } from "@/lib/auth/errors";
+import { env } from "@/env";
+import { TRPCError } from "@trpc/server";
+import type { Session, User } from "@replyon/prisma";
+import type { SignUpType, SignInType } from "@replyon/shared/schemas/auth";
+import type { Request, Response } from "express";
+import { isDev } from "@/lib/utils";
+
+export const authConstants = {
+	SESSION_ID_TOKEN: "sid",
+	SESSION_EXPIRATION: 1000 * 60 * 60 * 24 * 14, // 14 days
+	PASSWORD_RESET_EXPIRATION: 1000 * 60 * 60, // 1 hour
+	ACCOUNT_VERIFICATION_EXPIRATION: 1000 * 60 * 60, // 1 hour
+	EMAIL_COOLDOWN: 1000 * 60 * 5, // 5 minutes
+} as const;
 
 export class AuthService {
 	public getUser(userId: string): Promise<User | null> {
@@ -50,7 +58,14 @@ export class AuthService {
 	public async registerUser(data: SignUpType): Promise<User> {
 		const normalizedEmail = data.email.toLowerCase();
 
-		const existingUser = await this.getUserByEmail(normalizedEmail);
+		const existingUser = await prisma.user.findUnique({
+			where: {
+				email: normalizedEmail,
+			},
+			select: {
+				id: true,
+			},
+		});
 
 		if (existingUser) {
 			throw emailAlreadyRegistered();
@@ -64,35 +79,22 @@ export class AuthService {
 				password_hash: hashedPassword,
 				first_name: data.first_name,
 				last_name: data.last_name,
-				verification_requested_at: new Date(),
 			},
+		});
+
+		const verificationToken = await jwt.sign({ user_id: newUser.id }, env.EMAIL_VERIFICATION_SECRET, {
+			expiresIn: authConstants.ACCOUNT_VERIFICATION_EXPIRATION,
 		});
 
 		await emailService.sendWelcome({
 			to: data.email,
 			data: {
-				verifyCode: this.createEmailVerificationTokenForUser(newUser.id),
 				firstName: data.first_name,
+				verificationToken,
 			},
 		});
 
 		return newUser;
-	}
-
-	public async getUserFromRequest(req: Request): Promise<User | null> {
-		const sessionId = req.cookies[authConstants.SESSION_ID_TOKEN];
-
-		if (!sessionId) {
-			return null;
-		}
-
-		const session = await this.getSession(sessionId);
-
-		if (!session) {
-			return null;
-		}
-
-		return this.getUser(session.id);
 	}
 
 	public getSession(sessionId: string): Promise<Session | null> {
@@ -174,16 +176,6 @@ export class AuthService {
 		return ok({ user, session: updatedSession });
 	}
 
-	public async validateRequest(req: Request): ResultAsync<{ user: User; session: Session }, null> {
-		const sessionId = req.cookies[authConstants.SESSION_ID_TOKEN];
-
-		if (!sessionId) {
-			return err(null);
-		}
-
-		return this.validateSession(sessionId);
-	}
-
 	public async deleteExpiredPasswordResetCodes() {
 		await prisma.user.updateMany({
 			where: {
@@ -194,12 +186,6 @@ export class AuthService {
 			data: {
 				password_reset_code: null,
 			},
-		});
-	}
-
-	public createEmailVerificationTokenForUser(userId: string): string {
-		return jwt.sign({ user_id: userId }, env.EMAIL_VERIFICATION_SECRET, {
-			expiresIn: authConstants.ACCOUNT_VERIFICATION_EXPIRATION,
 		});
 	}
 
@@ -267,14 +253,86 @@ export class AuthService {
 			}
 		}
 
-		const resetCode = await this.createEmailVerificationTokenForUser(userId);
+		const verificationToken = await jwt.sign({ user_id: userId }, env.EMAIL_VERIFICATION_SECRET, {
+			expiresIn: authConstants.ACCOUNT_VERIFICATION_EXPIRATION,
+		});
 
-		await emailService.sendPasswordReset({
+		await this.updateUser(userId, {
+			verification_requested_at: new Date(),
+		});
+
+		await emailService.sendVerification({
 			to: user.email,
 			data: {
-				resetCode,
+				verificationToken,
 			},
 		});
+	}
+
+	// helpers
+
+	public async getUserFromRequest(req: Request): Promise<User | null> {
+		const sessionId = req.cookies[authConstants.SESSION_ID_TOKEN];
+
+		if (!sessionId) {
+			return null;
+		}
+
+		const session = await this.getSession(sessionId);
+
+		if (!session) {
+			return null;
+		}
+
+		return this.getUser(session.id);
+	}
+
+	public async validateRequest(req: Request): ResultAsync<{ user: User; session: Session }, null> {
+		const sessionId = this.getSessionIdFromRequest(req);
+
+		console.log(sessionId);
+
+		if (!sessionId) {
+			return err(null);
+		}
+
+		return this.validateSession(sessionId);
+	}
+
+	public async validateSignIn(data: SignInType): Promise<User | false> {
+		const user = await this.getUserByEmail(data.email);
+
+		if (!user) {
+			return false;
+		}
+
+		const passwordMatch = await argon2.verify(user.password_hash, data.password);
+
+		if (!passwordMatch) {
+			return false;
+		}
+
+		return user;
+	}
+
+	public getSessionIdFromRequest(req: Request) {
+		return req.signedCookies[authConstants.SESSION_ID_TOKEN];
+	}
+
+	public sendSessionCookie(res: Response, sessionId: string): void {
+		res.cookie(authConstants.SESSION_ID_TOKEN, sessionId, {
+			maxAge: authConstants.SESSION_EXPIRATION,
+			signed: true,
+			// domain
+			httpOnly: true,
+			secure: !isDev(),
+			// expires:
+			sameSite: "strict",
+		});
+	}
+
+	public sendBlankSessionCookie(res: Response): void {
+		res.clearCookie(authConstants.SESSION_ID_TOKEN);
 	}
 }
 

@@ -3,12 +3,12 @@ import { Container, Button, Footer, Header } from "../components";
 import { appConfig } from "@replyon/shared/lib/constants";
 
 export type VerifyAccountEmailProps = {
-	verifyCode: string;
+	verificationToken: string;
 };
 
 export const subject = "Verify Your Email";
 
-export const VerifyAccountEmail = ({ verifyCode }: VerifyAccountEmailProps) => {
+export const VerifyAccountEmail = ({ verificationToken }: VerifyAccountEmailProps) => {
 	const verifyLink = ""; // should link to api, which redirects to frontend
 
 	return (

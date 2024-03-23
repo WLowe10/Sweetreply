@@ -22,7 +22,7 @@ export const unauthenticatedProcedure = publicProcedure.use(
 // ensures that the requester is authenticated and verified
 export const authenticatedProcedure = publicProcedure.use(
 	authMiddleware.unstable_pipe(({ ctx, next }) => {
-		if (!ctx.user.email_verified) {
+		if (!ctx.user.verified_at) {
 			throw mustBeVerified();
 		}
 

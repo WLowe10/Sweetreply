@@ -1,10 +1,9 @@
 import { cleanUpJob } from "./clean-up";
+import { processRepliesJob } from "./process-replies";
 import type { CronJob } from "cron";
 
-const jobs: CronJob[] = [cleanUpJob];
+const jobs: CronJob[] = [cleanUpJob, processRepliesJob];
 
 export function startJobs() {
-	for (const job of jobs) {
-		job.start();
-	}
+	jobs.forEach((job) => job.start());
 }

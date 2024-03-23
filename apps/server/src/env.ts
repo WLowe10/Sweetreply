@@ -11,6 +11,7 @@ export const envSchema = z.object({
 	NODE_ENV: z.enum(["development", "production"]).default("production"),
 	FRONTEND_URL: z.string(),
 	DB_URL: z.string(),
+	COOKIE_SECRET: z.string(),
 	EMAIL_VERIFICATION_SECRET: z.string(),
 	AWS_REGION: z.string(),
 	AWS_ACCESS_KEY: z.string(),

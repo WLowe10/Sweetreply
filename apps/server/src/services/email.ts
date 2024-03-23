@@ -37,24 +37,24 @@ export class EmailService {
 		const replyTo = email.replyTo || [`"Replyon Support" <wes@replyon.com>`];
 		const to = Array.isArray(email.to) ? email.to : [email.to];
 
-		return ses.sendEmail({
-			Source: source,
-			ReplyToAddresses: replyTo,
-			Destination: {
-				ToAddresses: to,
-			},
-			Message: {
-				Subject: {
-					Data: email.subject,
-				},
-				Body: {
-					Html: {
-						Charset: "UTF-8",
-						Data: email.body,
-					},
-				},
-			},
-		});
+		// return ses.sendEmail({
+		// 	Source: source,
+		// 	ReplyToAddresses: replyTo,
+		// 	Destination: {
+		// 		ToAddresses: to,
+		// 	},
+		// 	Message: {
+		// 		Subject: {
+		// 			Data: email.subject,
+		// 		},
+		// 		Body: {
+		// 			Html: {
+		// 				Charset: "UTF-8",
+		// 				Data: email.body,
+		// 			},
+		// 		},
+		// 	},
+		// });
 	}
 
 	public renderTemplate<T extends React.FC<any>>({

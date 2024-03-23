@@ -2,15 +2,18 @@ import { mustBeSignedIn } from "@/lib/auth/errors";
 import { trpc } from "./trpc";
 
 export const authMiddleware = trpc.middleware(async ({ ctx, next }) => {
-	const user = await ctx.authService.getUserFromRequest(ctx.req);
+	const result = await ctx.authService.validateRequest(ctx.req);
 
-	if (!user) {
+	if (!result.success) {
 		throw mustBeSignedIn();
 	}
+
+	const { user, session } = result.data;
 
 	return next({
 		ctx: {
 			user,
+			session,
 		},
 	});
 });

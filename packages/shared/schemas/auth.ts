@@ -28,4 +28,5 @@ export const updateMeInputSchema = baseUserSchema.pick({
 });
 
 export type SignUpType = z.infer<typeof signUpInputSchema>;
+export type SignInType = z.infer<typeof signInInputSchema>;
 export type UpdateMeType = z.infer<typeof updateMeInputSchema>;

@@ -4,7 +4,7 @@ import { appConfig } from "@replyon/shared/lib/constants";
 
 export type WelcomeEmailProps = {
 	firstName: string;
-	verifyCode: string;
+	verificationToken: string;
 };
 
 export const subject = (props: WelcomeEmailProps) => `Welcome to the team, ${props.firstName}`;

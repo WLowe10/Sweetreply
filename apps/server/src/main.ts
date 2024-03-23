@@ -13,12 +13,15 @@ import { logger } from "./lib/logger";
 import { useExpressServer } from "routing-controllers";
 import { StripeController } from "./controllers/stripe";
 import { createOpenApiExpressMiddleware } from "trpc-openapi";
+import { isDev } from "./lib/utils";
+import { renderTrpcPanel } from "trpc-panel";
 
 async function bootstrap() {
 	const app = express();
 
 	app.use(helmet());
-	app.use(cookieParser());
+	app.use(cookieParser(env.COOKIE_SECRET));
+
 	app.use(
 		cors({
 			origin: env.FRONTEND_URL,
@@ -48,6 +51,23 @@ async function bootstrap() {
 			createContext,
 		})
 	);
+
+	if (isDev()) {
+		// todo add openapi panel
+		// ? might also want it always available, not just in dev
+
+		// app.use("/dev/openapi", (req, res) => {
+		// 	return res.send(
+		// 		renderTrpcPanel(appRouter, { url: "http://localhost:3000/trpc", transformer: "superjson" })
+		// 	);
+		// });
+
+		app.use("/dev/trpc-panel", (req, res) => {
+			return res.send(
+				renderTrpcPanel(appRouter, { url: "http://localhost:3000/trpc", transformer: "superjson" })
+			);
+		});
+	}
 
 	if (!env.JOBS_DISABLED) {
 		logger.info("Starting jobs");
