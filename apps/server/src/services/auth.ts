@@ -269,10 +269,42 @@ export class AuthService {
 		});
 	}
 
+	public async changePassword(code: string, newPassword: string) {
+		const user = await prisma.user.findUnique({
+			where: {
+				password_reset_code: code,
+				password_reset_code_expires_at: {
+					not: null,
+				},
+			},
+		});
+
+		if (!user) {
+			throw new TRPCError({
+				code: "BAD_REQUEST",
+				message: "Invalid password reset code",
+			});
+		}
+
+		// @ts-ignore
+		if (user.password_reset_code_expires_at < new Date()) {
+			throw new TRPCError({
+				code: "BAD_REQUEST",
+				message: "Password expiration expired, please request a new one",
+			});
+		}
+
+		return this.updateUser(user.id, {
+			password_hash: await argon2.hash(newPassword),
+			password_reset_code: null,
+			password_reset_code_expires_at: null,
+		});
+	}
+
 	// helpers
 
 	public async getUserFromRequest(req: Request): Promise<User | null> {
-		const sessionId = req.cookies[authConstants.SESSION_ID_TOKEN];
+		const sessionId = this.getSessionIdFromRequest(req);
 
 		if (!sessionId) {
 			return null;
@@ -284,13 +316,11 @@ export class AuthService {
 			return null;
 		}
 
-		return this.getUser(session.id);
+		return this.getUser(session.user_id);
 	}
 
 	public async validateRequest(req: Request): ResultAsync<{ user: User; session: Session }, null> {
 		const sessionId = this.getSessionIdFromRequest(req);
-
-		console.log(sessionId);
 
 		if (!sessionId) {
 			return err(null);
@@ -299,17 +329,17 @@ export class AuthService {
 		return this.validateSession(sessionId);
 	}
 
-	public async validateSignIn(data: SignInType): Promise<User | false> {
+	public async validateSignIn(data: SignInType): Promise<User | null> {
 		const user = await this.getUserByEmail(data.email);
 
 		if (!user) {
-			return false;
+			return null;
 		}
 
 		const passwordMatch = await argon2.verify(user.password_hash, data.password);
 
 		if (!passwordMatch) {
-			return false;
+			return null;
 		}
 
 		return user;
@@ -320,6 +350,8 @@ export class AuthService {
 	}
 
 	public sendSessionCookie(res: Response, sessionId: string): void {
+		// todo
+
 		res.cookie(authConstants.SESSION_ID_TOKEN, sessionId, {
 			maxAge: authConstants.SESSION_EXPIRATION,
 			signed: true,

@@ -40,7 +40,7 @@ model User {
     verified_at                    DateTime?
     verification_requested_at      DateTime?
     password_reset_requested_at    DateTime?
-    password_reset_code            String?
+    password_reset_code            String?   @unique
     password_reset_code_expires_at DateTime?
 
     team_members TeamMember[]

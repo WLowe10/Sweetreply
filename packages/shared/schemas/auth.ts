@@ -21,11 +21,17 @@ export const signInInputSchema = signUpInputSchema.pick({
 	password: true,
 });
 
-export const updateMeInputSchema = baseUserSchema.pick({
-	first_name: true,
-	last_name: true,
-	avatar_url: true,
+export const forgotPasswordInputSchema = signInInputSchema.pick({
+	email: true,
 });
+
+export const updateMeInputSchema = baseUserSchema
+	.pick({
+		first_name: true,
+		last_name: true,
+		avatar_url: true,
+	})
+	.partial();
 
 export type SignUpType = z.infer<typeof signUpInputSchema>;
 export type SignInType = z.infer<typeof signInInputSchema>;
