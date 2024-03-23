@@ -17,7 +17,7 @@ export const signUpHandler = unauthenticatedProcedure.input(signUpInputSchema).m
 
 	ctx.logger.info({ email: input.email }, "User signed up");
 
-	ctx.authService.sendSessionCookie(ctx.res, session.id);
+	ctx.authService.sendSessionCookie(ctx.res, session);
 
 	return serializeUser(user);
 });

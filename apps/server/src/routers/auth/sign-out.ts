@@ -10,6 +10,8 @@ const signOutInputSchema = z
 export const signOutHandler = authenticatedUnverifiedProcedure
 	.input(signOutInputSchema)
 	.mutation(async ({ input, ctx }) => {
+		ctx.authService.sendBlankSessionCookie(ctx.res);
+
 		if (input && input.all) {
 			await ctx.authService.deleteUserSessions(ctx.user.id);
 		} else {

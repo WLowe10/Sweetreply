@@ -14,10 +14,10 @@ import { ok, err, type ResultAsync } from "@replyon/shared/lib/result";
 import { emailAlreadyRegistered } from "@/lib/auth/errors";
 import { env } from "@/env";
 import { TRPCError } from "@trpc/server";
+import { isDev } from "@/lib/utils";
 import type { Session, User } from "@replyon/prisma";
 import type { SignUpType, SignInType } from "@replyon/shared/schemas/auth";
 import type { Request, Response } from "express";
-import { isDev } from "@/lib/utils";
 
 export const authConstants = {
 	SESSION_ID_TOKEN: "sid",
@@ -26,6 +26,9 @@ export const authConstants = {
 	ACCOUNT_VERIFICATION_EXPIRATION: 1000 * 60 * 60, // 1 hour
 	EMAIL_COOLDOWN: 1000 * 60 * 5, // 5 minutes
 } as const;
+
+const expirationDate = (expirationMs: number) => new Date(Date.now() + expirationMs);
+const cooldownDate = (cooldownMs: number) => new Date(Date.now() - cooldownMs);
 
 export class AuthService {
 	/**
@@ -132,6 +135,22 @@ export class AuthService {
 	}
 
 	/**
+	 * Creates a new session for a user.
+	 * @param userId - The id of the user.
+	 * @returns A Promise resolving to the new session
+	 */
+	public createSessionForUser(userId: string): Promise<Session> {
+		const expiresAt = expirationDate(authConstants.SESSION_EXPIRATION);
+
+		return prisma.session.create({
+			data: {
+				user_id: userId,
+				expires_at: expiresAt,
+			},
+		});
+	}
+
+	/**
 	 * Updates session by its id.
 	 * @param sessionId - The id of the user.
 	 * @param data - The data to update.
@@ -143,22 +162,6 @@ export class AuthService {
 				id: sessionId,
 			},
 			data,
-		});
-	}
-
-	/**
-	 * Creates a new session for a user.
-	 * @param userId - The id of the user.
-	 * @returns A Promise resolving to the new session
-	 */
-	public createSessionForUser(userId: string): Promise<Session> {
-		const expiresAt = new Date(Date.now() + authConstants.SESSION_EXPIRATION);
-
-		return prisma.session.create({
-			data: {
-				user_id: userId,
-				expires_at: expiresAt,
-			},
 		});
 	}
 
@@ -189,7 +192,7 @@ export class AuthService {
 	/**
 	 * Deletes all sessions that are expired
 	 */
-	public async deleteExpiredSessions() {
+	public async deleteExpiredSessions(): Promise<void> {
 		await prisma.session.deleteMany({
 			where: {
 				expires_at: {
@@ -208,10 +211,13 @@ export class AuthService {
 		const session = await this.getSession(sessionId);
 
 		if (!session) {
+			console.log("no session");
 			return err(null);
 		}
 
 		if (session.expires_at < new Date()) {
+			console.log("no session: expired");
+
 			await this.deleteSession(sessionId);
 
 			return err(null);
@@ -220,12 +226,16 @@ export class AuthService {
 		const user = await this.getUser(session.user_id);
 
 		if (!user) {
+			console.log("no user");
+
 			return err(null);
 		}
 
 		const updatedSession = await this.updateSession(session.id, {
-			expires_at: new Date(Date.now() + authConstants.SESSION_EXPIRATION),
+			expires_at: expirationDate(authConstants.SESSION_EXPIRATION),
 		});
+
+		console.log(updatedSession, "iupdated session");
 
 		if (!updatedSession) {
 			return err(null);
@@ -263,7 +273,7 @@ export class AuthService {
 
 		if (!opts?.ignoreRateLimit && user.password_reset_requested_at) {
 			if (user.password_reset_requested_at) {
-				if (user.password_reset_requested_at > new Date(Date.now() - authConstants.EMAIL_COOLDOWN)) {
+				if (user.password_reset_requested_at > cooldownDate(authConstants.EMAIL_COOLDOWN)) {
 					throw new TRPCError({
 						code: "TOO_MANY_REQUESTS",
 						message: "You can only request a password reset once every 5 minutes",
@@ -272,7 +282,7 @@ export class AuthService {
 			}
 		}
 
-		const expiresAt = new Date(Date.now() + authConstants.PASSWORD_RESET_EXPIRATION);
+		const expiresAt = expirationDate(authConstants.PASSWORD_RESET_EXPIRATION);
 
 		const resetCode = nanoid(8);
 
@@ -304,7 +314,7 @@ export class AuthService {
 
 		if (!opts?.ignoreRateLimit) {
 			if (user.verification_requested_at) {
-				if (user.verification_requested_at > new Date(Date.now() - authConstants.EMAIL_COOLDOWN)) {
+				if (user.verification_requested_at > cooldownDate(authConstants.EMAIL_COOLDOWN)) {
 					throw new TRPCError({
 						code: "TOO_MANY_REQUESTS",
 						message: "You can only request a verification email once every 5 minutes",
@@ -406,14 +416,24 @@ export class AuthService {
 	 * @param req The request object
 	 * @returns A result containing the user and session
 	 */
-	public async validateRequest(req: Request): ResultAsync<{ user: User; session: Session }, null> {
+	public async validateRequest(req: Request, res: Response): ResultAsync<{ user: User; session: Session }, null> {
 		const sessionId = this.getSessionIdFromRequest(req);
 
 		if (!sessionId) {
 			return err(null);
 		}
 
-		return this.validateSession(sessionId);
+		const sessionResult = await this.validateSession(sessionId);
+
+		if (sessionResult.success) {
+			// refresh the session cookie
+			this.sendSessionCookie(res, sessionResult.data.session);
+		} else {
+			// delete the session cookie for the expired session
+			this.sendBlankSessionCookie(res);
+		}
+
+		return sessionResult;
 	}
 
 	/**
@@ -450,16 +470,14 @@ export class AuthService {
 	 * Attaches a new session cookie to a response
 	 * @param res The response object
 	 */
-	public sendSessionCookie(res: Response, sessionId: string): void {
-		// todo
-
-		res.cookie(authConstants.SESSION_ID_TOKEN, sessionId, {
+	public sendSessionCookie(res: Response, session: Session): void {
+		res.cookie(authConstants.SESSION_ID_TOKEN, session.id, {
 			maxAge: authConstants.SESSION_EXPIRATION,
 			signed: true,
-			// domain
+			// todo domain
 			httpOnly: true,
 			secure: !isDev(),
-			// expires:
+			expires: session.expires_at,
 			sameSite: "strict",
 		});
 	}

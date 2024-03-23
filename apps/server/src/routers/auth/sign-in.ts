@@ -17,7 +17,7 @@ export const signInHandler = unauthenticatedProcedure.input(signInInputSchema).m
 
 	const session = await ctx.authService.createSessionForUser(user.id);
 
-	ctx.authService.sendSessionCookie(res, session.id);
+	ctx.authService.sendSessionCookie(res, session);
 
 	ctx.logger.info(
 		{
