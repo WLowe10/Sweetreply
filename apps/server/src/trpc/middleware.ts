@@ -2,7 +2,6 @@ import { mustBeSignedIn } from "@/lib/auth/errors";
 import { trpc } from "./trpc";
 
 export const authMiddleware = trpc.middleware(async ({ ctx, next }) => {
-	console.log(ctx.req.signedCookies);
 	const result = await ctx.authService.validateRequest(ctx.req, ctx.res);
 
 	if (!result.success) {

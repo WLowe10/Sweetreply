@@ -37,7 +37,7 @@ generateEmailPreview({
 	name: "welcome",
 	component: WelcomeEmail,
 	props: {
-		verifyCode: "",
+		verificationToken: "",
 		firstName: "John",
 	},
 });
@@ -46,7 +46,7 @@ generateEmailPreview({
 	name: "verify-account",
 	component: VerifyAccountEmail,
 	props: {
-		verifyCode: "",
+		verificationToken: "",
 	},
 });
 

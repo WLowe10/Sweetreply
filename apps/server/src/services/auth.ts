@@ -10,7 +10,7 @@ import argon2 from "argon2";
 import { prisma } from "@/lib/db";
 import { emailService } from "./email";
 import { nanoid } from "nanoid";
-import { ok, err, type ResultAsync } from "@replyon/shared/lib/result";
+import { ok, err, type ResultAsync, Result } from "@replyon/shared/lib/result";
 import { emailAlreadyRegistered } from "@/lib/auth/errors";
 import { env } from "@/env";
 import { TRPCError } from "@trpc/server";
@@ -19,9 +19,11 @@ import { UserRole, type Session, type User } from "@replyon/prisma";
 import type { SignUpType, SignInType } from "@replyon/shared/schemas/auth";
 import type { Request, Response } from "express";
 
+type EmailVerificationTokenPayloadType = { user_id: string };
+
 export const authConstants = {
 	SESSION_ID_TOKEN: "sid",
-	SESSION_EXPIRATION: 1000 * 60 * 60 * 24 * 14, // 14 days
+	SESSION_EXPIRATION: 1000 * 60 * 60 * 24 * 7, // 1 week
 	PASSWORD_RESET_EXPIRATION: 1000 * 60 * 60, // 1 hour
 	ACCOUNT_VERIFICATION_EXPIRATION: 1000 * 60 * 60, // 1 hour
 	EMAIL_COOLDOWN: 1000 * 60 * 5, // 5 minutes
@@ -106,9 +108,7 @@ export class AuthService {
 			},
 		});
 
-		const verificationToken = await jwt.sign({ user_id: newUser.id }, env.EMAIL_VERIFICATION_SECRET, {
-			expiresIn: authConstants.ACCOUNT_VERIFICATION_EXPIRATION,
-		});
+		const verificationToken = this.createEmailVerificationToken(newUser.id);
 
 		await emailService.sendWelcome({
 			to: data.email,
@@ -211,13 +211,10 @@ export class AuthService {
 		const session = await this.getSession(sessionId);
 
 		if (!session) {
-			console.log("no session");
 			return err(null);
 		}
 
 		if (session.expires_at < new Date()) {
-			console.log("no session: expired");
-
 			await this.deleteSession(sessionId);
 
 			return err(null);
@@ -226,8 +223,6 @@ export class AuthService {
 		const user = await this.getUser(session.user_id);
 
 		if (!user) {
-			console.log("no user");
-
 			return err(null);
 		}
 
@@ -235,28 +230,11 @@ export class AuthService {
 			expires_at: expirationDate(authConstants.SESSION_EXPIRATION),
 		});
 
-		console.log(updatedSession, "iupdated session");
-
 		if (!updatedSession) {
 			return err(null);
 		}
 
 		return ok({ user, session: updatedSession });
-	}
-
-	/**
-	 * Validates an email verification token
-	 * @param token The token to validate
-	 * @returns boolean
-	 */
-	public validateEmailVerificationToken(token: string): boolean {
-		try {
-			jwt.verify(token, env.EMAIL_VERIFICATION_SECRET);
-
-			return true;
-		} catch {
-			return false;
-		}
 	}
 
 	/**
@@ -323,9 +301,7 @@ export class AuthService {
 			}
 		}
 
-		const verificationToken = await jwt.sign({ user_id: userId }, env.EMAIL_VERIFICATION_SECRET, {
-			expiresIn: authConstants.ACCOUNT_VERIFICATION_EXPIRATION,
-		});
+		const verificationToken = this.createEmailVerificationToken(userId);
 
 		await this.updateUser(userId, {
 			verification_requested_at: new Date(),
@@ -388,7 +364,43 @@ export class AuthService {
 		});
 	}
 
-	// helpers
+	/**
+	 * Verifies a user's account
+	 * @param userId The user to verify
+	 * @returns The updated user
+	 */
+	public verifyUser(userId: string): Promise<User | null> {
+		return this.updateUser(userId, {
+			verified_at: new Date(),
+		});
+	}
+
+	/**
+	 * Creates an email verification token
+	 * @param userId The user ID to create the token for
+	 * @returns email verification JWT
+	 */
+	public createEmailVerificationToken(userId: string): string {
+		return jwt.sign({ user_id: userId } as EmailVerificationTokenPayloadType, env.EMAIL_VERIFICATION_SECRET, {
+			expiresIn: authConstants.ACCOUNT_VERIFICATION_EXPIRATION,
+		});
+	}
+
+	/**
+	 * Validates an email verification token
+	 * @param token The token to validate
+	 * @returns boolean
+	 */
+	public validateEmailVerificationToken(token: string): Result<EmailVerificationTokenPayloadType, null> {
+		try {
+			const decoded = jwt.verify(token, env.EMAIL_VERIFICATION_SECRET);
+			return ok(decoded as EmailVerificationTokenPayloadType);
+		} catch {
+			return err(null);
+		}
+	}
+
+	// --- helpers ---
 
 	/**
 	 * Gets user from request

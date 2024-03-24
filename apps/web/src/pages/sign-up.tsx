@@ -28,10 +28,9 @@ const Subtitle = () => {
 };
 
 export default function SignUpPage() {
+	const signUpMutation = trpc.auth.signUp.useMutation();
 	const form = useForm<z.infer<typeof signUpFormSchema>>();
 	const [visible, { toggle }] = useDisclosure(false);
-
-	const signUpMutation = trpc.auth.signUp.useMutation();
 
 	const handleSignUp = form.handleSubmit((data) => {
 		signUpMutation.mutate({

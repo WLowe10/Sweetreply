@@ -14,11 +14,20 @@ export function buildAPIUrl(path: string, query?: Record<string, string>): strin
 	return url.toString();
 }
 
-export function buildFrontendUrl(path: string, query?: Record<string, string>): string {
-	const url = new URL(env.FRONTEND_URL + path);
+type BuildFrontendUrlOptions = {
+	query?: Record<string, string>;
+	path: string;
+};
 
-	if (query) {
-		url.search = new URLSearchParams(query).toString();
+export function buildFrontendUrl(options?: string | BuildFrontendUrlOptions): string {
+	const url = new URL(
+		options ? env.FRONTEND_URL + (typeof options === "string" ? options : options.path) : env.FRONTEND_URL
+	);
+
+	if (typeof options === "object") {
+		if (options.query) {
+			url.search = new URLSearchParams(options.query).toString();
+		}
 	}
 
 	return url.toString();

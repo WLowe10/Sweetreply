@@ -7,6 +7,13 @@ export function mustBeVerified() {
 	});
 }
 
+export function alreadyVerified() {
+	return new TRPCError({
+		code: "FORBIDDEN",
+		message: "Your account is already verified",
+	});
+}
+
 export function mustBeSignedIn() {
 	return new TRPCError({
 		code: "UNAUTHORIZED",

@@ -1,5 +1,6 @@
 import { CronJob } from "cron";
 import { authService } from "@/services/auth";
+import { logger } from "@/lib/logger";
 
 /**
  * This job will run every day at midnight to delete expired sessions.
@@ -10,6 +11,8 @@ import { authService } from "@/services/auth";
 export const cleanUpJob = CronJob.from({
 	cronTime: "0 0 * * *",
 	onTick: async () => {
+		logger.info("Running clean up job");
+
 		await authService.deleteExpiredSessions();
 	},
 });

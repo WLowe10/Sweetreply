@@ -5,6 +5,7 @@ import type { AppProps } from "next/app";
 import type { PropsWithChildren } from "react";
 
 import "@mantine/core/styles.css";
+import "@mantine/charts/styles.css";
 
 const Providers = ({ children }: PropsWithChildren) => {
 	return <MantineProvider>{children}</MantineProvider>;
