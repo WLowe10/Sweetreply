@@ -7,7 +7,7 @@ import { signInInputSchema } from "@replyon/shared/schemas/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import z from "zod";
-
+import { useMe } from "@/features/auth/hooks";
 // this route should not be accessed if the user is already signed in
 
 const Subtitle = () => {
@@ -22,6 +22,15 @@ const Subtitle = () => {
 };
 
 export default function SignInPage() {
+	// useMe({
+	// 	redirect: {
+	// 		to: "/pricing",
+	// 		when: {
+	// 			isAuthenticated: true,
+	// 		},
+	// 	},
+	// });
+
 	const signInMutation = trpc.auth.signIn.useMutation();
 
 	const form = useForm<z.infer<typeof signInInputSchema>>({
@@ -29,10 +38,15 @@ export default function SignInPage() {
 	});
 
 	const handleSubmit = form.handleSubmit((data) => {
-		signInMutation.mutate({
-			email: data.email,
-			password: data.password,
-		});
+		signInMutation.mutate(
+			{
+				email: data.email,
+				password: data.password,
+			},
+			{
+				onSuccess: () => {},
+			}
+		);
 	});
 
 	return (
@@ -65,7 +79,7 @@ export default function SignInPage() {
 				</Stack>
 				{signInMutation.error && !signInMutation.isLoading && (
 					<Alert mt="sm" color="red" icon={<IconInfoCircle />}>
-						{signInMutation.error.message}
+						{errors.signIn}
 					</Alert>
 				)}
 				<Button type="submit" mt="xl" fullWidth loading={signInMutation.isLoading}>

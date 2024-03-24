@@ -8,6 +8,7 @@ const getManyUsersInputSchema = z.object({
 	sort: z
 		.object({
 			created_at: orderBySchema,
+			sessions: orderBySchema,
 		})
 		.partial()
 		.optional(),
@@ -26,9 +27,7 @@ export const getManyUsersHandler = adminProcedure.input(getManyUsersInputSchema)
 
 	const queryWhere: Prisma.UserWhereInput = {};
 
-	const queryOrderBy: Prisma.UserOrderByWithAggregationInput = {
-		created_at: "asc",
-	};
+	const queryOrderBy: Prisma.UserOrderByWithRelationInput[] = [];
 
 	if (search && search.length > 0) {
 		queryWhere.OR = [
@@ -73,7 +72,17 @@ export const getManyUsersHandler = adminProcedure.input(getManyUsersInputSchema)
 
 	if (sort && Object.keys(sort).length > 0) {
 		if (sort.created_at) {
-			queryOrderBy.created_at = sort.created_at;
+			queryOrderBy.push({
+				created_at: sort.created_at,
+			});
+		}
+
+		if (sort.sessions) {
+			queryOrderBy.push({
+				sessions: {
+					_count: sort.sessions,
+				},
+			});
 		}
 	}
 
@@ -85,6 +94,7 @@ export const getManyUsersHandler = adminProcedure.input(getManyUsersInputSchema)
 		where: queryWhere,
 		select: {
 			id: true,
+			role: true,
 			first_name: true,
 			last_name: true,
 			email: true,

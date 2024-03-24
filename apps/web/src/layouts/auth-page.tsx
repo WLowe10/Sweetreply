@@ -29,7 +29,7 @@ export const AuthPageLayout = ({ pageTitle, title, subtitle, children }: PropsWi
 					{children}
 				</Container>
 				<Text size="sm" c="dimmed">
-					{appConfig.name} © {new Date().getFullYear()}
+					{appConfig.name} @ {new Date().getFullYear()}
 				</Text>
 			</Stack>
 		</BaseLayout>

@@ -8,6 +8,7 @@ import { requestVerificationHandler } from "./request-verification";
 import { forgotPasswordHandler } from "./forgot-password";
 import { changePasswordHandler } from "./change-password";
 import { requestPasswordResetHandler } from "./request-password-reset";
+import { verifyAccountHandler } from "./verify";
 
 export const authRouter = router({
 	signUp: signUpHandler,
@@ -16,6 +17,7 @@ export const authRouter = router({
 	requestVerification: requestVerificationHandler,
 	requestPasswordReset: requestPasswordResetHandler,
 	forgotPassword: forgotPasswordHandler,
+	verifyAccount: verifyAccountHandler,
 	changePassword: changePasswordHandler,
 	getMe: getMeHandler,
 	updateMe: updateMeHandler,

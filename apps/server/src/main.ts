@@ -15,7 +15,6 @@ import { StripeController } from "./controllers/stripe";
 import { createOpenApiExpressMiddleware } from "trpc-openapi";
 import { isDev } from "./lib/utils";
 import { renderTrpcPanel } from "trpc-panel";
-import { AuthController } from "./controllers/auth";
 
 async function bootstrap() {
 	const app = express();
@@ -40,7 +39,7 @@ async function bootstrap() {
 	);
 
 	useExpressServer(app, {
-		controllers: [AuthController, StripeController],
+		controllers: [StripeController],
 	});
 
 	app.use("/api", createOpenApiExpressMiddleware({ router: appRouter, createContext }));

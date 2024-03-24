@@ -8,7 +8,7 @@ import "@mantine/core/styles.css";
 import "@mantine/charts/styles.css";
 
 const Providers = ({ children }: PropsWithChildren) => {
-	return <MantineProvider>{children}</MantineProvider>;
+	return <MantineProvider defaultColorScheme="dark">{children}</MantineProvider>;
 };
 
 const App = ({ Component, pageProps }: AppProps) => {
