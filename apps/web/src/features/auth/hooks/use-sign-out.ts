@@ -8,7 +8,7 @@ export const useSignOut = () => {
 	const signOutMutation = trpc.auth.signOut.useMutation();
 
 	const signOut = (data: RouterInput["auth"]["signOut"]) => {
-		signOutMutation.mutate(data, {
+		return signOutMutation.mutate(data, {
 			onSuccess: () => {
 				// clear the user data in the query cache
 				trpcUtils.auth.getMe.setData(undefined, undefined);
@@ -22,6 +22,6 @@ export const useSignOut = () => {
 		mutation: signOutMutation,
 		isLoading: signOutMutation.isLoading,
 		isError: signOutMutation.isError,
-		error: signOutMutation.error,
+		error: signOutMutation.error?.message,
 	};
 };

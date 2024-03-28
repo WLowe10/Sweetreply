@@ -4,8 +4,8 @@ import { userModel } from "@replyon/prisma/zod";
 export const baseUserSchema = userModel.extend({
 	email: z.string().email().max(100),
 	password: z.string().min(8),
-	first_name: z.string().max(32),
-	last_name: z.string().max(32),
+	first_name: z.string().min(3).max(32),
+	last_name: z.string().min(3).max(32),
 	avatar_url: z.string().url().optional(),
 });
 

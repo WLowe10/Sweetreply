@@ -8,7 +8,7 @@ export const useSignUp = () => {
 	const signUpMutation = trpc.auth.signUp.useMutation();
 
 	const signUp = (data: RouterInput["auth"]["signUp"]) => {
-		signUpMutation.mutate(data, {
+		return signUpMutation.mutate(data, {
 			onSuccess: (userData) => {
 				// set the data of the user in the query cache
 				trpcUtils.auth.getMe.setData(undefined, userData);
@@ -22,6 +22,6 @@ export const useSignUp = () => {
 		mutation: signUpMutation,
 		isLoading: signUpMutation.isLoading,
 		isError: signUpMutation.isError,
-		error: signUpMutation.error,
+		error: signUpMutation.error?.message,
 	};
 };

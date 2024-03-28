@@ -5,7 +5,7 @@ export const useForgotPassword = () => {
 	const forgotPassswordMutation = trpc.auth.forgotPassword.useMutation();
 
 	const forgotPassword = (data: RouterInput["auth"]["forgotPassword"]) => {
-		forgotPassswordMutation.mutate(data);
+		return forgotPassswordMutation.mutate(data);
 	};
 
 	return {
@@ -13,6 +13,6 @@ export const useForgotPassword = () => {
 		mutation: forgotPassswordMutation,
 		isLoading: forgotPassswordMutation.isLoading,
 		isError: forgotPassswordMutation.isError,
-		error: forgotPassswordMutation.error,
+		error: forgotPassswordMutation.error?.message,
 	};
 };

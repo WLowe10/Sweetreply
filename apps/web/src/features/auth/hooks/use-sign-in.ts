@@ -8,7 +8,7 @@ export const useSignIn = () => {
 	const signInMutation = trpc.auth.signIn.useMutation();
 
 	const signIn = (data: RouterInput["auth"]["signIn"]) => {
-		signInMutation.mutate(data, {
+		return signInMutation.mutate(data, {
 			onSuccess: (userData) => {
 				// set the data of the user in the query cache
 				trpcUtils.auth.getMe.setData(undefined, userData);
@@ -22,6 +22,6 @@ export const useSignIn = () => {
 		mutation: signInMutation,
 		isLoading: signInMutation.isLoading,
 		isError: signInMutation.isError,
-		error: signInMutation.error,
+		error: signInMutation.error?.message,
 	};
 };

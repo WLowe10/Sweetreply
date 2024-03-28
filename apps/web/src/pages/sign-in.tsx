@@ -7,7 +7,7 @@ import { signInInputSchema } from "@replyon/shared/schemas/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import z from "zod";
-import { useMe } from "@/features/auth/hooks";
+import { useMe, useSignIn } from "@/features/auth/hooks";
 // this route should not be accessed if the user is already signed in
 
 const Subtitle = () => {
@@ -22,36 +22,15 @@ const Subtitle = () => {
 };
 
 export default function SignInPage() {
-	// useMe({
-	// 	redirect: {
-	// 		to: "/pricing",
-	// 		when: {
-	// 			isAuthenticated: true,
-	// 		},
-	// 	},
-	// });
-
-	const signInMutation = trpc.auth.signIn.useMutation();
+	const { signIn, isLoading, isError, error } = useSignIn();
 
 	const form = useForm<z.infer<typeof signInInputSchema>>({
 		resolver: zodResolver(signInInputSchema),
 	});
 
-	const handleSubmit = form.handleSubmit((data) => {
-		signInMutation.mutate(
-			{
-				email: data.email,
-				password: data.password,
-			},
-			{
-				onSuccess: () => {},
-			}
-		);
-	});
-
 	return (
 		<AuthPageLayout pageTitle="Sign in | SaaS.tools" title="Sign-in to your account" subtitle={<Subtitle />}>
-			<Card component="form" withBorder shadow="md" radius="md" p={30} onSubmit={handleSubmit}>
+			<Card component="form" withBorder shadow="md" radius="md" p={30} onSubmit={form.handleSubmit(signIn)}>
 				<Stack>
 					<TextInput
 						label="Email"
@@ -77,12 +56,12 @@ export default function SignInPage() {
 						</Anchor>
 					</Group>
 				</Stack>
-				{signInMutation.error && !signInMutation.isLoading && (
+				{isError && !isLoading && (
 					<Alert mt="sm" color="red" icon={<IconInfoCircle />}>
-						{errors.signIn}
+						{error}
 					</Alert>
 				)}
-				<Button type="submit" mt="xl" fullWidth loading={signInMutation.isLoading}>
+				<Button type="submit" mt="xl" fullWidth loading={isLoading}>
 					Sign in
 				</Button>
 			</Card>
