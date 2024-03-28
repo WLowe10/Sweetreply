@@ -1,14 +1,17 @@
+import { useMe } from "@/features/auth/hooks";
 import { trpc } from "@/lib/trpc";
 import { Sparkline } from "@mantine/charts";
 
 // obviously add auth checks here
 
 export default function AdminDashboardPage() {
+	const { me } = useMe();
 	const getStatsQuery = trpc.admin.getStats.useQuery();
 
 	return (
 		<div>
 			<div>Admin</div>
+			<div>hello {me?.first_name}</div>
 			{/* <Sparkline
 				w={200}
 				h={60}

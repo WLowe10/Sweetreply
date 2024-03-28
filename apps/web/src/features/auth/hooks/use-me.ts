@@ -28,7 +28,8 @@ export const useMe = (props?: UseMeProps) => {
 	}, [getMeQuery, isAuthenticated, isInitialized, props]);
 
 	return {
-		data: getMeQuery.data,
+		me: getMeQuery.data,
+		query: getMeQuery,
 		isAuthenticated,
 		isInitialized,
 	};
