@@ -1,8 +1,7 @@
 import { MjmlSpacer, MjmlText } from "@faire/mjml-react";
 import { Button, Container, Footer, Header } from "../components";
-import { env } from "../../env";
-import { appConfig } from "@replyon/shared/lib/constants";
 import { buildFrontendUrl } from "@/lib/utils";
+import { appConfig } from "@replyon/shared/lib/constants";
 
 export type TeamInvitationEmailProps = {
 	inviteeName: string;

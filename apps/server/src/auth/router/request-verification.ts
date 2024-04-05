@@ -1,4 +1,4 @@
-import { alreadyVerified } from "@/lib/auth/errors";
+import { alreadyVerified } from "../errors";
 import { authenticatedUnverifiedProcedure } from "@/trpc";
 import { UserRole } from "@replyon/prisma";
 

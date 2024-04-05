@@ -8,10 +8,10 @@
 import jwt from "jsonwebtoken";
 import argon2 from "argon2";
 import { prisma } from "@/lib/db";
-import { emailService } from "./email";
+import { emailService } from "../email";
 import { nanoid } from "nanoid";
 import { ok, err, type ResultAsync, Result } from "@replyon/shared/lib/result";
-import { emailAlreadyRegistered } from "@/lib/auth/errors";
+import { emailAlreadyRegistered } from "./errors";
 import { env } from "@/env";
 import { TRPCError } from "@trpc/server";
 import { isDev } from "@/lib/utils";

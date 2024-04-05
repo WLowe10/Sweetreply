@@ -11,6 +11,7 @@ export const useSignOut = () => {
 		return signOutMutation.mutate(data, {
 			onSuccess: () => {
 				// clear the user data in the query cache
+				// ! not working
 				trpcUtils.auth.getMe.setData(undefined, undefined);
 				router.push("/");
 			},

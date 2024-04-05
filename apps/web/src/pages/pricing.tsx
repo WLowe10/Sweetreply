@@ -1,3 +1,5 @@
+import { LandingLayout } from "@/layouts";
+
 export default function PricingPage() {
-	return <div>pricing</div>;
+	return <LandingLayout>pricing</LandingLayout>;
 }

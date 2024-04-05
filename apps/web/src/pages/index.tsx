@@ -1,38 +1,26 @@
-import { Box, Button, Flex, Group, Title } from "@mantine/core";
-import Link from "next/link";
+import { LandingLayout } from "@/layouts";
+import { Box, Button, Center, Flex, Text, Image } from "@mantine/core";
+import { IconArrowNarrowRight } from "@tabler/icons-react";
 
 export default function HomePage() {
 	return (
-		<Box mih="100vh">
-			<Flex
-				component="header"
-				align="center"
-				justify="space-between"
-				p="md"
-				style={{ borderBottom: "1px solid dark" }}
-				maw="72rem"
-				mx="auto"
-			>
-				<Link href="/" style={{ textDecoration: "none" }}>
-					<Title order={2}>Replyon</Title>
-				</Link>
-				<Group>
-					<Button component={Link} variant="subtle" color="gray" size="compact-sm" href="/demo">
-						Demo
-					</Button>
-					<Button component={Link} variant="subtle" color="gray" size="compact-sm" href="/features">
-						Features
-					</Button>
-					<Button component={Link} variant="subtle" color="gray" size="compact-sm" href="/pricing">
-						Pricing
-					</Button>
-				</Group>
-				<Group>
-					<Button color="orange" component={Link} href="/sign-in">
-						Sign in
-					</Button>
-				</Group>
-			</Flex>
-		</Box>
+		<LandingLayout>
+			<Center mb="xl">
+				<Flex direction="column" align="center">
+					<Box ta="center" mb="2rem">
+						<Text size="3rem" fw="bold" mb="lg">
+							Your Personal AI Ambassador
+						</Text>
+						<Text size="lg" c="dimmed">
+							Replyon mentions your product in conversations naturally
+						</Text>
+					</Box>
+					<Button rightSection={<IconArrowNarrowRight size={18} />}>Get started</Button>
+				</Flex>
+			</Center>
+			<Box p="lg" maw="72rem" mx="auto">
+				<Image src="https://socialkiwi.co/static/imgs/post-scheduler.png" alt="Demo" />
+			</Box>
+		</LandingLayout>
 	);
 }

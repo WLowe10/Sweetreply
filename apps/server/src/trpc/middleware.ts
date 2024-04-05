@@ -1,4 +1,4 @@
-import { mustBeSignedIn } from "@/lib/auth/errors";
+import { mustBeSignedIn } from "../auth/errors";
 import { trpc } from "./trpc";
 
 export const authMiddleware = trpc.middleware(async ({ ctx, next }) => {

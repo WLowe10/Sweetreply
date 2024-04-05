@@ -1,7 +1,7 @@
 import { unauthenticatedProcedure } from "@/trpc";
 import { TRPCError } from "@trpc/server";
 import { signInInputSchema } from "@replyon/shared/schemas/auth";
-import { serializeUser } from "@/lib/auth/utils";
+import { serializeUser } from "../utils";
 
 export const signInHandler = unauthenticatedProcedure.input(signInInputSchema).mutation(async ({ input, ctx }) => {
 	const { res } = ctx;

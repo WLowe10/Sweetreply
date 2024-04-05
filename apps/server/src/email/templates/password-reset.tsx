@@ -10,7 +10,12 @@ export type PasswordResetEmailProps = {
 };
 
 export const PasswordResetEmail = ({ resetCode }: PasswordResetEmailProps) => {
-	const resetPasswordLink = buildFrontendUrl("/reset-password", { code: resetCode });
+	const resetPasswordLink = buildFrontendUrl({
+		path: "/reset-password",
+		query: {
+			code: resetCode,
+		},
+	});
 
 	return (
 		<Container>

@@ -1,3 +1,5 @@
+import { LandingLayout } from "@/layouts";
+
 export default function FeaturesPage() {
-	return <div>features</div>;
+	return <LandingLayout>features</LandingLayout>;
 }

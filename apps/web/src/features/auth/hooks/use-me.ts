@@ -1,6 +1,6 @@
-import { trpc } from "@/lib/trpc";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
+import { trpc } from "@/lib/trpc";
 import type { RouterInput } from "@server/router";
 
 type UseMeProps = {

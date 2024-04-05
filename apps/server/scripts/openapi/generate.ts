@@ -2,7 +2,7 @@ import "dotenv/config";
 import fs from "fs";
 import path from "path";
 import { generateOpenApiDocument } from "trpc-openapi";
-import { appRouter } from "../../src/routers";
+import { appRouter } from "../../src/router";
 import { appConfig } from "@replyon/shared/lib/constants";
 
 const outDir = path.resolve(process.cwd(), "out", "openapi");

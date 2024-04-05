@@ -1,7 +1,7 @@
 import { prisma } from "../lib/db";
 import { logger } from "../lib/logger";
-import { authService } from "../services/auth";
-import { emailService } from "../services/email";
+import { authService } from "../auth";
+import { emailService } from "../email";
 import type { CreateExpressContextOptions } from "@trpc/server/adapters/express";
 import type { Request, Response } from "express";
 

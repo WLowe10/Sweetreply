@@ -8,7 +8,7 @@ import * as trpcExpress from "@trpc/server/adapters/express";
 import { env } from "./env";
 import { createContext } from "./trpc";
 import { startJobs } from "./jobs";
-import { appRouter } from "./routers";
+import { appRouter } from "./router";
 import { logger } from "./lib/logger";
 import { useExpressServer } from "routing-controllers";
 import { StripeController } from "./controllers/stripe";

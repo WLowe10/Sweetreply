@@ -2,7 +2,7 @@ import { unauthenticatedProcedure } from "@/trpc";
 import { env } from "@/env";
 import { TRPCError } from "@trpc/server";
 import { signUpInputSchema } from "@replyon/shared/schemas/auth";
-import { serializeUser } from "@/lib/auth/utils";
+import { serializeUser } from "../utils";
 
 export const signUpHandler = unauthenticatedProcedure.input(signUpInputSchema).mutation(async ({ ctx, input }) => {
 	if (env.AUTH_REGISTRATION_DISABLED) {
