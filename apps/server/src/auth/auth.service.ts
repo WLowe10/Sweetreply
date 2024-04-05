@@ -13,6 +13,7 @@ import { nanoid } from "nanoid";
 import { ok, err, type ResultAsync, Result } from "@replyon/shared/lib/result";
 import { emailAlreadyRegistered } from "./errors";
 import { env } from "@/env";
+import { stripe } from "@/lib/client/stripe";
 import { TRPCError } from "@trpc/server";
 import { isDev } from "@/lib/utils";
 import { UserRole, type Session, type User } from "@replyon/prisma";
@@ -97,6 +98,11 @@ export class AuthService {
 			throw emailAlreadyRegistered();
 		}
 
+		// create the stripe customer for subscriptions
+		const stripeCustomer = await stripe.customers.create({
+			email: normalizedEmail,
+		});
+
 		const hashedPassword = await argon2.hash(data.password);
 
 		const newUser = await prisma.user.create({
@@ -105,6 +111,7 @@ export class AuthService {
 				password_hash: hashedPassword,
 				first_name: data.first_name,
 				last_name: data.last_name,
+				stripe_customer_id: stripeCustomer.id,
 			},
 		});
 
@@ -207,7 +214,9 @@ export class AuthService {
 	 * @param sessionId
 	 * @returns A Promise result resolving to the user and session
 	 */
-	public async validateSession(sessionId: string): ResultAsync<{ user: User; session: Session }, null> {
+	public async validateSession(
+		sessionId: string
+	): ResultAsync<{ user: User; session: Session }, null> {
 		const session = await this.getSession(sessionId);
 
 		if (!session) {
@@ -242,7 +251,10 @@ export class AuthService {
 	 * @param userId The user to send the email to
 	 * @param opts Options
 	 */
-	public async dispatchPasswordReset(userId: string, opts?: { ignoreRateLimit: boolean }): Promise<void> {
+	public async dispatchPasswordReset(
+		userId: string,
+		opts?: { ignoreRateLimit: boolean }
+	): Promise<void> {
 		const user = await this.getUser(userId);
 
 		if (!user) {
@@ -283,7 +295,10 @@ export class AuthService {
 	 * @param userId The user to send the email to
 	 * @param opts Options
 	 */
-	public async dispatchVerification(userId: string, opts?: { ignoreRateLimit: boolean }): Promise<void> {
+	public async dispatchVerification(
+		userId: string,
+		opts?: { ignoreRateLimit: boolean }
+	): Promise<void> {
 		const user = await this.getUser(userId);
 
 		if (!user) {
@@ -381,9 +396,13 @@ export class AuthService {
 	 * @returns email verification JWT
 	 */
 	public createEmailVerificationToken(userId: string): string {
-		return jwt.sign({ user_id: userId } as EmailVerificationTokenPayloadType, env.EMAIL_VERIFICATION_SECRET, {
-			expiresIn: authConstants.ACCOUNT_VERIFICATION_EXPIRATION,
-		});
+		return jwt.sign(
+			{ user_id: userId } as EmailVerificationTokenPayloadType,
+			env.EMAIL_VERIFICATION_SECRET,
+			{
+				expiresIn: authConstants.ACCOUNT_VERIFICATION_EXPIRATION,
+			}
+		);
 	}
 
 	/**
@@ -391,7 +410,9 @@ export class AuthService {
 	 * @param token The token to validate
 	 * @returns boolean
 	 */
-	public validateEmailVerificationToken(token: string): Result<EmailVerificationTokenPayloadType, null> {
+	public validateEmailVerificationToken(
+		token: string
+	): Result<EmailVerificationTokenPayloadType, null> {
 		try {
 			const decoded = jwt.verify(token, env.EMAIL_VERIFICATION_SECRET);
 			return ok(decoded as EmailVerificationTokenPayloadType);
@@ -428,7 +449,10 @@ export class AuthService {
 	 * @param req The request object
 	 * @returns A result containing the user and session
 	 */
-	public async validateRequest(req: Request, res: Response): ResultAsync<{ user: User; session: Session }, null> {
+	public async validateRequest(
+		req: Request,
+		res: Response
+	): ResultAsync<{ user: User; session: Session }, null> {
 		const sessionId = this.getSessionIdFromRequest(req);
 
 		if (!sessionId) {

@@ -42,6 +42,7 @@ model User {
     password_reset_requested_at    DateTime?
     password_reset_code            String?   @unique
     password_reset_code_expires_at DateTime?
+    stripe_customer_id             String
 
     team_members TeamMember[]
     teams        Team[]
@@ -54,7 +55,7 @@ model Session {
     id         String   @id @default(uuid())
     user_id    String
     expires_at DateTime
-    user       User     @relation(fields: [user_id], references: [id])
+    user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
     @@map(name: "session")
 }
@@ -63,7 +64,6 @@ model Team {
     id String @id @default(uuid())
 
     name               String
-    // slug               String  @unique
     image_url          String?
     seat_limit         Int?
     stripe_customer_id String
@@ -80,13 +80,13 @@ model Team {
 }
 
 enum TeamMemberRole {
-    OWNER
-    ADMIN
-    MEMBER
+    owner
+    admin
+    member
 }
 
 model TeamMember {
-    role TeamMemberRole @default(MEMBER)
+    role TeamMemberRole @default(member)
 
     team_id   String
     team      Team      @relation(fields: [team_id], references: [id], onDelete: Cascade)

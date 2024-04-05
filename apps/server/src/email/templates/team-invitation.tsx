@@ -4,24 +4,29 @@ import { buildFrontendUrl } from "@/lib/utils";
 import { appConfig } from "@replyon/shared/lib/constants";
 
 export type TeamInvitationEmailProps = {
+	teamId: string;
 	inviteeName: string;
 	inviterName: string;
 	inviterEmail: string;
 	teamName: string;
-	teamSlug: string;
 };
 
 export const subject = (props: TeamInvitationEmailProps) =>
 	`${props.inviterName} invited you to the ${props.teamName} team on ${appConfig.name}`;
 
 export const TeamInvitationEmail = ({
-	teamSlug,
+	teamId,
 	teamName,
 	inviterName,
 	inviterEmail,
 	inviteeName,
 }: TeamInvitationEmailProps) => {
-	const joinLink = buildFrontendUrl(`/teams/${teamSlug}/join`);
+	const joinLink = buildFrontendUrl({
+		path: "/dashboard",
+		query: {
+			join: teamId,
+		},
+	});
 
 	return (
 		<Container>
@@ -31,7 +36,8 @@ export const TeamInvitationEmail = ({
 			<MjmlText>
 				Hi {inviteeName},
 				<br />
-				{inviterName} ({inviterEmail}) has invited you to the {teamName} team on {appConfig.name}
+				{inviterName} ({inviterEmail}) has invited you to the {teamName} team on{" "}
+				{appConfig.name}
 			</MjmlText>
 			<MjmlSpacer />
 			<Button href={joinLink}>Join Team</Button>

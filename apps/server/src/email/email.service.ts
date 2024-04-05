@@ -1,7 +1,11 @@
 import { render } from "@faire/mjml-react/utils/render";
 import { createElement } from "react";
 import { ses } from "@/lib/client/aws";
-import { WelcomeEmail, subject as welcomeEmailSubject, type WelcomeEmailProps } from "../email/templates/welcome";
+import {
+	WelcomeEmail,
+	subject as welcomeEmailSubject,
+	type WelcomeEmailProps,
+} from "../email/templates/welcome";
 import {
 	VerifyAccountEmail,
 	subject as verifyAccountEmailSubject,
@@ -12,6 +16,7 @@ import {
 	subject as passwordResetEmailSubject,
 	type PasswordResetEmailProps,
 } from "../email/templates/password-reset";
+import { TeamInvitationEmail, TeamInvitationEmailProps } from "./templates/team-invitation";
 
 export type SendEmailData = {
 	to: string | string[];
@@ -36,6 +41,9 @@ export class EmailService {
 		const source = email.source || `"Replyon" <account@replyon.com>`;
 		const replyTo = email.replyTo || [`"Replyon Support" <wes@replyon.com>`];
 		const to = Array.isArray(email.to) ? email.to : [email.to];
+
+		// hardcoded to be disabled until have new ses key
+		return;
 
 		// return ses.sendEmail({
 		// 	Source: source,
@@ -106,6 +114,20 @@ export class EmailService {
 	public sendPasswordReset(data: SendTemplateEmailData<PasswordResetEmailProps>) {
 		const { html, subject } = this.renderTemplate({
 			template: PasswordResetEmail,
+			subject: passwordResetEmailSubject,
+			data: data.data,
+		});
+
+		return this.sendEmail({
+			to: data.to,
+			subject,
+			body: html,
+		});
+	}
+
+	public sendTeamInvitation(data: SendTemplateEmailData<TeamInvitationEmailProps>) {
+		const { html, subject } = this.renderTemplate({
+			template: TeamInvitationEmail,
 			subject: passwordResetEmailSubject,
 			data: data.data,
 		});
