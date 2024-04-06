@@ -1,5 +1,5 @@
 import { authenticatedProcedure } from "@/trpc";
-import { updateTeamInputSchema } from "@replyon/shared/schemas/teams";
+import { updateTeamInputSchema } from "@sweetreply/shared/schemas/teams";
 import { teamsService } from "../teams.service";
 import { TRPCError } from "@trpc/server";
 

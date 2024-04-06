@@ -3,12 +3,13 @@ import type { PropsWithChildren } from "react";
 
 // https://www.jimraptis.com/blog/seo-component-for-next-js-react
 
-const SITE_NAME = "Replyon";
-const DOMAIN = "https://replyon.ai";
-const TWITTER_HANDLE = "@replyonai";
-const DEFAULT_OG_IMAGE = "https://storage.googleapis.com/brandflow-bucket/personal/blog/portfolio-og.jpg";
-const DEFAULT_TITLE = "Replyon";
-const DEFAULT_DESCRIPTION = "Replyon is an automation tool to drive engagement.";
+const SITE_NAME = "Sweetreply";
+const DOMAIN = "https://sweetreply.ai";
+const TWITTER_HANDLE = "@sweetreplyai";
+const DEFAULT_OG_IMAGE =
+	"https://storage.googleapis.com/brandflow-bucket/personal/blog/portfolio-og.jpg";
+const DEFAULT_TITLE = "Sweetreply";
+const DEFAULT_DESCRIPTION = "Sweetreply is an automation tool to drive engagement.";
 
 export type SEOProps = {
 	title?: string;

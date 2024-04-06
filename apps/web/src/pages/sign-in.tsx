@@ -1,9 +1,19 @@
 import { useForm } from "react-hook-form";
-import { TextInput, PasswordInput, Group, Anchor, Button, Card, Text, Stack, Alert } from "@mantine/core";
+import {
+	TextInput,
+	PasswordInput,
+	Group,
+	Anchor,
+	Button,
+	Card,
+	Text,
+	Stack,
+	Alert,
+} from "@mantine/core";
 import { IconInfoCircle } from "@tabler/icons-react";
 import { AuthPageLayout } from "@/layouts";
 import { trpc } from "@/lib/trpc";
-import { signInInputSchema } from "@replyon/shared/schemas/auth";
+import { signInInputSchema } from "@sweetreply/shared/schemas/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import z from "zod";
@@ -29,8 +39,19 @@ export default function SignInPage() {
 	});
 
 	return (
-		<AuthPageLayout pageTitle="Sign in | SaaS.tools" title="Sign-in to your account" subtitle={<Subtitle />}>
-			<Card component="form" withBorder shadow="md" radius="md" p={30} onSubmit={form.handleSubmit(signIn)}>
+		<AuthPageLayout
+			pageTitle="Sign in | SaaS.tools"
+			title="Sign-in to your account"
+			subtitle={<Subtitle />}
+		>
+			<Card
+				component="form"
+				withBorder
+				shadow="md"
+				radius="md"
+				p={30}
+				onSubmit={form.handleSubmit(signIn)}
+			>
 				<Stack>
 					<TextInput
 						label="Email"

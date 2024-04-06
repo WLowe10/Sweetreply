@@ -1,6 +1,6 @@
 import { MjmlSpacer, MjmlText } from "@faire/mjml-react";
 import { Container, Header, Footer, Button } from "../components";
-import { appConfig } from "@replyon/shared/lib/constants";
+import { appConfig } from "@sweetreply/shared/lib/constants";
 
 export type WelcomeEmailProps = {
 	firstName: string;

@@ -1,5 +1,5 @@
 import { authenticatedProcedure } from "@/trpc";
-import { baseTeamSchema } from "@replyon/shared/schemas/teams";
+import { baseTeamSchema } from "@sweetreply/shared/schemas/teams";
 import { z } from "zod";
 
 const getTeamInputSchema = z.object({
@@ -8,7 +8,7 @@ const getTeamInputSchema = z.object({
 
 export const getTeamHandler = authenticatedProcedure
 	.input(getTeamInputSchema)
-	.mutation(({ input, ctx }) => {
+	.query(({ input, ctx }) => {
 		// todo validate auth
 
 		return ctx.prisma.team.findFirst({

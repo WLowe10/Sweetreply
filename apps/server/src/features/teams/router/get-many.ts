@@ -1,6 +1,6 @@
 import { authenticatedProcedure } from "@/trpc";
 
-export const getManyTeamsHandler = authenticatedProcedure.mutation(({ ctx }) => {
+export const getManyTeamsHandler = authenticatedProcedure.query(({ ctx }) => {
 	// todo validate auth
 
 	return ctx.prisma.team.findMany({

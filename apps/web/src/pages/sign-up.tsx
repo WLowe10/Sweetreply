@@ -5,7 +5,7 @@ import { AuthPageLayout } from "@/layouts";
 import { useDisclosure } from "@mantine/hooks";
 import Link from "next/link";
 import { z } from "zod";
-import { signUpInputSchema } from "@replyon/shared/schemas/auth";
+import { signUpInputSchema } from "@sweetreply/shared/schemas/auth";
 import { useSignUp } from "@/features/auth/hooks";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -42,7 +42,14 @@ export default function SignUpPage() {
 				</Text>
 			}
 		>
-			<Card component="form" shadow="md" radius="md" p={30} withBorder onSubmit={form.handleSubmit(signUp)}>
+			<Card
+				component="form"
+				shadow="md"
+				radius="md"
+				p={30}
+				withBorder
+				onSubmit={form.handleSubmit(signUp)}
+			>
 				<Stack>
 					<TextInput
 						label="Email"

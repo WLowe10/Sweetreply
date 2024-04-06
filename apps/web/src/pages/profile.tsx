@@ -1,7 +1,7 @@
 import { useMe } from "@/features/auth/hooks";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Box, Button, Card, Flex, Group, Stack, TextInput, Title } from "@mantine/core";
-import { updateMeInputSchema } from "@replyon/shared/schemas/auth";
+import { updateMeInputSchema } from "@sweetreply/shared/schemas/auth";
 import { useForm } from "react-hook-form";
 import z from "zod";
 

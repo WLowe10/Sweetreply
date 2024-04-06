@@ -1,5 +1,5 @@
 {
-	"name": "@replyon/reply-engine",
+	"name": "@sweetreply/reply-engine",
 	"version": "0.0.0",
 	"private": true,
 	"main": "./src/index.ts",
@@ -11,7 +11,7 @@
 		"snoowrap": "^1.23.0"
 	},
 	"devDependencies": {
-		"@replyon/tsconfig": "workspace:*",
+		"@sweetreply/tsconfig": "workspace:*",
 		"tsx": "^4.7.1",
 		"typescript": "^5"
 	}

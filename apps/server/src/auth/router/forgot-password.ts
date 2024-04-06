@@ -1,6 +1,6 @@
 import { unauthenticatedProcedure } from "@/trpc";
-import { UserRole } from "@replyon/prisma";
-import { forgotPasswordInputSchema } from "@replyon/shared/schemas/auth";
+import { UserRole } from "@sweetreply/prisma";
+import { forgotPasswordInputSchema } from "@sweetreply/shared/schemas/auth";
 
 export const forgotPasswordHandler = unauthenticatedProcedure
 	.input(forgotPasswordInputSchema)

@@ -1,6 +1,17 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Box, Title, Card, Stack, Group, TextInput, Button, Modal, Divider, Alert } from "@mantine/core";
-import { updateMeInputSchema } from "@replyon/shared/schemas/auth";
+import {
+	Box,
+	Title,
+	Card,
+	Stack,
+	Group,
+	TextInput,
+	Button,
+	Modal,
+	Divider,
+	Alert,
+} from "@mantine/core";
+import { updateMeInputSchema } from "@sweetreply/shared/schemas/auth";
 import { useForm } from "react-hook-form";
 import { useMe, useSignOut } from "../hooks";
 import { useRequestVerification } from "../hooks/use-request-verification";

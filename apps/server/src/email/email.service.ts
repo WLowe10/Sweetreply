@@ -38,8 +38,8 @@ export type RenderedTemplateType = {
 
 export class EmailService {
 	public sendEmail(email: SendEmailData) {
-		const source = email.source || `"Replyon" <account@replyon.com>`;
-		const replyTo = email.replyTo || [`"Replyon Support" <wes@replyon.com>`];
+		const source = email.source || `"Sweetreply" <account@sweetreply.com>`;
+		const replyTo = email.replyTo || [`"Sweetreply Support" <wes@sweetreply.com>`];
 		const to = Array.isArray(email.to) ? email.to : [email.to];
 
 		// hardcoded to be disabled until have new ses key

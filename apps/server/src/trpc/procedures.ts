@@ -1,6 +1,6 @@
 import { trpc } from "./trpc";
 import { authMiddleware } from "./middleware";
-import { UserRole } from "@replyon/prisma";
+import { UserRole } from "@sweetreply/prisma";
 import { alreadySignedIn, mustBeAdmin, mustBeVerified } from "../auth/errors";
 
 // base procedure

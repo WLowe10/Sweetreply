@@ -9,19 +9,21 @@ export class Processor {
 
 	public async start() {
 		const leads = await this.engine.getLeads({
-			keywords: ["replyon"],
+			keywords: ["123awd646"],
 		});
 
-		for (const lead of leads) {
-			await this.engine.reply({
-				lead,
-				ctx: {
-					generateReply: this.generateReply,
-				},
-			});
+		console.log(leads);
 
-			// after a successful reply, subtract a credit from the user
-		}
+		// for (const lead of leads) {
+		// 	await this.engine.reply({
+		// 		lead,
+		// 		ctx: {
+		// 			generateReply: this.generateReply,
+		// 		},
+		// 	});
+
+		// 	// after a successful reply, subtract a credit from the user
+		// }
 	}
 
 	private async generateReply() {

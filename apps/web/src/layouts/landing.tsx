@@ -1,6 +1,16 @@
 import { useMe } from "@/features/auth/hooks";
-import { Anchor, Box, Button, Flex, Group, Stack, Text, Title, useMantineColorScheme } from "@mantine/core";
-import { appConfig } from "@replyon/shared/lib/constants";
+import {
+	Anchor,
+	Box,
+	Button,
+	Flex,
+	Group,
+	Stack,
+	Text,
+	Title,
+	useMantineColorScheme,
+} from "@mantine/core";
+import { appConfig } from "@sweetreply/shared/lib/constants";
 import { IconBrandDiscordFilled, IconBrandTwitterFilled } from "@tabler/icons-react";
 import Link from "next/link";
 import { type PropsWithChildren } from "react";
@@ -25,10 +35,22 @@ export const LandingLayout = ({ children }: PropsWithChildren) => {
 					<Title order={2}>{appConfig.name}</Title>
 				</Link>
 				<Group>
-					<Button component={Link} variant="subtle" color="gray" size="compact-sm" href="/features">
+					<Button
+						component={Link}
+						variant="subtle"
+						color="gray"
+						size="compact-sm"
+						href="/features"
+					>
 						Features
 					</Button>
-					<Button component={Link} variant="subtle" color="gray" size="compact-sm" href="/pricing">
+					<Button
+						component={Link}
+						variant="subtle"
+						color="gray"
+						size="compact-sm"
+						href="/pricing"
+					>
 						Pricing
 					</Button>
 					<Group>
@@ -48,7 +70,7 @@ export const LandingLayout = ({ children }: PropsWithChildren) => {
 			<Flex p="lg" pb="3rem" justify="space-between" maw="60rem" mx="auto" w="100%">
 				<Stack>
 					<Text fw="bold" size="lg">
-						Replyon
+						Sweetreply
 					</Text>
 					<Box>
 						<Text tt="uppercase">Worldwide</Text>

@@ -1,4 +1,4 @@
 {
-	"extends": "@replyon/tsconfig/base.json",
+	"extends": "@sweetreply/tsconfig/base.json",
 	"include": ["**/*.ts"]
 }

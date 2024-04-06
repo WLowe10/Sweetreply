@@ -27,16 +27,22 @@ export class RedditReplyEngine implements IReplyEngine {
 
 	public async getLeads(input: GetLeadsInput) {
 		const submissions = await this.reddit.search({
-			query: input.keywords[0],
-			time: "week",
+			query: "hello AND world AND sweetreply NOT from",
+			time: "all",
 		});
 
-		const filteredSubmissions = submissions.filter((submission) => submission.subreddit_type === "public");
+		console.log(submissions);
+
+		const filteredSubmissions = submissions.filter(
+			(submission) => submission.subreddit_type === "public"
+		);
 
 		const leads = filteredSubmissions.map(async (submission) => ({
 			subreddit_id: await submission.subreddit.id,
 			subreddit_name: await submission.subreddit.display_name,
-			postId: submission.id,
+			// content: submission.
+			// url: submission.url,
+			post_id: submission.id,
 		}));
 
 		return await Promise.all(leads);

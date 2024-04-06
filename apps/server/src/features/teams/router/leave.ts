@@ -1,5 +1,5 @@
 import { authenticatedProcedure } from "@/trpc";
-import { baseTeamSchema } from "@replyon/shared/schemas/teams";
+import { baseTeamSchema } from "@sweetreply/shared/schemas/teams";
 import { z } from "zod";
 
 const leaveTeamInputSchema = z.object({
@@ -15,7 +15,7 @@ export const leaveTeamHandler = authenticatedProcedure
 			where: {
 				team_id_user_id: {
 					team_id: input.id,
-					user_id: ctx.user!.id,
+					user_id: ctx.user.id,
 				},
 			},
 		});

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { teamMemberModel, teamModel } from "@replyon/prisma/zod";
+import { teamMemberModel, teamModel } from "@sweetreply/prisma/zod";
 import { baseUserSchema } from "./auth";
 
 export const baseTeamSchema = teamModel.extend({

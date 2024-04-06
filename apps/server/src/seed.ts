@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/db";
-import { UserRole } from "@replyon/prisma";
+import { UserRole } from "@sweetreply/prisma";
 import argon2 from "argon2";
 
 /**

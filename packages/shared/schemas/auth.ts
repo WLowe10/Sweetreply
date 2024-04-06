@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { userModel } from "@replyon/prisma/zod";
+import { userModel } from "@sweetreply/prisma/zod";
 
 export const baseUserSchema = userModel.extend({
 	email: z.string().email().max(100),

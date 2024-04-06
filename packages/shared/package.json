@@ -1,5 +1,5 @@
 {
-	"name": "@replyon/shared",
+	"name": "@sweetreply/shared",
 	"version": "0.0.0",
 	"private": true,
 	"files": [
@@ -7,7 +7,7 @@
 		"lib"
 	],
 	"dependencies": {
-		"@replyon/prisma": "workspace:*",
+		"@sweetreply/prisma": "workspace:*",
 		"zod": "^3.22.4"
 	}
 }

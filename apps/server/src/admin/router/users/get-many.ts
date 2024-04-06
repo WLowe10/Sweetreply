@@ -1,6 +1,6 @@
 import { orderBySchema, paginationSchema, skip } from "@/lib/pagination";
 import { adminProcedure } from "@/trpc";
-import { Prisma, UserRole } from "@replyon/prisma";
+import { Prisma, UserRole } from "@sweetreply/prisma";
 import { z } from "zod";
 
 const getManyUsersInputSchema = z.object({
@@ -22,97 +22,99 @@ const getManyUsersInputSchema = z.object({
 	pagination: paginationSchema,
 });
 
-export const getManyUsersHandler = adminProcedure.input(getManyUsersInputSchema).query(async ({ input, ctx }) => {
-	const { search, filter, pagination, sort } = input;
+export const getManyUsersHandler = adminProcedure
+	.input(getManyUsersInputSchema)
+	.query(async ({ input, ctx }) => {
+		const { search, filter, pagination, sort } = input;
 
-	const queryWhere: Prisma.UserWhereInput = {};
+		const queryWhere: Prisma.UserWhereInput = {};
 
-	const queryOrderBy: Prisma.UserOrderByWithRelationInput[] = [];
+		const queryOrderBy: Prisma.UserOrderByWithRelationInput[] = [];
 
-	if (search && search.length > 0) {
-		queryWhere.OR = [
-			{
-				first_name: {
-					contains: search,
-					mode: "insensitive",
+		if (search && search.length > 0) {
+			queryWhere.OR = [
+				{
+					first_name: {
+						contains: search,
+						mode: "insensitive",
+					},
 				},
-			},
-			{
-				last_name: {
-					contains: search,
-					mode: "insensitive",
+				{
+					last_name: {
+						contains: search,
+						mode: "insensitive",
+					},
 				},
-			},
-			{
-				email: {
-					contains: search,
-					mode: "insensitive",
+				{
+					email: {
+						contains: search,
+						mode: "insensitive",
+					},
 				},
-			},
-		];
-	}
+			];
+		}
 
-	if (filter && Object.keys(filter).length > 0) {
-		if (typeof filter.verified === "boolean") {
-			if (filter.verified === true) {
-				queryWhere.verified_at = {
-					not: null,
+		if (filter && Object.keys(filter).length > 0) {
+			if (typeof filter.verified === "boolean") {
+				if (filter.verified === true) {
+					queryWhere.verified_at = {
+						not: null,
+					};
+				} else {
+					queryWhere.verified_at = null;
+				}
+			}
+
+			if (filter.role && filter.role.length > 0) {
+				queryWhere.role = {
+					in: filter.role,
 				};
-			} else {
-				queryWhere.verified_at = null;
 			}
 		}
 
-		if (filter.role && filter.role.length > 0) {
-			queryWhere.role = {
-				in: filter.role,
-			};
+		if (sort && Object.keys(sort).length > 0) {
+			if (sort.created_at) {
+				queryOrderBy.push({
+					created_at: sort.created_at,
+				});
+			}
+
+			if (sort.sessions) {
+				queryOrderBy.push({
+					sessions: {
+						_count: sort.sessions,
+					},
+				});
+			}
 		}
-	}
 
-	if (sort && Object.keys(sort).length > 0) {
-		if (sort.created_at) {
-			queryOrderBy.push({
-				created_at: sort.created_at,
-			});
-		}
+		const userCount = await ctx.prisma.user.count({
+			where: queryWhere,
+		});
 
-		if (sort.sessions) {
-			queryOrderBy.push({
-				sessions: {
-					_count: sort.sessions,
-				},
-			});
-		}
-	}
-
-	const userCount = await ctx.prisma.user.count({
-		where: queryWhere,
-	});
-
-	const users = await ctx.prisma.user.findMany({
-		where: queryWhere,
-		select: {
-			id: true,
-			role: true,
-			first_name: true,
-			last_name: true,
-			email: true,
-			verified_at: true,
-			created_at: true,
-			_count: {
-				select: {
-					sessions: true,
+		const users = await ctx.prisma.user.findMany({
+			where: queryWhere,
+			select: {
+				id: true,
+				role: true,
+				first_name: true,
+				last_name: true,
+				email: true,
+				verified_at: true,
+				created_at: true,
+				_count: {
+					select: {
+						sessions: true,
+					},
 				},
 			},
-		},
-		orderBy: queryOrderBy,
-		skip: skip(pagination.page, pagination.limit),
-		take: pagination.limit,
-	});
+			orderBy: queryOrderBy,
+			skip: skip(pagination.page, pagination.limit),
+			take: pagination.limit,
+		});
 
-	return {
-		total: userCount,
-		data: users,
-	};
-});
+		return {
+			total: userCount,
+			data: users,
+		};
+	});

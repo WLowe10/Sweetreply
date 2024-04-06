@@ -1,5 +1,5 @@
 {
-	"name": "@replyon/server",
+	"name": "@sweetreply/server",
 	"version": "1.0.0",
 	"private": true,
 	"scripts": {
@@ -14,8 +14,8 @@
 		"@aws-sdk/client-ses": "^3.535.0",
 		"@casl/ability": "^6.7.1",
 		"@faire/mjml-react": "^3.3.0",
-		"@replyon/prisma": "workspace:*",
-		"@replyon/shared": "workspace:*",
+		"@sweetreply/prisma": "workspace:*",
+		"@sweetreply/shared": "workspace:*",
 		"@trpc/server": "^10.45.1",
 		"argon2": "^0.40.1",
 		"cookie-parser": "^1.4.6",
@@ -41,7 +41,7 @@
 		"zod": "^3.22.4"
 	},
 	"devDependencies": {
-		"@replyon/tsconfig": "workspace:*",
+		"@sweetreply/tsconfig": "workspace:*",
 		"@types/cookie-parser": "^1.4.7",
 		"@types/cors": "^2.8.17",
 		"@types/express": "^4.17.21",

@@ -1,5 +1,5 @@
 {
-	"extends": "@replyon/tsconfig/base.json",
+	"extends": "@sweetreply/tsconfig/base.json",
 	"exclude": ["node_modules", "dist"],
 	"compilerOptions": {
 		"outDir": "dist",

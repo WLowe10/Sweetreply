@@ -1,5 +1,5 @@
 import { authenticatedUnverifiedProcedure } from "@/trpc";
-import { changePasswordInputSchema } from "@replyon/shared/schemas/auth";
+import { changePasswordInputSchema } from "@sweetreply/shared/schemas/auth";
 
 export const changePasswordHandler = authenticatedUnverifiedProcedure
 	.input(changePasswordInputSchema)

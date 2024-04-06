@@ -1,14 +1,20 @@
 import { DashboardLayout } from "@/layouts/dashboard";
-import { VerifyAccountModal } from "@/features/auth/components";
-import { useMe } from "@/features/auth/hooks";
+import { useCurrentTeamQuery } from "@/features/team/hooks/use-current-team";
+import { Box, Title } from "@mantine/core";
+import { ResourceLayout } from "@/layouts/resource";
 
-export default function Dashboard() {
-	const { me } = useMe();
+const Page = () => {
+	const { data: team } = useCurrentTeamQuery();
 
+	return <Box flex={1}>test</Box>;
+};
+
+export default function DashboardPage() {
 	return (
 		<DashboardLayout>
-			Dashboard {me?.email}
-			<VerifyAccountModal />
+			<ResourceLayout>
+				<Page />
+			</ResourceLayout>
 		</DashboardLayout>
 	);
 }

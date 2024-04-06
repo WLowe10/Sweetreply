@@ -12,7 +12,7 @@ export default function HomePage() {
 							Your Personal AI Ambassador
 						</Text>
 						<Text size="lg" c="dimmed">
-							Replyon mentions your product in conversations naturally
+							Sweetreply mentions your product in conversations naturally
 						</Text>
 					</Box>
 					<Button rightSection={<IconArrowNarrowRight size={18} />}>Get started</Button>

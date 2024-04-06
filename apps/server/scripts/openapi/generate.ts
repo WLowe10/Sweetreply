@@ -3,7 +3,7 @@ import fs from "fs";
 import path from "path";
 import { generateOpenApiDocument } from "trpc-openapi";
 import { appRouter } from "../../src/router";
-import { appConfig } from "@replyon/shared/lib/constants";
+import { appConfig } from "@sweetreply/shared/lib/constants";
 
 const outDir = path.resolve(process.cwd(), "out", "openapi");
 

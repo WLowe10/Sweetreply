@@ -1,5 +1,5 @@
 import { authenticatedProcedure } from "@/trpc";
-import { baseTeamSchema } from "@replyon/shared/schemas/teams";
+import { baseTeamSchema } from "@sweetreply/shared/schemas/teams";
 import { get } from "http";
 import { z } from "zod";
 

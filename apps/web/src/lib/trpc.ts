@@ -3,7 +3,7 @@ import { httpBatchLink } from "@trpc/react-query";
 import { QueryClient } from "@tanstack/react-query";
 import superjson from "superjson";
 import { buildAPIUrl } from "./utils";
-import type { AppRouter } from "../../../server/src/routers";
+import type { AppRouter } from "@server/router";
 
 const queryClient = new QueryClient();
 

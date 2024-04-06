@@ -1,6 +1,6 @@
 import { defineAbility } from "@casl/ability";
 import { prisma } from "@/lib/db";
-import { TeamMemberRole } from "@replyon/prisma";
+import { TeamMemberRole } from "@sweetreply/prisma";
 import { TRPCError } from "@trpc/server";
 import { teamNotFound } from "./errors";
 

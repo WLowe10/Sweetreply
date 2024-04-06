@@ -1,5 +1,5 @@
-import { userModel } from "@replyon/prisma/zod";
-import type { User } from "@replyon/prisma";
+import { userModel } from "@sweetreply/prisma/zod";
+import type { User } from "@sweetreply/prisma";
 
 const serializedUserSchema = userModel.pick({
 	id: true,

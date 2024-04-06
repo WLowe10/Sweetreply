@@ -1,6 +1,6 @@
 import { Box, Container, Image, Stack, Text, Title } from "@mantine/core";
 import { BaseLayout } from "./base";
-import { appConfig } from "@replyon/shared/lib/constants";
+import { appConfig } from "@sweetreply/shared/lib/constants";
 import type { PropsWithChildren, ReactNode } from "react";
 
 export type AuthPageLayoutProps = {
@@ -9,7 +9,12 @@ export type AuthPageLayoutProps = {
 	subtitle: ReactNode;
 };
 
-export const AuthPageLayout = ({ pageTitle, title, subtitle, children }: PropsWithChildren<AuthPageLayoutProps>) => {
+export const AuthPageLayout = ({
+	pageTitle,
+	title,
+	subtitle,
+	children,
+}: PropsWithChildren<AuthPageLayoutProps>) => {
 	return (
 		<BaseLayout
 			mih="100vh"
