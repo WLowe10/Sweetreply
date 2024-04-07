@@ -10,7 +10,7 @@ import {
 	Title,
 	useMantineColorScheme,
 } from "@mantine/core";
-import { appConfig } from "@sweetreply/shared/lib/constants";
+import { appConfig } from "@sweetreply/shared/config";
 import { IconBrandDiscordFilled, IconBrandTwitterFilled } from "@tabler/icons-react";
 import Link from "next/link";
 import type { PropsWithChildren } from "react";

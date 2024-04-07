@@ -1,6 +1,6 @@
 import { Box, Container, Image, Stack, Text, Title } from "@mantine/core";
 import { BaseLayout } from "./base";
-import { appConfig } from "@sweetreply/shared/lib/constants";
+import { appConfig } from "@sweetreply/shared/config";
 import type { PropsWithChildren, ReactNode } from "react";
 
 export type AuthPageLayoutProps = {

@@ -1,6 +1,6 @@
 import { MjmlSpacer, MjmlText } from "@faire/mjml-react";
 import { Container, Button, Footer, Header } from "../components";
-import { appConfig } from "@sweetreply/shared/lib/constants";
+import { appConfig } from "@sweetreply/shared/config";
 
 export type VerifyAccountEmailProps = {
 	verificationToken: string;

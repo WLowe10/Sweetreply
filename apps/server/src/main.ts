@@ -5,7 +5,7 @@ import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import * as trpcExpress from "@trpc/server/adapters/express";
-import { env, type ENVType } from "./env";
+import { env } from "./env";
 import { createContext } from "./trpc";
 import { startJobs } from "./jobs";
 import { appRouter } from "./router";
@@ -54,12 +54,8 @@ async function bootstrap() {
 
 	if (isDev()) {
 		// todo add openapi panel
-		// ? might also want it always available, not just in dev
 
 		// app.use("/dev/openapi", (req, res) => {
-		// 	return res.send(
-		// 		renderTrpcPanel(appRouter, { url: "http://localhost:3000/trpc", transformer: "superjson" })
-		// 	);
 		// });
 
 		app.use("/dev/trpc-panel", (req, res) => {

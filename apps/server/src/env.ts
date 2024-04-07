@@ -32,14 +32,4 @@ export const envSchema = z.object({
 	REDDIT_PASSWORD: z.string(),
 });
 
-export type ENVType = z.infer<typeof envSchema>;
-
-// makes process.env typesafe.
-// it is still recommended to import { env } from here and use it instead of process.env.
-declare global {
-	namespace NodeJS {
-		interface ProcessEnv extends ENVType {}
-	}
-}
-
 export const env = envSchema.parse(process.env);

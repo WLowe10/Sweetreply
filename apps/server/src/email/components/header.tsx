@@ -1,6 +1,6 @@
 import { MjmlImage, MjmlSpacer, MjmlText } from "@faire/mjml-react";
 import { env } from "../../env";
-import { appConfig } from "@sweetreply/shared/lib/constants";
+import { appConfig } from "@sweetreply/shared/config";
 import type { PropsWithChildren } from "react";
 
 export const Header = ({ children }: PropsWithChildren) => {
