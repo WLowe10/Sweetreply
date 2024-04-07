@@ -98,7 +98,7 @@ export const DashboardLayout = ({ children }: PropsWithChildren) => {
 					direction="column"
 					justify="space-between"
 					p="lg"
-					style={{ borderRight: "1px solid lightgray" }}
+					style={{ borderRight: "1px solid var(--mantine-color-default-border)" }}
 				>
 					<Stack>
 						<TeamSelector />
@@ -113,8 +113,8 @@ export const DashboardLayout = ({ children }: PropsWithChildren) => {
 							/>
 							<NavLink
 								component={Link}
-								href="/replies"
-								label="Replies"
+								href="/leads"
+								label="Leads"
 								leftSection={
 									<IconMessageReply size={18} color={theme.colors.gray[5]} />
 								}

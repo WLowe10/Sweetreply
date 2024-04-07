@@ -1,6 +1,7 @@
 export type GetLeadsInput<T = any> = {
 	keywords: string[];
-	extraData?: T;
+	negativeKeywords?: string[];
+	meta?: T;
 };
 
 export type ReplyInput<T = any> = {

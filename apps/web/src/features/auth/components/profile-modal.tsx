@@ -31,7 +31,7 @@ export const ProfileModal = () => {
 	});
 
 	return (
-		<Modal title="Profile" centered={true} onClose={() => {}}>
+		<Modal title="Profile" centered={true} opened={true} onClose={() => {}}>
 			<form onSubmit={form.handleSubmit(updateMe)}>
 				<Stack>
 					<Alert>Lol</Alert>
@@ -51,9 +51,9 @@ export const ProfileModal = () => {
 						Save changes
 					</Button>
 					<Divider />
-					<Button type="submit" onClick={() => signOut()}>
+					{/* <Button type="submit" onClick={() => signOut()}>
 						Sign out
-					</Button>
+					</Button> */}
 				</Stack>
 			</form>
 		</Modal>

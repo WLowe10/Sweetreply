@@ -37,12 +37,12 @@ export const UserMenu = () => {
 				>
 					Profile
 				</Menu.Item>
-				<Menu.Item
+				{/* <Menu.Item
 					leftSection={<IconDoorOff size={18} color={theme.colors.gray[5]} />}
 					onClick={() => signOut()}
 				>
 					Sign out
-				</Menu.Item>
+				</Menu.Item> */}
 			</Menu.Dropdown>
 		</Menu>
 	);

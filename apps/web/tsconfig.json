@@ -2,18 +2,18 @@
 	"extends": "@sweetreply/tsconfig/nextjs.json",
 	"compilerOptions": {
 		"skipLibCheck": true,
-		"module": "NodeNext",
-		"moduleResolution": "NodeNext",
+		"lib": ["dom", "dom.iterable", "esnext"],
+		"module": "ESNext",
 		"noEmit": true,
 		"composite": false,
+		"baseUrl": "./src",
 		"paths": {
-			"@/*": ["./src/*"],
-			"@server/router": ["../server/src/router.ts"]
+			"@/*": ["./*"],
+			"@server/router": ["../../server/src/router.ts"]
 		},
-		"typeRoots": ["src/types", "./node_modules/@types"],
-		"types": ["node"]
+		"typeRoots": ["src/types", "./node_modules/@types"]
 	},
-	"include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/env.js", "next.config.mjs"],
+	"include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "next.config.mjs"],
 	"exclude": ["node_modules"],
 	"references": [{ "path": "../server" }]
 }

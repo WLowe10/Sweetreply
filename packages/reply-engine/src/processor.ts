@@ -8,11 +8,19 @@ export class Processor {
 	}
 
 	public async start() {
-		const leads = await this.engine.getLeads({
-			keywords: ["123awd646"],
-		});
+		let leads;
 
-		console.log(leads);
+		try {
+			leads = await this.engine.getLeads({
+				keywords: ["replyon", "check", "cool"],
+				negativeKeywords: ["from"],
+				// meta: {
+				// 	subreddit: "replyon"
+				// }
+			});
+		} catch (error) {
+			throw new Error("Failed to get leads");
+		}
 
 		// for (const lead of leads) {
 		// 	await this.engine.reply({
@@ -24,9 +32,5 @@ export class Processor {
 
 		// 	// after a successful reply, subtract a credit from the user
 		// }
-	}
-
-	private async generateReply() {
-		return "Check us out: https://example.com";
 	}
 }

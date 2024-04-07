@@ -5,7 +5,7 @@ import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import * as trpcExpress from "@trpc/server/adapters/express";
-import { env } from "./env";
+import { env, type ENVType } from "./env";
 import { createContext } from "./trpc";
 import { startJobs } from "./jobs";
 import { appRouter } from "./router";
@@ -13,8 +13,8 @@ import { logger } from "./lib/logger";
 import { useExpressServer } from "routing-controllers";
 import { StripeController } from "./controllers/stripe";
 import { createOpenApiExpressMiddleware } from "trpc-openapi";
-import { isDev } from "./lib/utils";
 import { renderTrpcPanel } from "trpc-panel";
+import { isDev } from "./lib/utils";
 
 async function bootstrap() {
 	const app = express();
@@ -64,7 +64,10 @@ async function bootstrap() {
 
 		app.use("/dev/trpc-panel", (req, res) => {
 			return res.send(
-				renderTrpcPanel(appRouter, { url: "http://localhost:3000/trpc", transformer: "superjson" })
+				renderTrpcPanel(appRouter, {
+					url: "http://localhost:3000/trpc",
+					transformer: "superjson",
+				})
 			);
 		});
 	}

@@ -62,11 +62,11 @@ generateEmailPreview({
 	name: "team-invitation",
 	component: TeamInvitationEmail,
 	props: {
+		teamId: "123",
 		inviteeName: "Obama",
 		inviterName: "Joe Biden",
 		teamName: "USA",
 		inviterEmail: "jb@gmail.com",
-		teamSlug: "america",
 	},
 });
 

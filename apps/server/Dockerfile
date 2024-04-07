@@ -1,22 +1,39 @@
-# Use the official Node.js 14 image as the base image
-FROM node:20-alpine
+# Make sure you update this Dockerfile, the Dockerfile in the web workspace and copy that over to Dockerfile in the docs.
 
-###! NEED TO MAKE THIS BUILD WORK FOR WORKSPACE PACKAGES
+FROM node:alpine AS builder
+# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
+RUN apk add --no-cache libc6-compat
+RUN apk update
+# Set working directory
+WORKDIR /app
+RUN yarn global add turbo
+COPY . .
+RUN turbo prune --scope=server --docker
 
-# Set the working directory inside the container
+# Add lockfile and package.json's of isolated subworkspace
+FROM node:alpine AS installer
+RUN apk add --no-cache libc6-compat
+RUN apk update
 WORKDIR /app
 
-# Copy package.json and package-lock.json to the working directory
-COPY package*.json ./
+# First install dependencies (as they change less often)
+COPY .gitignore .gitignore
+COPY --from=builder /app/out/json/ .
+COPY --from=builder /app/out/yarn.lock ./yarn.lock
+RUN yarn install
 
-# Install dependencies
-RUN npm install
+# Build the project and its dependencies
+COPY --from=builder /app/out/full/ .
+COPY turbo.json turbo.json
+RUN yarn turbo run build --filter=server...
 
-# Copy the rest of the application code to the working directory
-COPY . .
+FROM node:alpine AS runner
+WORKDIR /app
 
-# Expose the port that the server will listen on
-EXPOSE 3000
+# Don't run production as root
+RUN addgroup --system --gid 1001 expressjs
+RUN adduser --system --uid 1001 expressjs
+USER expressjs
+COPY --from=installer /app .
 
-# Start the server
-CMD ["node", "dist/main.js"]
+CMD node apps/server/dist/src/main.js

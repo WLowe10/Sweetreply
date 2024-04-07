@@ -1,3 +1,4 @@
+import { BaseReplyEngine } from "./base";
 import Snoowrap from "snoowrap";
 import type { GetLeadsInput, IReplyEngine, ReplyInput } from "../types";
 
@@ -26,32 +27,55 @@ export class RedditReplyEngine implements IReplyEngine {
 	}
 
 	public async getLeads(input: GetLeadsInput) {
+		const subredditToSearch = input.meta?.subreddit;
+
+		// reddit boolean (AND, OR, NOT)
+		let query = input.keywords.join(" AND ");
+
+		if (input.negativeKeywords && input.negativeKeywords.length > 0) {
+			query = query + ` NOT (${input.negativeKeywords.join(" OR ")})`;
+		}
+
+		if (query.length > 512) {
+			throw new Error("Query is too long for reddit. The max length is 512 characters.");
+		}
+
+		console.log(`Querying reddit: ${query}`);
+
 		const submissions = await this.reddit.search({
-			query: "hello AND world AND sweetreply NOT from",
-			time: "all",
+			query,
+			time: "week",
+			type: "link",
+			// sort: "new", //? not working
+			subreddit: subredditToSearch ?? "all",
+			restrictSr: !!subredditToSearch,
+			limit: 100,
 		});
 
-		console.log(submissions);
+		// note: Selftext can be "" on reddit
 
-		const filteredSubmissions = submissions.filter(
-			(submission) => submission.subreddit_type === "public"
-		);
-
-		const leads = filteredSubmissions.map(async (submission) => ({
-			subreddit_id: await submission.subreddit.id,
-			subreddit_name: await submission.subreddit.display_name,
-			// content: submission.
-			// url: submission.url,
-			post_id: submission.id,
-		}));
+		const leads = submissions.map(async (submission) => {
+			// console.log(await submission.comments.fetchAll());
+			return {
+				platform: "reddit",
+				username: await submission.author.name,
+				full_name: await submission.author_fullname,
+				remote_id: submission.id,
+				remote_user_id: await submission.author.id,
+				content: submission.selftext,
+				channel: await submission.subreddit.display_name,
+				remote_channel_id: await submission.subreddit_id,
+				remote_url: submission.url,
+				date: new Date(submission.created_utc * 1000).toISOString(),
+			};
+		});
 
 		return await Promise.all(leads);
 	}
 
 	public async reply({ lead, ctx }: ReplyInput) {
-		const replyMessage = await ctx.generateReply();
-		const replyablePost = this.reddit.getSubmission(lead.postId).reply(replyMessage);
-
-		await replyablePost;
+		// const replyMessage = await ctx.generateReply();
+		// const replyablePost = this.reddit.getSubmission(lead.postId).reply(replyMessage);
+		// await replyablePost;
 	}
 }

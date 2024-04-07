@@ -5,12 +5,12 @@ export const ResourceLayout = ({ children }: PropsWithChildren) => {
 	return (
 		<Box flex={1} p="md">
 			<Flex align="center">
-				<Breadcrumbs>
+				{/* <Breadcrumbs>
 					<Button>home</Button>
-				</Breadcrumbs>
+				</Breadcrumbs> */}
 			</Flex>
 			<Box maw="58rem" mx="auto">
-				<Box mt="3rem">
+				<Box mt="3rem" mb="3rem">
 					<Title order={2}>Settings</Title>
 				</Box>
 				{children}

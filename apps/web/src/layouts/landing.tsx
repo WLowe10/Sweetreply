@@ -13,7 +13,7 @@ import {
 import { appConfig } from "@sweetreply/shared/lib/constants";
 import { IconBrandDiscordFilled, IconBrandTwitterFilled } from "@tabler/icons-react";
 import Link from "next/link";
-import { type PropsWithChildren } from "react";
+import type { PropsWithChildren } from "react";
 
 export const LandingLayout = ({ children }: PropsWithChildren) => {
 	const { isAuthenticated } = useMe();
@@ -55,11 +55,11 @@ export const LandingLayout = ({ children }: PropsWithChildren) => {
 					</Button>
 					<Group>
 						{isAuthenticated ? (
-							<Button color="orange" component={Link} href="/dashboard">
+							<Button component={Link} href="/dashboard">
 								Dashboard
 							</Button>
 						) : (
-							<Button color="orange" component={Link} href="/sign-in">
+							<Button component={Link} href="/sign-in">
 								Sign in
 							</Button>
 						)}

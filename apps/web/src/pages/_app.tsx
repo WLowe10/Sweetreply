@@ -6,9 +6,10 @@ import type { PropsWithChildren } from "react";
 
 import "@mantine/core/styles.css";
 import "@mantine/charts/styles.css";
+import "../styles/global.css";
 
 const Providers = ({ children }: PropsWithChildren) => {
-	return <MantineProvider>{children}</MantineProvider>;
+	return <MantineProvider forceColorScheme="dark">{children}</MantineProvider>;
 };
 
 const App = ({ Component, pageProps }: AppProps) => {
