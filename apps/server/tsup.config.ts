@@ -1,14 +1,15 @@
+// ! this tsup config is not being used at this time, left for reference
+
 import { defineConfig } from "tsup";
 
 export default defineConfig({
 	entry: ["./src/main.ts"],
 	noExternal: ["@sweetreply"], // Bundle any package starting with `@sweetreply` and its dependencies
 	platform: "node",
+	outDir: "./dist",
 	splitting: false,
 	bundle: true,
-	outDir: "./dist",
 	clean: true,
-	loader: { ".json": "copy" },
 	cjsInterop: true,
 	minify: true,
 	sourcemap: true,

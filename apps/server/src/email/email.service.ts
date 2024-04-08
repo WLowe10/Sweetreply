@@ -42,27 +42,24 @@ export class EmailService {
 		const replyTo = email.replyTo || [`"Sweetreply Support" <wes@sweetreply.com>`];
 		const to = Array.isArray(email.to) ? email.to : [email.to];
 
-		// hardcoded to be disabled until have new ses key
-		return;
-
-		// return ses.sendEmail({
-		// 	Source: source,
-		// 	ReplyToAddresses: replyTo,
-		// 	Destination: {
-		// 		ToAddresses: to,
-		// 	},
-		// 	Message: {
-		// 		Subject: {
-		// 			Data: email.subject,
-		// 		},
-		// 		Body: {
-		// 			Html: {
-		// 				Charset: "UTF-8",
-		// 				Data: email.body,
-		// 			},
-		// 		},
-		// 	},
-		// });
+		return ses.sendEmail({
+			Source: source,
+			ReplyToAddresses: replyTo,
+			Destination: {
+				ToAddresses: to,
+			},
+			Message: {
+				Subject: {
+					Data: email.subject,
+				},
+				Body: {
+					Html: {
+						Charset: "UTF-8",
+						Data: email.body,
+					},
+				},
+			},
+		});
 	}
 
 	public renderTemplate<T extends React.FC<any>>({

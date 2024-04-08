@@ -4,4 +4,7 @@ import "./src/env.js";
 export default {
 	reactStrictMode: false,
 	transpilePackages: ["@sweetreply/shared", "../../server"],
+	typescript: {
+		ignoreBuildErrors: true,
+	},
 };

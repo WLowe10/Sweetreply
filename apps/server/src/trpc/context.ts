@@ -2,9 +2,9 @@ import { prisma } from "../lib/db";
 import { logger } from "../lib/logger";
 import { authService } from "../auth";
 import { emailService } from "../email";
+import { teamsService } from "@/features/teams/teams.service";
 import type { CreateExpressContextOptions } from "@trpc/server/adapters/express";
 import type { Request, Response } from "express";
-import { teamsService } from "@/features/teams/teams.service";
 
 type CreateContextOptions = {
 	req: Request;

@@ -274,7 +274,10 @@ export class AuthService {
 
 		const expiresAt = expirationDate(authConstants.PASSWORD_RESET_EXPIRATION);
 
-		const resetCode = nanoid(8);
+		// NanoID is used for the reset code, it looks better that a UUID in the url param
+		// NanoID is a 21 length random string. This will protect against someone brute forcing password reset
+
+		const resetCode = nanoid();
 
 		await this.updateUser(userId, {
 			password_reset_code: resetCode,
@@ -282,12 +285,17 @@ export class AuthService {
 			password_reset_requested_at: new Date(),
 		});
 
-		await emailService.sendPasswordReset({
-			to: user.email,
-			data: {
-				resetCode,
-			},
-		});
+		// The email is sent without awaiting in the response.
+		// This prevents a malicious actor from potentially knowing if an email exists in the system due to a longer response time
+
+		emailService
+			.sendPasswordReset({
+				to: user.email,
+				data: {
+					resetCode,
+				},
+			})
+			.catch((err) => {});
 	}
 
 	/**
@@ -330,6 +338,8 @@ export class AuthService {
 		});
 	}
 
+	// ? consider making it optional to delete the sessions on PW change
+
 	/**
 	 * Changes the password of a user and deletes their old sessions
 	 * @param code The password reset code
@@ -370,17 +380,24 @@ export class AuthService {
 			});
 		}
 
-		await this.deleteUserSessions(user.id);
+		const passwordHash = await argon2.hash(newPassword);
 
-		return this.updateUser(user.id, {
-			password_hash: await argon2.hash(newPassword),
+		const updatedUser = await this.updateUser(user.id, {
+			password_hash: passwordHash,
 			password_reset_code: null,
 			password_reset_code_expires_at: null,
 		});
+
+		// delete sessions after the password is changed. This mechanism will delete any stolen sessions
+		await this.deleteUserSessions(user.id);
+
+		return updatedUser;
 	}
 
 	/**
-	 * Verifies a user's account
+	 * Verifies a user's account.
+	 *
+	 * This is a separate method to allow admins to verify accounts
 	 * @param userId The user to verify
 	 * @returns The updated user
 	 */

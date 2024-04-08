@@ -1,7 +1,7 @@
-import { authenticatedUnverifiedProcedure } from "@/trpc";
+import { publicProcedure } from "@/trpc";
 import { changePasswordInputSchema } from "@sweetreply/shared/schemas/auth";
 
-export const changePasswordHandler = authenticatedUnverifiedProcedure
+export const changePasswordHandler = publicProcedure
 	.input(changePasswordInputSchema)
 	.mutation(async ({ input, ctx }) => {
 		const { code } = input;
