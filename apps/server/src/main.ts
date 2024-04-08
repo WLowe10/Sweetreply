@@ -5,16 +5,19 @@ import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import * as trpcExpress from "@trpc/server/adapters/express";
+import { useExpressServer } from "routing-controllers";
+import { createOpenApiExpressMiddleware } from "trpc-openapi";
+import { renderTrpcPanel } from "trpc-panel";
 import { env } from "./env";
 import { createContext } from "./trpc";
 import { startJobs } from "./jobs";
 import { appRouter } from "./router";
 import { logger } from "./lib/logger";
-import { useExpressServer } from "routing-controllers";
-import { StripeController } from "./controllers/stripe";
-import { createOpenApiExpressMiddleware } from "trpc-openapi";
-import { renderTrpcPanel } from "trpc-panel";
 import { isDev } from "./lib/utils";
+
+// REST controllers
+import { StripeController } from "./controllers/stripe";
+import { CommonController } from "./controllers/common";
 
 async function bootstrap() {
 	const app = express();
@@ -39,7 +42,7 @@ async function bootstrap() {
 	);
 
 	useExpressServer(app, {
-		controllers: [StripeController],
+		controllers: [CommonController, StripeController],
 	});
 
 	app.use("/api", createOpenApiExpressMiddleware({ router: appRouter, createContext }));

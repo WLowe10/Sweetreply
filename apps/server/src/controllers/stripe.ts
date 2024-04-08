@@ -1,5 +1,4 @@
-import { Controller, Get, Post, Req } from "routing-controllers";
-import type { Request } from "express";
+import { Controller, Post } from "routing-controllers";
 
 @Controller("/stripe")
 export class StripeController {

@@ -5,7 +5,7 @@
 	"scripts": {
 		"dev": "tsx watch ./src/main.ts",
 		"start": "tsx ./src/main.ts",
-		"build": "pnpm clean:dist && tsup",
+		"build": "pnpm clean:dist && tsc",
 		"email:preview": "tsx watch ./scripts/email/preview.ts",
 		"type-check": "tsc --pretty --noEmit",
 		"openapi:generate": "tsx ./scripts/openapi/generate.ts",
