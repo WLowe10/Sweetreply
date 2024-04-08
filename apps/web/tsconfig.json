@@ -8,7 +8,7 @@
 		"composite": false,
 		"baseUrl": "./src",
 		"paths": {
-			"@/*": ["./*"],
+			"@/*": ["*"],
 			"@server/router": ["../../server/src/router.ts"]
 		},
 		"typeRoots": ["src/types", "./node_modules/@types"]

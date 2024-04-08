@@ -88,7 +88,28 @@ authenticatedProcedure.mutation(({ ctx }) => {
 	 */
 	// ctx.user -> the user
 	// ctx.session -> the session
+	// ctx.authService -> the AuthService instance
 
 	return `Hello ${ctx.user.first_name}!`;
 });
+```
+
+#### Express
+
+```js
+import { authService } from "@/auth";
+
+app.get("/test", (req, res) => {
+	const result = await authService.validateRequest(req);
+
+	if (!result.success) {
+		// handle error
+
+		return res.sendStatus(403)
+	}
+
+	// authenticated
+
+	const { session, user } = result.data
+})
 ```
