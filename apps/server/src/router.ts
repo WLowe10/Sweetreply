@@ -1,7 +1,6 @@
 import { router } from "./trpc";
-import { adminRouter } from "./admin";
-import { authRouter } from "./auth";
-import { teamsRouter } from "./features/teams/router";
+import { adminRouter } from "./admin/router";
+import { authRouter } from "./auth/router";
 import { projectsRouter } from "./features/projects/router";
 import { leadsRouter } from "./features/leads/router";
 import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
@@ -9,7 +8,7 @@ import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
 export const appRouter = router({
 	admin: adminRouter,
 	auth: authRouter,
-	teams: teamsRouter,
+	// teams: teamsRouter, // will add later
 	projects: projectsRouter,
 	leads: leadsRouter,
 });

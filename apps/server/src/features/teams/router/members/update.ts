@@ -1,6 +1,6 @@
 import { authenticatedProcedure } from "@/trpc";
 import { TeamMemberRole } from "@sweetreply/prisma";
-import { updateTeamMemberInputSchema } from "@sweetreply/shared/schemas/teams";
+import { updateTeamMemberInputSchema } from "@sweetreply/shared/features/teams/schemas";
 import { TRPCError } from "@trpc/server";
 
 export const updateTeamMemberHandler = authenticatedProcedure

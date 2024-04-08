@@ -44,9 +44,8 @@ model User {
     password_reset_code_expires_at DateTime?
     stripe_customer_id             String
 
-    team_members TeamMember[]
-    teams        Team[]
-    sessions     Session[]
+    sessions Session[]
+    projects Project[]
 
     @@map(name: "auth_user")
 }
@@ -60,71 +59,86 @@ model Session {
     @@map(name: "session")
 }
 
+// Social Accounts (These are the bots that will be used to reply to the leads)
+
+model SocialAccount {
+    id           String    @id @default(uuid())
+    platform     String
+    username     String
+    password     String
+    status       String
+    active       Boolean   @default(true)
+    fails        Int       @default(0)
+    created_at   DateTime  @default(now())
+    last_used_at DateTime?
+
+    @@map(name: "social_account")
+}
+
 // Team
+// will be implemented later
 
-model Team {
-    id String @id @default(uuid())
+// model Team {
+//     id String @id @default(uuid())
 
-    name               String
-    image_url          String?
-    seat_limit         Int?
-    stripe_customer_id String
+//     name               String
+//     image_url          String?
+//     seat_limit         Int?
+//     stripe_customer_id String
 
-    created_at DateTime  @default(now())
-    updated_at DateTime? @updatedAt
+//     created_at DateTime  @default(now())
+//     updated_at DateTime? @updatedAt
 
-    owner_id String
-    owner    User   @relation(fields: [owner_id], references: [id], onDelete: Cascade)
+//     owner_id String
+//     owner    User   @relation(fields: [owner_id], references: [id], onDelete: Cascade)
 
-    team_members TeamMember[]
-    // projects     Project[]
-    leads        Lead[]
+//     team_members TeamMember[]
+//     // projects     Project[]
+//     leads        Lead[]
 
-    @@map(name: "team")
-}
+//     @@map(name: "team")
+// }
 
-enum TeamMemberRole {
-    owner
-    admin
-    member
-}
+// enum TeamMemberRole {
+//     owner
+//     admin
+//     member
+// }
 
-model TeamMember {
-    role TeamMemberRole @default(member)
+// model TeamMember {
+//     role TeamMemberRole @default(member)
 
-    team_id   String
-    team      Team      @relation(fields: [team_id], references: [id], onDelete: Cascade)
-    user_id   String
-    user      User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
-    joined_at DateTime?
+//     team_id   String
+//     team      Team      @relation(fields: [team_id], references: [id], onDelete: Cascade)
+//     user_id   String
+//     user      User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+//     joined_at DateTime?
 
-    @@id([team_id, user_id])
-    @@map(name: "team_member")
-}
+//     @@id([team_id, user_id])
+//     @@map(name: "team_member")
+// }
 
 // Project
 
-// model Project {
-//     id          String    @id @default(uuid())
-//     name        String
-//     team_id     String
-//     webhook_url String?
-//     created_at  DateTime  @default(now())
-//     updated_at  DateTime? @updatedAt
+model Project {
+    id          String    @id @default(uuid())
+    name        String
+    user_id     String
+    webhook_url String?
+    created_at  DateTime  @default(now())
+    updated_at  DateTime? @updatedAt
 
-//     team  Team   @relation(fields: [team_id], references: [id], onDelete: Cascade)
-//     leads Lead[]
+    user  User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+    leads Lead[]
 
-//     @@map(name: "project")
-// }
+    @@map(name: "project")
+}
 
 // Lead
 
 model Lead {
-    id      String @id @default(uuid())
-    // project_id String
-    team_id String
-
+    id                String   @id @default(uuid())
+    project_id        String
     platform          String
     username          String
     full_name         String?
@@ -138,8 +152,7 @@ model Lead {
     replied_at        String?
     date              DateTime
 
-    // project Project @relation(fields: [project_id], references: [id], onDelete: Cascade)
-    team Team @relation(fields: [team_id], references: [id], onDelete: Cascade)
+    project Project @relation(fields: [project_id], references: [id], onDelete: Cascade)
 
     @@map(name: "lead")
 }

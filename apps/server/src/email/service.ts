@@ -5,17 +5,17 @@ import {
 	WelcomeEmail,
 	subject as welcomeEmailSubject,
 	type WelcomeEmailProps,
-} from "../email/templates/welcome";
+} from "./templates/welcome";
 import {
 	VerifyAccountEmail,
 	subject as verifyAccountEmailSubject,
 	type VerifyAccountEmailProps,
-} from "../email/templates/verify-account";
+} from "./templates/verify-account";
 import {
 	PasswordResetEmail,
 	subject as passwordResetEmailSubject,
 	type PasswordResetEmailProps,
-} from "../email/templates/password-reset";
+} from "./templates/password-reset";
 import { TeamInvitationEmail, TeamInvitationEmailProps } from "./templates/team-invitation";
 
 export type SendEmailData = {

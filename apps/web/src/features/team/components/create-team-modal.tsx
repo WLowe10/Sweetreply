@@ -1,7 +1,7 @@
 import { trpc } from "@/lib/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Flex, Modal, TextInput, type ModalProps } from "@mantine/core";
-import { createTeamInputSchema } from "@sweetreply/shared/schemas/teams";
+import { createTeamInputSchema } from "@sweetreply/shared/features/teams/schemas";
 import { useForm } from "react-hook-form";
 import { useTeamContext } from "../hooks/use-team-context";
 import { z } from "zod";

@@ -1,6 +1,14 @@
 import { z } from "zod";
-import { teamMemberModel, teamModel } from "@sweetreply/prisma/zod";
-import { baseUserSchema } from "./auth";
+import { baseUserSchema } from "../auth/schemas";
+
+// stub
+const teamModel = z.object({
+	id: z.string(),
+	name: z.string(),
+});
+
+// stub
+const teamMemberModel = z.object({});
 
 export const baseTeamSchema = teamModel.extend({
 	id: z.string().uuid(),

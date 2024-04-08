@@ -11,7 +11,7 @@ import {
 	Divider,
 	Alert,
 } from "@mantine/core";
-import { updateMeInputSchema } from "@sweetreply/shared/schemas/auth";
+import { updateMeInputSchema } from "@sweetreply/shared/features/auth/schemas";
 import { useForm } from "react-hook-form";
 import { useMe, useSignOut } from "../hooks";
 import { useRequestVerification } from "../hooks/use-request-verification";

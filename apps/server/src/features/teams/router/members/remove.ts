@@ -1,6 +1,6 @@
 import { authenticatedProcedure } from "@/trpc";
-import { baseUserSchema } from "@sweetreply/shared/schemas/auth";
-import { baseTeamSchema } from "@sweetreply/shared/schemas/teams";
+import { baseUserSchema } from "@sweetreply/shared/features/auth/schemas";
+import { baseTeamSchema } from "@sweetreply/shared/features/teams/schemas";
 import { z } from "zod";
 
 const remoteTeamMemberInputSchema = z.object({

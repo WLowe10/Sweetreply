@@ -1,5 +1,5 @@
 import { authenticatedProcedure } from "@/trpc";
-import { createTeamInputSchema } from "@sweetreply/shared/schemas/teams";
+import { createTeamInputSchema } from "@sweetreply/shared/features/teams/schemas";
 
 export const createTeamHandler = authenticatedProcedure
 	.input(createTeamInputSchema)

@@ -1,4 +1,4 @@
-import { updateMeInputSchema } from "@sweetreply/shared/schemas/auth";
+import { updateMeInputSchema } from "@sweetreply/shared/features/auth/schemas";
 import { authenticatedProcedure } from "@/trpc";
 import type { User } from "@sweetreply/prisma";
 

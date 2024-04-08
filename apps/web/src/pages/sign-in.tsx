@@ -13,7 +13,7 @@ import {
 import { IconInfoCircle } from "@tabler/icons-react";
 import { AuthPageLayout } from "@/layouts";
 import { trpc } from "@/lib/trpc";
-import { signInInputSchema } from "@sweetreply/shared/schemas/auth";
+import { signInInputSchema } from "@sweetreply/shared/features/auth/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import z from "zod";

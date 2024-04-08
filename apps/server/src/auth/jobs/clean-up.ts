@@ -1,5 +1,5 @@
 import { CronJob } from "cron";
-import { authService } from "../auth.service";
+import { authService } from "../service";
 import { logger } from "@/lib/logger";
 
 /**

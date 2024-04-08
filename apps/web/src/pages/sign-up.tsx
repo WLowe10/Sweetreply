@@ -5,7 +5,7 @@ import { AuthPageLayout } from "@/layouts";
 import { useDisclosure } from "@mantine/hooks";
 import Link from "next/link";
 import { z } from "zod";
-import { signUpInputSchema } from "@sweetreply/shared/schemas/auth";
+import { signUpInputSchema } from "@sweetreply/shared/features/auth/schemas";
 import { useSignUp } from "@/features/auth/hooks";
 import { zodResolver } from "@hookform/resolvers/zod";
 

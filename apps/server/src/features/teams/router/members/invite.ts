@@ -1,5 +1,5 @@
 import { authenticatedProcedure } from "@/trpc";
-import { inviteTeamMemberInputSchema } from "@sweetreply/shared/schemas/teams";
+import { inviteTeamMemberInputSchema } from "@sweetreply/shared/features/teams/schemas";
 import { TRPCError } from "@trpc/server";
 import { teamsConstants } from "../../constants";
 

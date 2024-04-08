@@ -1,5 +1,5 @@
 import { authenticatedProcedure } from "@/trpc";
-import { baseTeamSchema } from "@sweetreply/shared/schemas/teams";
+import { baseTeamSchema } from "@sweetreply/shared/features/teams/schemas";
 import { z } from "zod";
 
 const getTeamInputSchema = z.object({

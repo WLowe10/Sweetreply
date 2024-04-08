@@ -11,9 +11,7 @@
         "db:studio": "prisma studio",
         "db:generate": "prisma generate",
         "db:push": "prisma db push",
-        "db:nuke": "prisma migrate reset && prisma db push && yarn seed",
-        "db:seed": "prisma generate && ts-node --project tsconfig.json --compiler-options {\\\"module\\\":\\\"CommonJS\\\"} prisma/newSeed.ts",
-        "db:remove-seed": "prisma generate && ts-node --project tsconfig.json --compiler-options {\\\"module\\\":\\\"CommonJS\\\"} prisma/removeSeed.ts",
+        "db:genpush": "pnpm db:generate && pnpm db:push",
         "postinstall": "pnpm db:generate"
     },
     "dependencies": {

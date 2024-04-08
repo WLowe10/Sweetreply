@@ -1,7 +1,7 @@
 import { unauthenticatedProcedure } from "@/trpc";
 import { env } from "@/env";
 import { TRPCError } from "@trpc/server";
-import { signUpInputSchema } from "@sweetreply/shared/schemas/auth";
+import { signUpInputSchema } from "@sweetreply/shared/features/auth/schemas";
 import { serializeUser } from "../utils";
 
 export const signUpHandler = unauthenticatedProcedure
