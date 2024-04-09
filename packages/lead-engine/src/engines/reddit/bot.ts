@@ -2,9 +2,7 @@ import axios, { Axios } from "axios";
 import parse from "node-html-parser";
 import { wrapper } from "axios-cookiejar-support";
 import { CookieJar } from "tough-cookie";
-
-const chromeUserAgent =
-	"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36";
+import { CHROME_USER_AGENT } from "../../utils/constants";
 
 const redditBase = new URL("https://www.reddit.com/api");
 const oldRedditBase = new URL("https://old.reddit.com/api");
@@ -26,13 +24,13 @@ export class RedditBot {
 			axios.create({
 				jar: this.cookieJar,
 				headers: {
-					"User-Agent": chromeUserAgent,
+					"User-Agent": CHROME_USER_AGENT,
 				},
 			})
 		);
 	}
 
-	public async authenticate() {
+	public async login() {
 		const formData = new URLSearchParams({
 			op: "login",
 			rem: "yes",

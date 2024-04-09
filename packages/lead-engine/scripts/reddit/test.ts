@@ -1,8 +1,8 @@
-import { RedditReplyEngine } from "../src/engines/reddit";
-import { redditInfo } from "../secrets";
+import { RedditEngine } from "../../src/engines/reddit/engine";
+import { redditInfo } from "../../secrets";
 
 async function start() {
-	const engine = new RedditReplyEngine({
+	const engine = new RedditEngine({
 		clientId: redditInfo.clientId,
 		clientSecret: redditInfo.clientSecret,
 		username: redditInfo.username,

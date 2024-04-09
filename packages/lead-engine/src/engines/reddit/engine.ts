@@ -1,6 +1,5 @@
-import { BaseReplyEngine } from "./base";
 import Snoowrap from "snoowrap";
-import type { GetLeadsInput, IReplyEngine, ReplyInput } from "../types";
+import type { GetLeadsInput, IReplyEngine, ReplyInput } from "../../utils/types";
 
 export type RedditReplyEngineOptions = {
 	clientId: string;
@@ -13,7 +12,7 @@ export type RedditReplyEngineOptions = {
 const chromeUserAgent =
 	"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36";
 
-export class RedditReplyEngine implements IReplyEngine {
+export class RedditEngine implements IReplyEngine {
 	private reddit: Snoowrap;
 
 	constructor(opts: RedditReplyEngineOptions) {

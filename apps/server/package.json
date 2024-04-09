@@ -20,7 +20,7 @@
 		"@casl/ability": "^6.7.1",
 		"@faire/mjml-react": "^3.3.0",
 		"@sweetreply/prisma": "workspace:*",
-		"@sweetreply/reply-engine": "workspace:*",
+		"@sweetreply/lead-engine": "workspace:*",
 		"@sweetreply/shared": "workspace:*",
 		"@trpc/server": "^10.45.1",
 		"argon2": "^0.40.1",
