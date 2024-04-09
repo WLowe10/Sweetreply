@@ -7,7 +7,9 @@
 	"scripts": {
 		"reddit:test": "tsx ./scripts/reddit/test.ts",
 		"hn:test": "tsx ./scripts/hn/test.ts",
-		"hn:test-bot": "tsx ./scripts/hn/test-bot.ts"
+		"hn:test-bot": "tsx ./scripts/hn/test-bot.ts",
+		"clean": "pnpm clean:modules",
+		"clean:modules": "rm -rf node_modules"
 	},
 	"dependencies": {
 		"axios": "^1.6.8",

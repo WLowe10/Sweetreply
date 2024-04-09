@@ -9,7 +9,7 @@
 		"lint": "next lint",
 		"type-check": "tsc -b --pretty",
 		"clean:next": "rm -rf .next",
-		"clean:modules": "rf -rf .node_modules",
+		"clean:modules": "rm -rf .node_modules",
 		"clean": "pnpm clean:modules && pnpm clean:next"
 	},
 	"dependencies": {

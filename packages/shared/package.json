@@ -7,6 +7,10 @@
 		"schemas",
 		"lib"
 	],
+	"scripts": {
+        "clean": "pnpm clean:modules",
+        "clean:modules": "rm -rf node_modules"
+	},
 	"dependencies": {
 		"@sweetreply/prisma": "workspace:*",
 		"zod": "^3.22.4"
