@@ -1,43 +1,37 @@
 import { TRPCError } from "@trpc/server";
 
-export function mustBeVerified() {
-	return new TRPCError({
+export const mustBeVerified = () =>
+	new TRPCError({
 		code: "FORBIDDEN",
 		message: "You must verify your account",
 	});
-}
 
-export function alreadyVerified() {
-	return new TRPCError({
+export const alreadyVerified = () =>
+	new TRPCError({
 		code: "FORBIDDEN",
 		message: "Your account is already verified",
 	});
-}
 
-export function mustBeSignedIn() {
-	return new TRPCError({
+export const mustBeSignedIn = () =>
+	new TRPCError({
 		code: "UNAUTHORIZED",
 		message: "You must be signed in",
 	});
-}
 
-export function mustBeAdmin() {
-	return new TRPCError({
+export const mustBeAdmin = () =>
+	new TRPCError({
 		code: "FORBIDDEN",
 		message: "You are not able to do this",
 	});
-}
 
-export function alreadySignedIn() {
-	return new TRPCError({
+export const alreadySignedIn = () =>
+	new TRPCError({
 		code: "FORBIDDEN",
 		message: "You are already signed in",
 	});
-}
 
-export function emailAlreadyRegistered() {
-	return new TRPCError({
+export const emailAlreadyRegistered = () =>
+	new TRPCError({
 		code: "CONFLICT",
 		message: "Email already registered",
 	});
-}

@@ -10,6 +10,10 @@ import {
 	Modal,
 	Divider,
 	Alert,
+	type ModalProps,
+	Accordion,
+	Flex,
+	SimpleGrid,
 } from "@mantine/core";
 import { updateMeInputSchema } from "@sweetreply/shared/features/auth/schemas";
 import { useForm } from "react-hook-form";
@@ -17,8 +21,12 @@ import { useMe, useSignOut } from "../hooks";
 import { useRequestVerification } from "../hooks/use-request-verification";
 import z from "zod";
 
-export const ProfileModal = () => {
-	const { me, updateMe } = useMe();
+export type ProfileModalProps = {
+	modalProps: ModalProps;
+};
+
+export const ProfileModal = ({ modalProps }: ProfileModalProps) => {
+	const { me, updateMe, mutation: updateMeMutation } = useMe();
 	const { signOut } = useSignOut();
 	const { requestVerification } = useRequestVerification();
 
@@ -31,10 +39,9 @@ export const ProfileModal = () => {
 	});
 
 	return (
-		<Modal title="Profile" centered={true} opened={true} onClose={() => {}}>
+		<Modal title="Profile" centered={true} {...modalProps}>
 			<form onSubmit={form.handleSubmit(updateMe)}>
 				<Stack>
-					<Alert>Lol</Alert>
 					<Group align="start">
 						<TextInput
 							label="First name"
@@ -47,13 +54,38 @@ export const ProfileModal = () => {
 							{...form.register("last_name")}
 						/>
 					</Group>
-					<Button type="submit" disabled={!form.formState.isDirty}>
-						Save changes
-					</Button>
-					<Divider />
-					{/* <Button type="submit" onClick={() => signOut()}>
-						Sign out
-					</Button> */}
+					<Accordion>
+						<Accordion.Item value="email">
+							<Accordion.Control>{me?.email}</Accordion.Control>
+							<Accordion.Panel>
+								<Stack>
+									<Button>Resend verification email</Button>
+								</Stack>
+							</Accordion.Panel>
+						</Accordion.Item>
+					</Accordion>
+					<Stack gap="xs">
+						<Button
+							type="submit"
+							disabled={!form.formState.isDirty}
+							loading={updateMeMutation.isLoading}
+						>
+							Save changes
+						</Button>
+						<SimpleGrid cols={2} spacing="xs">
+							<Button type="submit" color="gray" variant="light" loading={true}>
+								Change password
+							</Button>
+							<Button
+								type="submit"
+								color="gray"
+								variant="light"
+								onClick={() => signOut()}
+							>
+								Sign out
+							</Button>
+						</SimpleGrid>
+					</Stack>
 				</Stack>
 			</form>
 		</Modal>

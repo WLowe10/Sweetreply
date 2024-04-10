@@ -7,8 +7,9 @@
 		"lint": "turbo lint",
 		"type-check": "turbo run type-check",
 		"format": "prettier --write \"**/*.{ts,tsx,md}\"",
-		"clean": "pnpm clean:modules && pnpm -r clean",
+		"clean": "pnpm clean:modules && pnpm clean:turbo && pnpm -r clean",
 		"clean:modules": "rm -rf node_modules",
+		"clean:turbo": "rm -rf .turbo",
 		"db:generate": "pnpm --filter @sweetreply/prisma db:generate",
 		"db:push": "pnpm --filter @sweetreply/prisma db:push",
 		"db:genpush": "pnpm --filter @sweetreply/prisma db:genpush"

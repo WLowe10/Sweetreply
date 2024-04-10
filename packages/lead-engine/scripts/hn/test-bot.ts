@@ -28,10 +28,14 @@ async function testBot() {
 
 	await bot.login();
 
+	await new Promise((resolve) => setTimeout(resolve, 5000));
+
 	await bot.comment({
-		postId: "39976343",
+		postId: "39983826",
 		content: "Hello, world!",
 	});
+
+	// console.log(response.status);
 }
 
 testBot();

@@ -13,10 +13,12 @@ const Providers = ({ children }: PropsWithChildren) => {
 };
 
 const App = ({ Component, pageProps }: AppProps) => {
+	const getLayout = Component.getLayout ?? ((page) => page);
+
 	return (
 		<Providers>
 			<SEO />
-			<Component {...pageProps} />
+			{getLayout(<Component {...pageProps} />)}
 		</Providers>
 	);
 };

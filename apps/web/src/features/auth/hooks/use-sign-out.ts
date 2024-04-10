@@ -11,9 +11,14 @@ export const useSignOut = () => {
 		return signOutMutation.mutate(data, {
 			onSuccess: () => {
 				// clear the user data in the query cache
-				// ! not working
-				trpcUtils.auth.getMe.setData(undefined, undefined);
-				router.push("/");
+
+				// ! clearing the data is not working for some reason
+				// trpcUtils.auth.getMe.setData(undefined, undefined);
+
+				// for now, ill just use invalidate to force the refetch
+
+				trpcUtils.auth.getMe.invalidate();
+				router.push("/sign-in");
 			},
 		});
 	};

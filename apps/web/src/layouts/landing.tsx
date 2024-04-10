@@ -11,7 +11,7 @@ import {
 	useMantineColorScheme,
 } from "@mantine/core";
 import { appConfig } from "@sweetreply/shared/config";
-import { IconBrandDiscordFilled, IconBrandTwitterFilled } from "@tabler/icons-react";
+import { IconBrandDiscordFilled, IconBrandXFilled } from "@tabler/icons-react";
 import Link from "next/link";
 import type { PropsWithChildren } from "react";
 
@@ -78,7 +78,7 @@ export const LandingLayout = ({ children }: PropsWithChildren) => {
 					</Box>
 					<Group>
 						<Anchor component={Link} c="dimmed" href="">
-							<IconBrandTwitterFilled />
+							<IconBrandXFilled />
 						</Anchor>
 						<Anchor component={Link} c="dimmed" href="">
 							<IconBrandDiscordFilled />

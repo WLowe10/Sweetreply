@@ -72,7 +72,21 @@ model SocialAccount {
     created_at   DateTime  @default(now())
     last_used_at DateTime?
 
+    social_account_errors SocialAccountError[]
+    Lead                  Lead[]
+
     @@map(name: "social_account")
+}
+
+model SocialAccountError {
+    id                String   @id @default(uuid())
+    social_account_id String
+    message           String
+    date              DateTime
+
+    social_account SocialAccount @relation(fields: [social_account_id], references: [id], onDelete: Cascade)
+
+    @@map("social_account_error")
 }
 
 // Team
@@ -122,8 +136,10 @@ model SocialAccount {
 
 model Project {
     id          String    @id @default(uuid())
-    name        String
     user_id     String
+    name        String
+    description String?
+    keywords    String[]
     webhook_url String?
     created_at  DateTime  @default(now())
     updated_at  DateTime? @updatedAt
@@ -151,8 +167,10 @@ model Lead {
     reply             String?
     replied_at        String?
     date              DateTime
+    reply_account_id  String?
 
-    project Project @relation(fields: [project_id], references: [id], onDelete: Cascade)
+    project       Project        @relation(fields: [project_id], references: [id], onDelete: Cascade)
+    reply_account SocialAccount? @relation(fields: [reply_account_id], references: [id])
 
     @@map(name: "lead")
 }

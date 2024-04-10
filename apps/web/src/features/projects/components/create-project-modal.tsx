@@ -3,22 +3,22 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Flex, Modal, TextInput, type ModalProps } from "@mantine/core";
 import { createTeamInputSchema } from "@sweetreply/shared/features/teams/schemas";
 import { useForm } from "react-hook-form";
-import { useTeamContext } from "../hooks/use-team-context";
 import { z } from "zod";
+import { useLocalProject } from "../hooks/use-local-project";
 
 export type CreateTeamModalProps = {
 	modalProps: ModalProps;
 };
 
-export const CreateTeamModal = ({ modalProps }: CreateTeamModalProps) => {
-	const { setTeamId } = useTeamContext();
-	const createTeamMutation = trpc.teams.create.useMutation();
+export const CreateProjectModal = ({ modalProps }: CreateTeamModalProps) => {
+	const [id, setId] = useLocalProject();
+	const createTeamMutation = trpc.projects.create.useMutation();
 	const trpcUtils = trpc.useUtils();
 
 	const form = useForm<z.infer<typeof createTeamInputSchema>>({
 		resolver: zodResolver(createTeamInputSchema),
 		defaultValues: {
-			name: "My Team",
+			name: "My Project",
 		},
 	});
 
@@ -30,21 +30,21 @@ export const CreateTeamModal = ({ modalProps }: CreateTeamModalProps) => {
 	const handleSubmit = form.handleSubmit(async (data) => {
 		createTeamMutation.mutate(data, {
 			onSuccess: (newTeam) => {
-				trpcUtils.teams.get.setData({ id: newTeam.id }, newTeam);
-				trpcUtils.teams.getMany.setData(undefined, (prev) =>
+				trpcUtils.projects.get.setData({ id: newTeam.id }, newTeam);
+				trpcUtils.projects.getMany.setData(undefined, (prev) =>
 					prev ? [...prev, newTeam] : [newTeam]
 				);
-				setTeamId(newTeam.id);
+				setId(newTeam.id);
 			},
 		});
 	});
 
 	return (
-		<Modal title="Create Team" {...modalProps}>
+		<Modal title="Create Project" {...modalProps}>
 			<form onSubmit={handleSubmit}>
 				<TextInput
 					{...form.register("name")}
-					label="Team Name"
+					label="Project Name"
 					error={form.formState.errors.name?.message}
 				/>
 				<Flex align="center" justify="space-between" mt="md">
