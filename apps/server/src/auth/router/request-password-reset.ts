@@ -3,8 +3,6 @@ import { UserRole } from "@sweetreply/prisma";
 
 export const requestPasswordResetHandler = authenticatedUnverifiedProcedure.mutation(
 	async ({ ctx }) => {
-		await ctx.authService.dispatchPasswordReset(ctx.user.id, {
-			ignoreRateLimit: ctx.user.role === UserRole.admin,
-		});
+		await ctx.authService.dispatchPasswordReset(ctx.user.id);
 	}
 );

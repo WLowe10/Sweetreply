@@ -17,7 +17,7 @@ import { stripe } from "@/lib/client/stripe";
 import { TRPCError } from "@trpc/server";
 import { isDev } from "@/lib/utils";
 import { UserRole, type Session, type User } from "@sweetreply/prisma";
-import type { SignUpType, SignInType } from "@sweetreply/shared/features/auth/schemas";
+import type { SignUpInputType, SignInInputType } from "@sweetreply/shared/features/auth/schemas";
 import type { Request, Response } from "express";
 
 type EmailVerificationTokenPayloadType = { user_id: string };
@@ -82,7 +82,7 @@ export class AuthService {
 	 * @param data - The registration data of the new user.
 	 * @returns A Promise resolving to the user
 	 */
-	public async registerUser(data: SignUpType): Promise<User> {
+	public async registerUser(data: SignUpInputType): Promise<User> {
 		const normalizedEmail = data.email.toLowerCase();
 
 		const existingUser = await prisma.user.findUnique({
@@ -494,7 +494,7 @@ export class AuthService {
 	 * @param data The sign-in payload
 	 * @returns The user if validated, otherwise null
 	 */
-	public async validateSignIn(data: SignInType): Promise<User | null> {
+	public async validateSignIn(data: SignInInputType): Promise<User | null> {
 		const user = await this.getUserByEmail(data.email);
 
 		if (!user) {

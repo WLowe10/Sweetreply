@@ -12,11 +12,9 @@ import {
 } from "@mantine/core";
 import { IconInfoCircle } from "@tabler/icons-react";
 import { AuthPageLayout } from "@/layouts";
-import { trpc } from "@/lib/trpc";
-import { signInInputSchema } from "@sweetreply/shared/features/auth/schemas";
+import { signInInputSchema, type SignInInputType } from "@sweetreply/shared/features/auth/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
-import z from "zod";
 import { useMe, useSignIn } from "@/features/auth/hooks";
 // this route should not be accessed if the user is already signed in
 
@@ -34,7 +32,7 @@ const Subtitle = () => {
 export default function SignInPage() {
 	const { signIn, isLoading, isError, error } = useSignIn();
 
-	const form = useForm<z.infer<typeof signInInputSchema>>({
+	const form = useForm<SignInInputType>({
 		resolver: zodResolver(signInInputSchema),
 	});
 

@@ -9,9 +9,7 @@ export const forgotPasswordHandler = unauthenticatedProcedure
 
 		if (user) {
 			try {
-				await ctx.authService.dispatchPasswordReset(user.id, {
-					ignoreRateLimit: user.role === UserRole.admin,
-				});
+				await ctx.authService.dispatchPasswordReset(user.id);
 			} catch {
 				// noop, there should be no feedback if the user exists or not
 			}

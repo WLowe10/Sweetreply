@@ -62,13 +62,16 @@ model Session {
 // Social Accounts (These are the bots that will be used to reply to the leads)
 
 model SocialAccount {
-    id           String    @id @default(uuid())
-    platform     String
-    username     String
-    password     String
-    status       String
-    active       Boolean   @default(true)
-    fails        Int       @default(0)
+    id       String  @id @default(uuid())
+    platform String
+    username String
+    password String
+    status   String
+    active   Boolean @default(true)
+
+    // it may make sense to serialize and store sessions this way
+    // session Json? @db.JsonB
+
     created_at   DateTime  @default(now())
     last_used_at DateTime?
 

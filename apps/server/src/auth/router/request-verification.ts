@@ -8,8 +8,6 @@ export const requestVerificationHandler = authenticatedUnverifiedProcedure.mutat
 			throw alreadyVerified();
 		}
 
-		await ctx.authService.dispatchVerification(ctx.user.id, {
-			ignoreRateLimit: ctx.user.role === UserRole.admin,
-		});
+		await ctx.authService.dispatchVerification(ctx.user.id);
 	}
 );

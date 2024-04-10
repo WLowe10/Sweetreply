@@ -38,6 +38,8 @@ export const updateMeInputSchema = baseUserSchema
 	})
 	.partial();
 
-export type SignUpType = z.infer<typeof signUpInputSchema>;
-export type SignInType = z.infer<typeof signInInputSchema>;
-export type UpdateMeType = z.infer<typeof updateMeInputSchema>;
+export type SignUpInputType = z.infer<typeof signUpInputSchema>;
+export type SignInInputType = z.infer<typeof signInInputSchema>;
+export type UpdateInputMeType = z.infer<typeof updateMeInputSchema>;
+export type ForgotInputPasswordType = z.infer<typeof forgotPasswordInputSchema>;
+export type ChangePasswordInputType = z.infer<typeof changePasswordInputSchema>;

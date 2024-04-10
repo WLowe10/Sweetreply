@@ -1,13 +1,13 @@
+import Link from "next/link";
+import { z } from "zod";
 import { Card, TextInput, PasswordInput, Anchor, Button, Text, Stack, Alert } from "@mantine/core";
 import { useForm } from "react-hook-form";
 import { IconInfoCircle } from "@tabler/icons-react";
 import { AuthPageLayout } from "@/layouts";
 import { useDisclosure } from "@mantine/hooks";
-import Link from "next/link";
-import { z } from "zod";
-import { signUpInputSchema } from "@sweetreply/shared/features/auth/schemas";
 import { useSignUp } from "@/features/auth/hooks";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { signUpInputSchema } from "@sweetreply/shared/features/auth/schemas";
 
 // this route should not be accessed if the user is already signed in
 
