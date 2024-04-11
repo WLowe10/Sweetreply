@@ -1,8 +1,7 @@
 import { TRPCError } from "@trpc/server";
 
-export function teamNotFound() {
-	return new TRPCError({
+export const teamNotFound = () =>
+	new TRPCError({
 		code: "NOT_FOUND",
 		message: "Team not found",
 	});
-}

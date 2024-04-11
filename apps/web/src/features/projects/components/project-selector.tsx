@@ -1,4 +1,4 @@
-import { Avatar, Box, Button, Flex, Popover, Stack, UnstyledButton } from "@mantine/core";
+import { Button, Flex, Popover } from "@mantine/core";
 import { IconPlus, IconSwitchVertical } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
 import { trpc } from "@/lib/trpc";

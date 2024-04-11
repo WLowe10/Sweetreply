@@ -1,9 +1,9 @@
-import { useRouter } from "next/router";
 import { trpc } from "@/lib/trpc";
+import { useNavigate } from "@remix-run/react";
 import type { RouterInput } from "@server/router";
 
 export const useSignIn = () => {
-	const router = useRouter();
+	const navigate = useNavigate();
 	const trpcUtils = trpc.useUtils();
 	const signInMutation = trpc.auth.signIn.useMutation();
 
@@ -12,7 +12,7 @@ export const useSignIn = () => {
 			onSuccess: (userData) => {
 				// set the data of the user in the query cache
 				trpcUtils.auth.getMe.setData(undefined, userData);
-				router.push("/dashboard");
+				navigate("/dashboard");
 			},
 		});
 	};

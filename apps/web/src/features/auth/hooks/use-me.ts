@@ -1,4 +1,3 @@
-import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { trpc } from "@/lib/trpc";
 import type { RouterInput } from "@server/router";
@@ -13,11 +12,12 @@ type UseMeProps = {
 };
 
 export const useMe = (props?: UseMeProps) => {
-	const router = useRouter();
+	// const router = useRouter();
 	const trpcUtils = trpc.useUtils();
 	const getMeQuery = trpc.auth.getMe.useQuery();
 	const updateMeMutation = trpc.auth.updateMe.useMutation();
-	const isInitialized: boolean = getMeQuery.isSuccess || getMeQuery.error?.data?.code === "UNAUTHORIZED";
+	const isInitialized: boolean =
+		getMeQuery.isSuccess || getMeQuery.error?.data?.code === "UNAUTHORIZED";
 	const isAuthenticated: boolean = getMeQuery.isSuccess && isInitialized;
 
 	const updateMe = (data: RouterInput["auth"]["updateMe"]) => {
@@ -32,8 +32,11 @@ export const useMe = (props?: UseMeProps) => {
 		if (props && props.redirect) {
 			const { to, when } = props.redirect;
 
-			if (typeof when.isAuthenticated === "boolean" && when.isAuthenticated === isAuthenticated) {
-				router.push(to);
+			if (
+				typeof when.isAuthenticated === "boolean" &&
+				when.isAuthenticated === isAuthenticated
+			) {
+				// router.push(to);
 			}
 		}
 	}, [getMeQuery, isAuthenticated, isInitialized, props]);

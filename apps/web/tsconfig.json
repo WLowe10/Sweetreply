@@ -1,19 +1,11 @@
 {
-	"extends": "@sweetreply/tsconfig/nextjs.json",
+	"extends": "@sweetreply/tsconfig/remix.json",
+	"references": [{ "path": "../server" }],
 	"compilerOptions": {
-		"skipLibCheck": true,
-		"lib": ["dom", "dom.iterable", "esnext"],
-		"module": "ESNext",
-		"noEmit": true,
-		"composite": false,
 		"baseUrl": "./src",
 		"paths": {
 			"@/*": ["*"],
 			"@server/router": ["../../server/src/router.ts"]
-		},
-		"typeRoots": ["src/types", "./node_modules/@types"]
-	},
-	"include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "next.config.mjs"],
-	"exclude": ["node_modules"],
-	"references": [{ "path": "../server" }]
+		}
+	}
 }

@@ -1,10 +1,13 @@
-import { env } from "@/env";
 import { appConfig } from "@sweetreply/shared/config";
 
-export function buildAPIUrl(path: string) {
-	return env.NEXT_PUBLIC_API_URL + path;
-}
+export const isBrowser = () => typeof window !== "undefined";
 
-export function buildTitle(pageName: string, appName: string = appConfig.name) {
-	return `${pageName} | ${appName}`;
-}
+export const getEnv = (key?: string) => {
+	const env: Record<string, any> = isBrowser() ? window.ENV : process.env;
+
+	return key ? env[key] : env;
+};
+
+export const buildPageTitle = (title: string) => `${title} | ${appConfig.name}`;
+
+export const buildAPIUrl = (path: string) => getEnv("API_URL") + path;
