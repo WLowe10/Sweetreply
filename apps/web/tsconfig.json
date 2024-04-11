@@ -1,8 +1,10 @@
 {
 	"extends": "@sweetreply/tsconfig/remix.json",
 	"references": [{ "path": "../server" }],
+	"include": ["src"],
 	"compilerOptions": {
 		"baseUrl": "./src",
+		"jsx": "react-jsx",
 		"paths": {
 			"@/*": ["*"],
 			"@server/router": ["../../server/src/router.ts"]

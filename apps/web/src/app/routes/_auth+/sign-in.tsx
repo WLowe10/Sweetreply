@@ -19,7 +19,7 @@ import { useMe, useSignIn } from "@/features/auth/hooks";
 import { AuthFormContainer } from "@/features/auth/components/auth-form-container";
 import { buildPageTitle } from "@/lib/utils";
 
-export const meta: MetaFunction = () => [{ title: buildPageTitle("Sign in") }];
+export const meta: MetaFunction = () => [{ title: buildPageTitle("Sign-in") }];
 
 // this route should not be accessed if the user is already signed in
 export default function SignInPage() {
@@ -41,8 +41,8 @@ export default function SignInPage() {
 				</Text>
 			}
 		>
-			<Card withBorder shadow="md" radius="md" p={30} onSubmit={form.handleSubmit(signIn)}>
-				<form>
+			<Card withBorder shadow="md" radius="md" p={30}>
+				<form onSubmit={form.handleSubmit(signIn)}>
 					<Stack>
 						<TextInput
 							label="Email"

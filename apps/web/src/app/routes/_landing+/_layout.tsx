@@ -57,7 +57,15 @@ export default function LandingLayout() {
 				</Group>
 			</Flex>
 			<Outlet />
-			<Flex p="lg" pb="3rem" justify="space-between" maw="60rem" mx="auto" w="100%">
+			<Flex
+				component="footer"
+				p="lg"
+				pb="3rem"
+				justify="space-between"
+				maw="60rem"
+				mx="auto"
+				w="100%"
+			>
 				<Stack>
 					<Text fw="bold" size="lg">
 						Sweetreply

@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { useNavigate } from "@remix-run/react";
 import { trpc } from "@/lib/trpc";
 import type { RouterInput } from "@server/router";
 
@@ -12,7 +13,7 @@ type UseMeProps = {
 };
 
 export const useMe = (props?: UseMeProps) => {
-	// const router = useRouter();
+	const navigate = useNavigate();
 	const trpcUtils = trpc.useUtils();
 	const getMeQuery = trpc.auth.getMe.useQuery();
 	const updateMeMutation = trpc.auth.updateMe.useMutation();
@@ -36,7 +37,7 @@ export const useMe = (props?: UseMeProps) => {
 				typeof when.isAuthenticated === "boolean" &&
 				when.isAuthenticated === isAuthenticated
 			) {
-				// router.push(to);
+				// navigate(to);
 			}
 		}
 	}, [getMeQuery, isAuthenticated, isInitialized, props]);

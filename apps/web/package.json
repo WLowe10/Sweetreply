@@ -1,5 +1,5 @@
 {
-	"name": "web",
+	"name": "@sweetreply/web",
 	"private": true,
 	"sideEffects": false,
 	"type": "module",
@@ -8,7 +8,10 @@
 		"dev": "remix vite:dev",
 		"lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint .",
 		"start": "remix-serve ./build/server/index.js",
-		"type-check": "tsc --noEmit --pretty"
+		"type-check": "tsc -b --pretty",
+		"clean:modules": "rm -rf node_modules",
+		"clean:build": "rm -rf build",
+		"clean": " pnpm clean:modules && pnpm clean:build"
 	},
 	"dependencies": {
 		"@hookform/resolvers": "^3.3.4",
