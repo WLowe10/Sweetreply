@@ -40,6 +40,18 @@ export const getManyLeadsHandler = authenticatedProcedure
 					},
 				},
 				{
+					content: {
+						contains: query,
+						mode: "insensitive",
+					},
+				},
+				{
+					reply: {
+						contains: query,
+						mode: "insensitive",
+					},
+				},
+				{
 					channel: {
 						contains: query,
 						mode: "insensitive",

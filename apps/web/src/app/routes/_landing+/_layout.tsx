@@ -62,6 +62,8 @@ export default function LandingLayout() {
 				p="lg"
 				pb="3rem"
 				justify="space-between"
+				direction={{ base: "column", sm: "row" }}
+				gap={"lg"}
 				maw="60rem"
 				mx="auto"
 				w="100%"

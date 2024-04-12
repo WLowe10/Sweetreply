@@ -10,16 +10,19 @@ import {
 	Modal,
 	Divider,
 	Alert,
-	type ModalProps,
 	Accordion,
 	Flex,
 	SimpleGrid,
+	type ModalProps,
+	Tooltip,
+	Text,
 } from "@mantine/core";
 import { updateMeInputSchema } from "@sweetreply/shared/features/auth/schemas";
 import { useForm } from "react-hook-form";
 import { useMe, useSignOut } from "../hooks";
 import { useRequestVerification } from "../hooks/use-request-verification";
 import z from "zod";
+import { IconAlertTriangle, IconCheck } from "@tabler/icons-react";
 
 export type ProfileModalProps = {
 	modalProps: ModalProps;
@@ -28,7 +31,8 @@ export type ProfileModalProps = {
 export const ProfileModal = ({ modalProps }: ProfileModalProps) => {
 	const { me, updateMe, mutation: updateMeMutation } = useMe();
 	const { signOut } = useSignOut();
-	const { requestVerification } = useRequestVerification();
+	const { requestVerification, isLoading: isRequestVerificationLoading } =
+		useRequestVerification();
 
 	const form = useForm<z.infer<typeof updateMeInputSchema>>({
 		resolver: zodResolver(updateMeInputSchema),
@@ -38,11 +42,13 @@ export const ProfileModal = ({ modalProps }: ProfileModalProps) => {
 		},
 	});
 
+	const isVerified = me?.verified_at !== null;
+
 	return (
 		<Modal title="Profile" centered={true} {...modalProps}>
 			<form onSubmit={form.handleSubmit(updateMe)}>
 				<Stack>
-					<Group align="start">
+					<SimpleGrid cols={2}>
 						<TextInput
 							label="First name"
 							error={form.formState.errors.first_name?.message}
@@ -53,17 +59,40 @@ export const ProfileModal = ({ modalProps }: ProfileModalProps) => {
 							error={form.formState.errors.last_name?.message}
 							{...form.register("last_name")}
 						/>
-					</Group>
-					<Accordion>
-						<Accordion.Item value="email">
-							<Accordion.Control>{me?.email}</Accordion.Control>
-							<Accordion.Panel>
-								<Stack>
-									<Button>Resend verification email</Button>
-								</Stack>
-							</Accordion.Panel>
-						</Accordion.Item>
-					</Accordion>
+					</SimpleGrid>
+					<TextInput
+						label="Email"
+						disabled={true}
+						rightSection={
+							isVerified && (
+								<Tooltip label="Verified">
+									<IconCheck color="var(--mantine-color-green-4)" size={16} />
+								</Tooltip>
+							)
+						}
+						value={me?.email}
+					/>
+					{!isVerified && (
+						<Alert
+							variant="outline"
+							title="Action required"
+							icon={<IconAlertTriangle />}
+						>
+							<Stack>
+								<Text>
+									Your account is not verified. Please click the button below.
+								</Text>
+								<Button
+									size="xs"
+									loading={isRequestVerificationLoading}
+									onClick={requestVerification}
+								>
+									Request verification
+								</Button>
+							</Stack>
+						</Alert>
+					)}
+					<Divider />
 					<Stack gap="xs">
 						<Button
 							type="submit"
@@ -72,19 +101,17 @@ export const ProfileModal = ({ modalProps }: ProfileModalProps) => {
 						>
 							Save changes
 						</Button>
-						<SimpleGrid cols={2} spacing="xs">
-							<Button type="submit" color="gray" variant="light" loading={true}>
-								Change password
-							</Button>
-							<Button
-								type="submit"
-								color="gray"
-								variant="light"
-								onClick={() => signOut()}
-							>
-								Sign out
-							</Button>
-						</SimpleGrid>
+						<Button type="submit" color="gray" variant="light">
+							Change password
+						</Button>
+						<Button
+							type="submit"
+							color="gray"
+							variant="light"
+							onClick={() => signOut()}
+						>
+							Sign out
+						</Button>
 					</Stack>
 				</Stack>
 			</form>

@@ -1,4 +1,4 @@
-import { Link, Outlet } from "@remix-run/react";
+import { Link, Outlet, useLocation } from "@remix-run/react";
 import { UserMenu } from "@/features/auth/components/user-menu";
 import { ProjectSelector } from "@/features/projects/components/project-selector";
 import { Box, Flex, NavLink, Stack } from "@mantine/core";
@@ -10,6 +10,8 @@ import {
 } from "@tabler/icons-react";
 
 export default function DashboardLayout() {
+	const location = useLocation();
+
 	return (
 		<Flex mih="100vh">
 			<Flex
@@ -26,6 +28,8 @@ export default function DashboardLayout() {
 					<Box>
 						<NavLink
 							component={Link}
+							active={location.pathname.includes("dashboard")}
+							color="gray"
 							to="/dashboard"
 							label="Dashboard"
 							leftSection={
@@ -37,6 +41,8 @@ export default function DashboardLayout() {
 						/>
 						<NavLink
 							component={Link}
+							active={location.pathname.includes("leads")}
+							color="gray"
 							to="/leads"
 							label="Leads"
 							leftSection={
@@ -44,8 +50,10 @@ export default function DashboardLayout() {
 							}
 						/>
 						<NavLink
-							label="Settings"
+							active={location.pathname.includes("settings")}
 							component={Link}
+							label="Settings"
+							color="gray"
 							to="/settings"
 							leftSection={
 								<IconSettings size={18} color="var(--mantine-color-gray-6)" />

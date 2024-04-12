@@ -1,9 +1,16 @@
 import { Box, Button, Center, Flex, Text, Image } from "@mantine/core";
 import { IconArrowNarrowRight } from "@tabler/icons-react";
 import type { MetaFunction } from "@remix-run/react";
+import { appConfig } from "@sweetreply/shared/config";
 
 export const meta: MetaFunction = () => {
-	return [{ title: "New Remix App" }, { name: "description", content: "Welcome to Remix!" }];
+	return [
+		{ title: appConfig.name },
+		{
+			name: "description",
+			content: "Sweetreply finds and engages with leads across social media.",
+		},
+	];
 };
 
 export default function HomePage() {
