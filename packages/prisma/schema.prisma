@@ -56,7 +56,7 @@ model Session {
 
 // Social Accounts (These are the bots that will be used to reply to the leads)
 
-model SocialAccount {
+model Bot {
     id       String  @id @default(uuid())
     platform String
     username String
@@ -70,21 +70,21 @@ model SocialAccount {
     created_at   DateTime  @default(now())
     last_used_at DateTime?
 
-    social_account_errors SocialAccountError[]
-    Lead                  Lead[]
+    errors BotError[]
+    leads  Lead[]
 
-    @@map(name: "social_account")
+    @@map(name: "bot")
 }
 
-model SocialAccountError {
-    id                String   @id @default(uuid())
-    social_account_id String
-    message           String
-    date              DateTime
+model BotError {
+    id      String   @id @default(uuid())
+    bot_id  String
+    message String
+    date    DateTime
 
-    social_account SocialAccount @relation(fields: [social_account_id], references: [id], onDelete: Cascade)
+    bot Bot @relation(fields: [bot_id], references: [id], onDelete: Cascade)
 
-    @@map("social_account_error")
+    @@map("bot_error")
 }
 
 // Team
@@ -165,10 +165,10 @@ model Lead {
     reply             String?
     replied_at        String?
     date              DateTime
-    reply_account_id  String?
+    reply_bot_id      String?
 
-    project       Project        @relation(fields: [project_id], references: [id], onDelete: Cascade)
-    reply_account SocialAccount? @relation(fields: [reply_account_id], references: [id])
+    project   Project @relation(fields: [project_id], references: [id], onDelete: Cascade)
+    reply_bot Bot?    @relation(fields: [reply_bot_id], references: [id])
 
     @@map(name: "lead")
 }

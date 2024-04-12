@@ -50,8 +50,8 @@ export const getStatsHandler = adminProcedure.query(async ({ ctx }) => {
 		interval: "day",
 	});
 
-	const socialAccountsCount = await ctx.prisma.socialAccount.count();
-	const activeSocialAccountsCount = await ctx.prisma.socialAccount.count({
+	const botCount = await ctx.prisma.bot.count();
+	const activeBotCount = await ctx.prisma.bot.count({
 		where: {
 			active: true,
 		},
@@ -63,8 +63,8 @@ export const getStatsHandler = adminProcedure.query(async ({ ctx }) => {
 			chart: userChartData,
 		},
 		socialAccounts: {
-			total: socialAccountsCount,
-			active: activeSocialAccountsCount,
+			total: botCount,
+			active: activeBotCount,
 		},
 	};
 });

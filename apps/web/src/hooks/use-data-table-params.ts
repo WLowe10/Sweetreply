@@ -16,7 +16,7 @@ export const useDataTableParams = (opts?: { defaultLimit: number }) => {
 	const setPage = (newPage: number | null) => {
 		setParams((prev) => {
 			if (newPage === null || newPage === 1) {
-				prev.delete(pageParamKey);
+				clearPage();
 			} else {
 				prev.set(pageParamKey, newPage.toString());
 			}
@@ -28,7 +28,7 @@ export const useDataTableParams = (opts?: { defaultLimit: number }) => {
 	const setLimit = (newLimit: number | string | null) => {
 		setParams((prev) => {
 			if (newLimit === null || newLimit === defaultLimit) {
-				prev.delete(limitParamKey);
+				clearLimit();
 			} else {
 				prev.set(limitParamKey, newLimit.toString());
 			}
@@ -40,7 +40,7 @@ export const useDataTableParams = (opts?: { defaultLimit: number }) => {
 	const setQuery = (newQuery: string | null) => {
 		setParams((prev) => {
 			if (newQuery === null || newQuery.length === 0) {
-				prev.delete(queryParamKey);
+				clearQuery();
 			} else {
 				prev.set(queryParamKey, newQuery);
 			}

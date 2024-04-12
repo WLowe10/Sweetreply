@@ -18,6 +18,7 @@ import { useDebouncedState, useDebouncedValue, useInputState } from "@mantine/ho
 import { trpc } from "@/lib/trpc";
 import { IconChevronUp, IconDots } from "@tabler/icons-react";
 import { useSearchParams } from "@remix-run/react";
+import { ResourceContainer } from "@/components/resource-container";
 
 export default function UsersPage() {
 	const [params, setParams] = useSearchParams();
@@ -50,7 +51,7 @@ export default function UsersPage() {
 	};
 
 	return (
-		<Flex p="xl" direction="column">
+		<ResourceContainer title="Users" subtitle="Manage and view all users">
 			<Box>
 				<Flex>
 					<TextInput placeholder="Search users" value={search} onChange={setSearch} />
@@ -113,6 +114,6 @@ export default function UsersPage() {
 					</Group>
 				</Flex>
 			</Box>
-		</Flex>
+		</ResourceContainer>
 	);
 }
