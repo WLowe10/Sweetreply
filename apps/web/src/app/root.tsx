@@ -1,6 +1,7 @@
 import { json } from "@remix-run/node";
 import { Links, Meta, Outlet, Scripts, ScrollRestoration, useLoaderData } from "@remix-run/react";
 import { ColorSchemeScript, MantineProvider } from "@mantine/core";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { env } from "@/env";
 import { TRPCProvider } from "@/lib/trpc";
 import type { PropsWithChildren } from "react";
@@ -73,6 +74,8 @@ export default function App() {
 		<Document env={data.env}>
 			<RootProviders>
 				<Outlet />
+
+				<ReactQueryDevtools position="bottom-right" />
 			</RootProviders>
 		</Document>
 	);

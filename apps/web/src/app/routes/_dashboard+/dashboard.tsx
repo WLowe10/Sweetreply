@@ -1,6 +1,6 @@
 import { ResourceContainer } from "@/components/resource-container";
 import { buildPageTitle } from "@/lib/utils";
-import type { MetaFunction } from "@remix-run/node";
+import type { MetaFunction } from "@remix-run/react";
 
 export const meta: MetaFunction = () => [{ title: buildPageTitle("Dashboard") }];
 

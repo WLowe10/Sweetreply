@@ -21,7 +21,7 @@ export const getProjectHandler = authenticatedProcedure
 				id: true,
 				name: true,
 				description: true,
-				keywords: true,
+				query: true,
 				webhook_url: true,
 				updated_at: true,
 				created_at: true,

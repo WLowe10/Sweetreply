@@ -14,7 +14,7 @@ async function testBot() {
 	await redditBot.comment({
 		postId: "1bxqprr",
 		subredditName: "tarkovroyale",
-		content: "I love tarkov",
+		content: `Hello world ${Date.now()}`,
 	});
 }
 

@@ -8,7 +8,7 @@ import {
 	forgotPasswordInputSchema,
 } from "@sweetreply/shared/features/auth/schemas";
 import { buildPageTitle } from "@/lib/utils";
-import type { MetaFunction } from "@remix-run/node";
+import type { MetaFunction } from "@remix-run/react";
 
 export const meta: MetaFunction = () => [{ title: buildPageTitle("Forgot password") }];
 

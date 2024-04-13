@@ -1,6 +1,5 @@
 import { trpc } from "./trpc";
 import { authMiddleware } from "./middleware";
-import { UserRole } from "@sweetreply/prisma";
 import { alreadySignedIn, mustBeAdmin, mustBeVerified } from "../auth/errors";
 
 // base procedure
@@ -35,7 +34,7 @@ export const authenticatedUnverifiedProcedure = publicProcedure.use(authMiddlewa
 
 // ensures that the user is an admin
 export const adminProcedure = authenticatedProcedure.use(({ ctx, next }) => {
-	if (ctx.user.role !== UserRole.admin) {
+	if (ctx.user.role !== "admin") {
 		throw mustBeAdmin();
 	}
 

@@ -6,6 +6,7 @@
 	"types": "./src/index.ts",
 	"scripts": {
 		"reddit:test": "tsx ./scripts/reddit/test.ts",
+		"reddit:test-bot": "tsx ./scripts/reddit/test-bot.ts",
 		"hn:test": "tsx ./scripts/hn/test.ts",
 		"hn:test-bot": "tsx ./scripts/hn/test-bot.ts",
 		"clean": "pnpm clean:modules",

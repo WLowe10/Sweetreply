@@ -1,7 +1,7 @@
 import { Box, Button, Center, Flex, Text, Image } from "@mantine/core";
 import { IconArrowNarrowRight } from "@tabler/icons-react";
-import type { MetaFunction } from "@remix-run/react";
 import { appConfig } from "@sweetreply/shared/config";
+import type { MetaFunction } from "@remix-run/react";
 
 export const meta: MetaFunction = () => {
 	return [

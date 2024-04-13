@@ -1,6 +1,6 @@
-import { SVGProps } from "react";
+import { SVGProps, Ref, forwardRef } from "react";
 
-export const IconReddit = (props: SVGProps<SVGSVGElement>) => (
+export const IconReddit = forwardRef((props: SVGProps<SVGSVGElement>, ref: Ref<SVGSVGElement>) => (
 	<svg
 		xmlns="http://www.w3.org/2000/svg"
 		xmlSpace="preserve"
@@ -10,6 +10,7 @@ export const IconReddit = (props: SVGProps<SVGSVGElement>) => (
 		// 	}
 		// }
 		viewBox="0 0 1000 1000"
+		ref={ref}
 		{...props}
 	>
 		<title />
@@ -26,4 +27,4 @@ export const IconReddit = (props: SVGProps<SVGSVGElement>) => (
 			}}
 		/>
 	</svg>
-);
+));

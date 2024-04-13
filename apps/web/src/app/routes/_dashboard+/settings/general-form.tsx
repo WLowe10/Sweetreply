@@ -1,19 +1,14 @@
-import { ResourceContainer } from "@/components/resource-container";
 import { useCurrentProjectQuery } from "@/features/projects/hooks/use-current-project";
 import { trpc } from "@/lib/trpc";
-import { buildPageTitle } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Box, Button, Stack, Tabs, TagsInput, TextInput, Textarea } from "@mantine/core";
-import type { MetaFunction } from "@remix-run/node";
+import { Box, Button, Stack, Tabs, TextInput, Textarea } from "@mantine/core";
 import {
 	UpdateProjectInputType,
 	updateProjectInputSchema,
 } from "@sweetreply/shared/features/projects/schemas";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 
-export const meta: MetaFunction = () => [{ title: buildPageTitle("Settings") }];
-
-const GeneralForm = () => {
+export const GeneralForm = () => {
 	const { data: project } = useCurrentProjectQuery();
 	const updateProjectMutation = trpc.projects.update.useMutation();
 	const trpcUtils = trpc.useUtils();
@@ -23,7 +18,7 @@ const GeneralForm = () => {
 		values: {
 			name: project?.name ?? "",
 			description: project?.description ?? "",
-			keywords: project?.keywords ?? [],
+			query: project?.query ?? "",
 		},
 	});
 
@@ -64,17 +59,13 @@ const GeneralForm = () => {
 						error={form.formState.errors.description?.message}
 						{...form.register("description")}
 					/>
-					<Controller
-						name="keywords"
-						control={form.control}
-						render={({ field }) => (
-							<TagsInput
-								label="Keywords"
-								value={field.value}
-								error={form.formState.errors.keywords?.message}
-								onChange={field.onChange}
-							/>
-						)}
+					<Textarea
+						label="Query"
+						autoCorrect="false"
+						autoComplete="false"
+						inputWrapperOrder={["label", "input", "description", "error"]}
+						error={form.formState.errors.query?.message}
+						{...form.register("query")}
 					/>
 					<Button type="submit" loading={updateProjectMutation.isLoading}>
 						Save
@@ -84,26 +75,3 @@ const GeneralForm = () => {
 		</Box>
 	);
 };
-
-export default function DashboardPage() {
-	return (
-		<ResourceContainer title="Settings">
-			<Tabs defaultValue="general">
-				<Tabs.List>
-					<Tabs.Tab value="general">General</Tabs.Tab>
-					<Tabs.Tab value="reddit">Reddit</Tabs.Tab>
-					<Tabs.Tab value="notifications">Notifications</Tabs.Tab>
-				</Tabs.List>
-				<Tabs.Panel value="general">
-					<GeneralForm />
-				</Tabs.Panel>
-				<Tabs.Panel value="reddit">
-					<div />
-				</Tabs.Panel>
-				<Tabs.Panel value="notifications">
-					<div />
-				</Tabs.Panel>
-			</Tabs>
-		</ResourceContainer>
-	);
-}

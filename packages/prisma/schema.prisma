@@ -137,7 +137,7 @@ model Project {
     user_id     String
     name        String
     description String?
-    keywords    String[]
+    query       String?
     webhook_url String?
     created_at  DateTime  @default(now())
     updated_at  DateTime? @updatedAt
@@ -152,19 +152,22 @@ model Project {
 
 model Lead {
     id                String   @id @default(uuid())
-    project_id        String
+    type              String   @default("post")
     platform          String
-    username          String
-    full_name         String?
-    content           String
-    remote_user_id    String
     remote_id         String
-    channel           String?
+    remote_user_id    String
+    channel           String? // Ex: subreddit name for reddit
     remote_channel_id String?
+    username          String
+    name              String?
+    title             String?
+    content           String
     remote_url        String?
+    date              DateTime
+    created_at        DateTime @default(now())
+    project_id        String
     reply             String?
     replied_at        String?
-    date              DateTime
     reply_bot_id      String?
 
     project   Project @relation(fields: [project_id], references: [id], onDelete: Cascade)

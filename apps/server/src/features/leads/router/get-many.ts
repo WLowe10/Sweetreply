@@ -88,6 +88,9 @@ export const getManyLeadsHandler = authenticatedProcedure
 			where: queryWhere,
 			take: pagination.limit,
 			skip: skip(pagination.page, pagination.limit),
+			orderBy: {
+				created_at: "desc",
+			},
 		});
 
 		return {
