@@ -1,13 +1,14 @@
 import { Link, Outlet, useLocation } from "@remix-run/react";
 import { UserMenu } from "@/features/auth/components/user-menu";
 import { ProjectSelector } from "@/features/projects/components/project-selector";
-import { Box, Flex, NavLink, Stack } from "@mantine/core";
+import { Box, Divider, Flex, NavLink, Stack } from "@mantine/core";
 import {
 	IconGridGoldenratio,
 	IconLayoutDashboard,
 	IconMessageReply,
 	IconSettings,
 } from "@tabler/icons-react";
+import { TokensDisplay } from "@/features/projects/components/tokens-display";
 
 export default function DashboardLayout() {
 	const location = useLocation();
@@ -15,7 +16,7 @@ export default function DashboardLayout() {
 	return (
 		<Flex mih="100vh">
 			<Flex
-				w="250"
+				w="280"
 				pos="fixed"
 				h="100%"
 				direction="column"
@@ -61,7 +62,11 @@ export default function DashboardLayout() {
 						/>
 					</Box>
 				</Stack>
-				<UserMenu />
+				<Stack>
+					<TokensDisplay />
+					<Divider />
+					<UserMenu />
+				</Stack>
 			</Flex>
 			<Box ml="250" flex={1} mih="100vh">
 				<Outlet />

@@ -1,7 +1,7 @@
 import { useCurrentProjectQuery } from "@/features/projects/hooks/use-current-project";
 import { trpc } from "@/lib/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Box, Button, Stack, Tabs, TextInput, Textarea } from "@mantine/core";
+import { Box, Button, Stack, Tabs, Text, TextInput, Textarea } from "@mantine/core";
 import {
 	UpdateProjectInputType,
 	updateProjectInputSchema,
@@ -52,18 +52,20 @@ export const GeneralForm = () => {
 					<TextInput
 						label="Name"
 						error={form.formState.errors.name?.message}
+						description="Name of your product or service"
 						{...form.register("name")}
 					/>
 					<Textarea
 						label="Description"
 						error={form.formState.errors.description?.message}
+						description="Describe your product or service. This will be used to generate replies."
 						{...form.register("description")}
 					/>
 					<Textarea
 						label="Query"
+						description="Use a query to filter the leads you want to find"
 						autoCorrect="false"
 						autoComplete="false"
-						inputWrapperOrder={["label", "input", "description", "error"]}
 						error={form.formState.errors.query?.message}
 						{...form.register("query")}
 					/>

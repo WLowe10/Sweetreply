@@ -1,9 +1,10 @@
-import { json } from "@remix-run/node";
+import { LinksFunction, LoaderFunction, json } from "@remix-run/node";
 import { Links, Meta, Outlet, Scripts, ScrollRestoration, useLoaderData } from "@remix-run/react";
 import { ColorSchemeScript, MantineProvider } from "@mantine/core";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { env } from "@/env";
 import { TRPCProvider } from "@/lib/trpc";
+import { theme } from "@/lib/theme";
 import type { PropsWithChildren } from "react";
 
 import "@mantine/core/styles.css";
@@ -20,11 +21,30 @@ declare global {
 	}
 }
 
-export function loader() {
-	return json({
+export const loader: LoaderFunction = () =>
+	json({
 		env: getPublicEnv(),
 	});
-}
+
+export const links: LinksFunction = () => [
+	{
+		rel: "preconnect",
+		href: "https://fonts.googleapis.com",
+	},
+	{
+		rel: "preconnect",
+		href: "https://fonts.gstatic.com",
+		crossOrigin: "anonymous",
+	},
+	{
+		rel: "stylesheet",
+		// href: "https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap",
+		// href: "https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap",
+		// href: "https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap",
+		// href: "https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap",
+		href: "https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap",
+	},
+];
 
 function Document({
 	env,
@@ -59,7 +79,7 @@ function Document({
 
 function RootProviders({ children }: PropsWithChildren) {
 	return (
-		<MantineProvider forceColorScheme="dark">
+		<MantineProvider forceColorScheme="dark" theme={theme}>
 			<TRPCProvider>{children}</TRPCProvider>
 		</MantineProvider>
 	);
@@ -74,7 +94,6 @@ export default function App() {
 		<Document env={data.env}>
 			<RootProviders>
 				<Outlet />
-
 				<ReactQueryDevtools position="bottom-right" />
 			</RootProviders>
 		</Document>

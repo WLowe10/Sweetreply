@@ -121,46 +121,47 @@ async function start() {
 			// console.log(data);
 
 			const payload = {
-				id: data.id,
-				subreddit: data.subreddit,
-				subreddit_id: data.subreddit_id,
+				remote_id: data.id,
+				platform: "reddit",
+				type: "post",
+				channel: data.subreddit,
+				remote_channel_id: data.subreddit_id,
 				username: data.author,
-				user_id: data.author_fullname,
+				remote_user_id: data.author_fullname,
 				title: data.title,
 				content: data.selftext,
-				created: data.created,
-				url: data.url,
+				date: new Date(data.created * 1000),
+				remote_url: data.url,
 			};
 
 			// users can be deleted after they send a post, make sure that we dont try to turn it into a lead
-			if (!payload.user_id) {
+			if (!payload.remote_user_id) {
 				continue;
 			}
 
+			// this currently doesn't allow filtering by subreddit in the query (e.g., "subreddit:replyon")
+			const searchDocument = {
+				title: payload.title,
+				content: payload.content,
+			};
+
+			// should projects be processed in parallel here?
 			for (const project of projects) {
-				const isMatch = test(parse(project.query as string), payload);
+				const isMatch = test(parse(project.query as string), searchDocument);
 
 				if (isMatch) {
 					const existingLead = await prisma.lead.findFirst({
 						where: {
 							project_id: project.id,
-							remote_id: payload.id,
+							remote_id: payload.remote_id,
 						},
 					});
 
 					if (!existingLead) {
 						await prisma.lead.create({
 							data: {
-								platform: "reddit",
+								...payload,
 								project_id: project.id,
-								content: payload.content,
-								remote_id: payload.id,
-								username: payload.username,
-								remote_user_id: payload.user_id,
-								channel: payload.subreddit,
-								remote_channel_id: payload.subreddit_id,
-								remote_url: payload.url,
-								date: new Date(payload.created * 1000),
 							},
 						});
 					}
