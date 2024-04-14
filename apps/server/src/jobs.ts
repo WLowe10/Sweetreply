@@ -1,5 +1,5 @@
 import { cleanUpJob } from "./auth/jobs/clean-up";
-import { leadGenJob } from "./features/leads/jobs/lead-gen";
+import { redditLeadGenJob } from "./features/leads/jobs/reddit-lead-gen";
 import type { CronJob } from "cron";
 
 const jobs: CronJob[] = [cleanUpJob];

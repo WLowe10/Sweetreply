@@ -12,10 +12,10 @@ export default defineConfig({
 	},
 	plugins: [
 		remix({
-			appDirectory: "./src/app",
+			appDirectory: "./src",
 			routes: (defineRoutes) => {
 				return flatRoutes("routes", defineRoutes, {
-					appDir: "./src/app",
+					appDir: "./src",
 				});
 			},
 		}),

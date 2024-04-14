@@ -9,6 +9,10 @@ export const ReplyForm = () => {
 						label="Enable replies"
 						description="When enabled, we will automatically reply to leads on your behalf"
 					/>
+					<Switch
+						label="Engagement"
+						description="When enabled, our bot will like and follow leads to increase connection"
+					/>
 					<Textarea
 						label="Custom instructions"
 						description="Use custom instructions to fine-tune how our AI generates replies"

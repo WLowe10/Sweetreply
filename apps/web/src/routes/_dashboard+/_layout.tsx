@@ -68,7 +68,7 @@ export default function DashboardLayout() {
 					<UserMenu />
 				</Stack>
 			</Flex>
-			<Box ml="250" flex={1} mih="100vh">
+			<Box ml="280" flex={1} mih="100vh">
 				<Outlet />
 			</Box>
 		</Flex>
