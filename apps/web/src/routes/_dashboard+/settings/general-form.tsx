@@ -64,8 +64,10 @@ export const GeneralForm = () => {
 					<Textarea
 						label="Query"
 						description="Use a query to filter the leads you want to find"
-						autoCorrect="false"
-						autoComplete="false"
+						autoCorrect="off"
+						autoComplete="off"
+						autoCapitalize="off"
+						spellCheck="false"
 						error={form.formState.errors.query?.message}
 						{...form.register("query")}
 					/>

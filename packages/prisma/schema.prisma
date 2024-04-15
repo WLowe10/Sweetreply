@@ -151,8 +151,8 @@ model Project {
 // Lead
 
 model Lead {
-    id                String   @id @default(uuid())
-    type              String   @default("post")
+    id                String    @id @default(uuid())
+    type              String    @default("post")
     platform          String
     remote_id         String
     remote_user_id    String
@@ -164,10 +164,10 @@ model Lead {
     content           String
     remote_url        String?
     date              DateTime
-    created_at        DateTime @default(now())
+    created_at        DateTime  @default(now())
     project_id        String
     reply             String?
-    replied_at        String?
+    replied_at        DateTime?
     reply_bot_id      String?
 
     project   Project @relation(fields: [project_id], references: [id], onDelete: Cascade)

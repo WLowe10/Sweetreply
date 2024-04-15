@@ -1,4 +1,16 @@
-import { Box, Flex, Group, Pagination, Select, Skeleton, Table, TextInput } from "@mantine/core";
+import {
+	ActionIcon,
+	Box,
+	Flex,
+	Group,
+	Pagination,
+	Popover,
+	Select,
+	Stack,
+	Table,
+	TextInput,
+} from "@mantine/core";
+import { IconFilter } from "@tabler/icons-react";
 import type { useDataTableParams } from "@/hooks/use-data-table-params";
 import type { ReactNode } from "react";
 
@@ -41,12 +53,28 @@ export const DataTable = ({
 
 	return (
 		<Box>
-			<Flex>
+			<Flex align="center" justify="space-between">
 				<TextInput
 					placeholder={searchPlaceholder}
 					value={params.query || ""}
 					onChange={(e) => params.setQuery(e.target.value)}
 				/>
+				<Popover>
+					<Popover.Target>
+						<ActionIcon color="gray" variant="subtle">
+							<IconFilter size={18} />
+						</ActionIcon>
+					</Popover.Target>
+					<Popover.Dropdown>
+						<Stack>
+							<Select
+								label="Platform"
+								data={["test", "test2"]}
+								comboboxProps={{ withinPortal: false }}
+							/>
+						</Stack>
+					</Popover.Dropdown>
+				</Popover>
 			</Flex>
 			<Table my="sm">
 				{header}
@@ -77,9 +105,6 @@ export const DataTable = ({
 						value={params.limit.toString()}
 						onChange={params.setLimit}
 					/>
-					{/* <Text size="sm" c="dimmed">{`Showing ${rowStart} - ${rowEnd} of ${
-						getUsersQuery.data?.total ?? 0
-					} results`}</Text> */}
 				</Group>
 			</Flex>
 		</Box>

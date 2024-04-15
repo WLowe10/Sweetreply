@@ -62,7 +62,7 @@ export const ProfileModal = ({ modalProps }: ProfileModalProps) => {
 					</SimpleGrid>
 					<TextInput
 						label="Email"
-						disabled={true}
+						readOnly={true}
 						rightSection={
 							isVerified && (
 								<Tooltip label="Verified">

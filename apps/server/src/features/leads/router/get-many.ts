@@ -4,6 +4,7 @@ import { z } from "zod";
 import type { Prisma } from "@sweetreply/prisma";
 
 const getManyLeadsInputSchema = z.object({
+	projectId: z.string(),
 	pagination: paginationSchema,
 	query: z.string().optional(),
 	filter: z
@@ -29,7 +30,9 @@ export const getManyLeadsHandler = authenticatedProcedure
 
 		const { pagination, query, filter, sort } = input;
 
-		const queryWhere: Prisma.LeadWhereInput = {};
+		const queryWhere: Prisma.LeadWhereInput = {
+			project_id: input.projectId,
+		};
 
 		if (query && query.length > 0) {
 			queryWhere.OR = [

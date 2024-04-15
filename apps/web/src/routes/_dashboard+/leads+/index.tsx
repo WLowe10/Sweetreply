@@ -6,11 +6,16 @@ import { trpc } from "@/lib/trpc";
 import { buildPageTitle } from "@/lib/utils";
 import { ActionIcon, Badge, Flex, Menu, Skeleton, Table, Text } from "@mantine/core";
 import { IconDots } from "@tabler/icons-react";
-import type { MetaFunction } from "@remix-run/react";
+import { useLocalProject } from "@/features/projects/hooks/use-local-project";
+import { useDisclosure } from "@mantine/hooks";
+import { PreviewLeadModal } from "@/features/leads/components/preview-lead-modal";
+import { Link, type MetaFunction } from "@remix-run/react";
 
 export const meta: MetaFunction = () => [{ title: buildPageTitle("Leads") }];
 
 const Row = (lead: any) => {
+	const [isOpen, { open, close }] = useDisclosure();
+
 	return (
 		<Table.Tr>
 			<Table.Td>
@@ -36,6 +41,9 @@ const Row = (lead: any) => {
 					</Menu.Target>
 					<Menu.Dropdown>
 						<Menu.Label>Actions</Menu.Label>
+						<Menu.Item component={Link} to={lead.id}>
+							View lead
+						</Menu.Item>
 						{lead.remote_url && (
 							<Menu.Item component="a" href={lead.remote_url} target="_blank">
 								View on {lead.platform}
@@ -71,9 +79,11 @@ const LoadingRow = () => {
 };
 
 export default function LeadsPage() {
+	const [projectId] = useLocalProject();
 	const params = useDataTableParams();
 
-	const getBotsQuery = trpc.leads.getMany.useQuery({
+	const getLeadsQuery = trpc.leads.getMany.useQuery({
+		projectId: projectId,
 		query: params.query ?? undefined,
 		pagination: {
 			page: params.page - 1,
@@ -84,11 +94,11 @@ export default function LeadsPage() {
 	return (
 		<ResourceContainer title="Leads" subtitle="View all of your leads and replies">
 			<DataTable
-				data={getBotsQuery.data?.data ?? []}
-				searchPlaceholder="Search leads"
-				total={getBotsQuery.data?.total || 0}
 				params={params}
-				isLoading={getBotsQuery.isLoading}
+				data={getLeadsQuery.data?.data ?? []}
+				searchPlaceholder="Search leads"
+				total={getLeadsQuery.data?.total || 0}
+				isLoading={getLeadsQuery.isLoading}
 				header={
 					<Table.Thead>
 						<Table.Tr>
