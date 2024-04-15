@@ -12,6 +12,11 @@ export type ReplyQueueJobData = {
 
 const replyQueue = new Queue<ReplyQueueJobData>("reply", {
 	redis: env.REDIS_URL,
+	// reconsider the rate limit
+	limiter: {
+		max: 1,
+		duration: 1000,
+	},
 	defaultJobOptions: {
 		attempts: 1,
 	},

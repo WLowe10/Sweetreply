@@ -1,4 +1,4 @@
-import type { MetaFunction } from "@remix-run/react";
+import { useNavigate, useParams, type MetaFunction } from "@remix-run/react";
 import { ResourceContainer } from "@/components/resource-container";
 import { buildPageTitle } from "@/lib/utils";
 import { Tabs } from "@mantine/core";
@@ -8,10 +8,17 @@ import { ReplyForm } from "./reply-form";
 
 export const meta: MetaFunction = () => [{ title: buildPageTitle("Settings") }];
 
-export default function DashboardPage() {
+export default function SettingsPage() {
+	const { tab } = useParams();
+	const navigate = useNavigate();
+
 	return (
 		<ResourceContainer title="Settings" subtitle="Manage your Sweetreply project">
-			<Tabs defaultValue="general">
+			<Tabs
+				value={tab}
+				defaultValue="general"
+				onChange={(value) => navigate(value ? `/settings/${value}` : "")}
+			>
 				<Tabs.List>
 					<Tabs.Tab value="general">General</Tabs.Tab>
 					<Tabs.Tab value="reply">Reply</Tabs.Tab>

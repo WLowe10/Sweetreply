@@ -20,8 +20,11 @@ export const getProjectHandler = authenticatedProcedure
 			select: {
 				id: true,
 				name: true,
+				website_url: true,
 				description: true,
 				query: true,
+				replies_enabled: true,
+				custom_reply_instructions: true,
 				webhook_url: true,
 				updated_at: true,
 				created_at: true,

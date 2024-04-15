@@ -50,6 +50,8 @@ export default function UsersPage() {
 		});
 	};
 
+	const deleteSessionsMutation = trpc.admin.users.deleteSessions.useMutation();
+
 	return (
 		<ResourceContainer title="Users" subtitle="Manage and view all users">
 			<Box>
@@ -90,7 +92,15 @@ export default function UsersPage() {
 										</Menu.Target>
 										<Menu.Dropdown>
 											<Menu.Label>Actions</Menu.Label>
-											<Menu.Item>Delete sessions</Menu.Item>
+											<Menu.Item
+												onClick={() =>
+													deleteSessionsMutation.mutate({
+														userId: user.id,
+													})
+												}
+											>
+												Delete sessions
+											</Menu.Item>
 											<Menu.Item>Send password reset</Menu.Item>
 											<Menu.Item>Send email verification</Menu.Item>
 										</Menu.Dropdown>

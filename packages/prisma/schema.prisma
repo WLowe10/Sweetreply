@@ -133,11 +133,16 @@ model BotError {
 // Project
 
 model Project {
-    id          String    @id @default(uuid())
+    id          String  @id @default(uuid())
     user_id     String
     name        String
     description String?
+    website_url String?
     query       String?
+
+    replies_enabled           Boolean @default(true)
+    custom_reply_instructions String?
+
     webhook_url String?
     created_at  DateTime  @default(now())
     updated_at  DateTime? @updatedAt

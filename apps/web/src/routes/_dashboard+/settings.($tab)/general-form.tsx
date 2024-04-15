@@ -13,11 +13,14 @@ export const GeneralForm = () => {
 	const updateProjectMutation = trpc.projects.update.useMutation();
 	const trpcUtils = trpc.useUtils();
 
-	const form = useForm<UpdateProjectInputType["data"]>({
+	const form = useForm<
+		Pick<UpdateProjectInputType["data"], "name" | "description" | "website_url" | "query">
+	>({
 		resolver: zodResolver(updateProjectInputSchema.shape.data),
 		values: {
 			name: project?.name ?? "",
 			description: project?.description ?? "",
+			website_url: project?.website_url ?? "",
 			query: project?.query ?? "",
 		},
 	});
@@ -53,12 +56,31 @@ export const GeneralForm = () => {
 						label="Name"
 						error={form.formState.errors.name?.message}
 						description="Name of your product or service"
+						autoCorrect="off"
+						autoComplete="off"
+						autoCapitalize="off"
+						spellCheck="false"
 						{...form.register("name")}
+					/>
+					<TextInput
+						label="Website URL"
+						error={form.formState.errors.website_url?.message}
+						description="The URL of your website"
+						placeholder="https://website.com"
+						autoCorrect="off"
+						autoComplete="off"
+						autoCapitalize="off"
+						spellCheck="false"
+						{...form.register("website_url")}
 					/>
 					<Textarea
 						label="Description"
 						error={form.formState.errors.description?.message}
 						description="Describe your product or service. This will be used to generate replies."
+						autoCorrect="off"
+						autoComplete="off"
+						autoCapitalize="off"
+						spellCheck="false"
 						{...form.register("description")}
 					/>
 					<Textarea
@@ -71,7 +93,11 @@ export const GeneralForm = () => {
 						error={form.formState.errors.query?.message}
 						{...form.register("query")}
 					/>
-					<Button type="submit" loading={updateProjectMutation.isLoading}>
+					<Button
+						type="submit"
+						disabled={!form.formState.isDirty}
+						loading={updateProjectMutation.isLoading}
+					>
 						Save
 					</Button>
 				</Stack>
