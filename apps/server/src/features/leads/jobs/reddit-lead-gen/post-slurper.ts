@@ -49,9 +49,6 @@ export class RedditPostSlurper {
 
 			for (const post of newPosts) {
 				const postData = post.data;
-
-				// console.log(data);
-
 				const lead = this.getLead(postData);
 
 				// users can be deleted after they send a post, make sure that we dont try to turn it into a lead
@@ -68,6 +65,25 @@ export class RedditPostSlurper {
 
 				// should projects be processed in parallel here?
 				for (const project of projects) {
+					/**
+					 * Comment for later
+					 * To filter out NSFW reddit posts, the postData has a key called "over_18" which is a boolean
+					 */
+
+					if (
+						project.reddit_included_subreddits.length > 0 &&
+						!project.reddit_included_subreddits.includes(lead.channel)
+					) {
+						continue;
+					}
+
+					if (
+						project.reddit_excluded_subreddits.length > 0 &&
+						project.reddit_excluded_subreddits.includes(lead.channel)
+					) {
+						continue;
+					}
+
 					const isMatch = test(parse(project.query as string), searchDocument);
 
 					if (isMatch) {
@@ -109,7 +125,7 @@ export class RedditPostSlurper {
 		return response.data["data"]["children"][0]["data"]["id"];
 	}
 
-	public getLead(redditPost: any): Omit<Prisma.LeadCreateInput, "project" | "reply_bot"> {
+	public getLead(redditPost: any) {
 		return {
 			platform: "reddit",
 			type: "post",

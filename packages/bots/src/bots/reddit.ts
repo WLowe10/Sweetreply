@@ -2,7 +2,7 @@ import axios, { Axios } from "axios";
 import parse from "node-html-parser";
 import { wrapper } from "axios-cookiejar-support";
 import { CookieJar } from "tough-cookie";
-import { userAgents } from "../../lib/constants";
+import { userAgents } from "../lib/constants";
 
 const redditBase = new URL("https://www.reddit.com/api");
 const oldRedditBase = new URL("https://old.reddit.com/api");

@@ -9,10 +9,10 @@ import { useLocalProject } from "../hooks/use-local-project";
 export const ProjectSelector = () => {
 	const [id, setId] = useLocalProject();
 	const { data: currentProject } = useCurrentProjectQuery();
-	const { data: teams } = trpc.projects.getMany.useQuery();
+	const { data: projects } = trpc.projects.getMany.useQuery();
 
 	const [
-		teamsPopoverOpened,
+		projectsPopoverOpened,
 		{ open: openTeamsPopover, close: closeTeamsPopover, toggle: toggleTeamsPopover },
 	] = useDisclosure(false);
 
@@ -24,7 +24,7 @@ export const ProjectSelector = () => {
 			<Popover
 				position="bottom-start"
 				width="target"
-				opened={teamsPopoverOpened}
+				opened={projectsPopoverOpened}
 				onChange={(status) => (status ? openTeamsPopover() : closeTeamsPopover())}
 			>
 				<Popover.Target>
@@ -41,7 +41,7 @@ export const ProjectSelector = () => {
 				</Popover.Target>
 				<Popover.Dropdown p={0}>
 					<Flex direction="column">
-						{teams?.map((team) => (
+						{projects?.map((team) => (
 							<Button
 								color="gray"
 								variant="subtle"

@@ -140,14 +140,14 @@ model Project {
     website_url String?
     query       String?
 
-    replies_enabled           Boolean @default(true)
+    reply_mention_mode        String? @default("name")
     custom_reply_instructions String?
-
-    reply_mention_mode String? @default("name")
     // reply_should_include_url
 
     // reddit settings
 
+    reddit_monitor_enabled     Boolean  @default(true)
+    reddit_replies_enabled     Boolean  @default(true)
     reddit_included_subreddits String[]
     reddit_excluded_subreddits String[]
 

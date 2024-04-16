@@ -1,10 +1,12 @@
 import { trpc } from "@/lib/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Flex, Modal, TextInput, type ModalProps } from "@mantine/core";
-import { createTeamInputSchema } from "@sweetreply/shared/features/teams/schemas";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { useLocalProject } from "../hooks/use-local-project";
+import {
+	createProjectInputSchema,
+	type CreateProjectInputType,
+} from "@sweetreply/shared/features/projects/schemas";
 
 export type CreateTeamModalProps = {
 	modalProps: ModalProps;
@@ -15,8 +17,8 @@ export const CreateProjectModal = ({ modalProps }: CreateTeamModalProps) => {
 	const createTeamMutation = trpc.projects.create.useMutation();
 	const trpcUtils = trpc.useUtils();
 
-	const form = useForm<z.infer<typeof createTeamInputSchema>>({
-		resolver: zodResolver(createTeamInputSchema),
+	const form = useForm<CreateProjectInputType>({
+		resolver: zodResolver(createProjectInputSchema),
 		defaultValues: {
 			name: "My Project",
 		},

@@ -15,9 +15,19 @@ export const redditLeadGenJob = CronJob.from({
 		// also figure out best way to configure specific subreddits
 		const projects = await prisma.project.findMany({
 			where: {
-				query: {
-					not: null,
-				},
+				reddit_monitor_enabled: true,
+				AND: [
+					{
+						query: {
+							not: null,
+						},
+					},
+					{
+						query: {
+							not: "",
+						},
+					},
+				],
 			},
 		});
 

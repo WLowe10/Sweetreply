@@ -20,13 +20,20 @@ export const baseProjectSchema = projectModel.extend({
 	reply_mention_mode: z.enum(["name", "name_or_url", "url"]),
 	webhook_url: z.string().url().max(128),
 
-	// todo prevent duplicates
+	reddit_included_subreddits: z
+		.array(subredditNameSchema)
+		.max(10, {
+			message: "You cannot include more than 10 subreddits",
+		})
+		.refine((items) => new Set(items).size === items.length, {
+			message: "A subreddit cannot be included more than once",
+		}),
 	reddit_excluded_subreddits: z
 		.array(subredditNameSchema)
-		.max(10, { message: "You cannot exclude more than 10 subreddits" }),
-	reddit_included_subreddits: z.array(subredditNameSchema).max(10, {
-		message: "You cannot include more than 10 subreddits",
-	}),
+		.max(10, { message: "You cannot exclude more than 10 subreddits" })
+		.refine((items) => new Set(items).size === items.length, {
+			message: "A subreddit cannot be excluded more than once",
+		}),
 });
 
 export const createProjectInputSchema = baseProjectSchema.pick({
@@ -44,6 +51,8 @@ export const updateProjectInputSchema = z.object({
 			replies_enabled: true,
 			reply_mention_mode: true,
 			custom_reply_instructions: true,
+			reddit_monitor_enabled: true,
+			reddit_replies_enabled: true,
 			reddit_included_subreddits: true,
 			reddit_excluded_subreddits: true,
 			webhook_url: true,

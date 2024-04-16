@@ -29,6 +29,8 @@ export const SitesForm = () => {
 	const form = useForm<UpdateProjectInputType["data"]>({
 		resolver: zodResolver(updateProjectInputSchema.shape.data),
 		values: {
+			reddit_monitor_enabled: project?.reddit_monitor_enabled ?? false,
+			reddit_replies_enabled: project?.reddit_replies_enabled ?? false,
 			reddit_included_subreddits: project?.reddit_included_subreddits ?? [],
 			reddit_excluded_subreddits: project?.reddit_excluded_subreddits ?? [],
 		},
@@ -71,8 +73,30 @@ export const SitesForm = () => {
 							</Accordion.Control>
 							<Accordion.Panel>
 								<Stack mt="lg">
-									{/* todo */}
-									<Switch label="Enable" description="Enable reddit monitoring" />
+									<Controller
+										control={form.control}
+										name="reddit_monitor_enabled"
+										render={({ field }) => (
+											<Switch
+												label="Enable monitoring"
+												description="Monitor Reddit for mentions of your project."
+												checked={field.value}
+												onChange={field.onChange}
+											/>
+										)}
+									/>
+									<Controller
+										control={form.control}
+										name="reddit_replies_enabled"
+										render={({ field }) => (
+											<Switch
+												label="Enable replies"
+												description="Automatically reply to mentions on Reddit."
+												checked={field.value}
+												onChange={field.onChange}
+											/>
+										)}
+									/>
 									<Controller
 										name="reddit_included_subreddits"
 										control={form.control}
