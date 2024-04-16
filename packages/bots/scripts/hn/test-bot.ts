@@ -1,5 +1,5 @@
 import { parseArgs } from "node:util";
-import { HackerNewsBot } from "../../src/engines/hacker-news/bot";
+import { HackerNewsBot } from "../../src/bots/hacker-news/bot";
 
 const args = parseArgs({
 	options: {

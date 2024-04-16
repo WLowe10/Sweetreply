@@ -8,7 +8,6 @@ import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
 export const appRouter = router({
 	admin: adminRouter,
 	auth: authRouter,
-	// teams: teamsRouter, // will add later
 	projects: projectsRouter,
 	leads: leadsRouter,
 });

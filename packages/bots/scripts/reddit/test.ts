@@ -1,4 +1,4 @@
-import { RedditEngine } from "../../src/engines/reddit/engine";
+import { RedditEngine } from "../../src/bots/reddit/engine";
 import { redditInfo } from "../../secrets";
 
 async function start() {

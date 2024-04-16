@@ -16,7 +16,7 @@ import { env } from "@/env";
 import { stripe } from "@/lib/client/stripe";
 import { TRPCError } from "@trpc/server";
 import { isDev } from "@/lib/utils";
-import { UserRole, type Session, type User } from "@sweetreply/prisma";
+import { type Session, type User } from "@sweetreply/prisma";
 import type { SignUpInputType, SignInInputType } from "@sweetreply/shared/features/auth/schemas";
 import type { Request, Response } from "express";
 

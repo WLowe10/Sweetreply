@@ -1,7 +1,7 @@
 import { orderBySchema, paginationSchema, skip } from "@/lib/pagination";
 import { adminProcedure } from "@/trpc";
-import { Prisma, UserRole } from "@sweetreply/prisma";
 import { z } from "zod";
+import type { Prisma } from "@sweetreply/prisma";
 
 const getManyUsersInputSchema = z.object({
 	search: z.string().optional(),
@@ -15,7 +15,7 @@ const getManyUsersInputSchema = z.object({
 	filter: z
 		.object({
 			verified: z.boolean(),
-			role: z.array(z.nativeEnum(UserRole)),
+			role: z.array(z.enum(["user", "admin"])),
 		})
 		.partial()
 		.optional(),

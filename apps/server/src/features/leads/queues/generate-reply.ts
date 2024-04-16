@@ -1,8 +1,6 @@
 import Queue from "bull";
 import { env } from "@/env";
-import { openAI } from "@/lib/client/openai";
 import { prisma } from "@/lib/db";
-import { replyPrompt } from "../utils/prompts/reply-prompt";
 import { generateReplyCompletion } from "../utils/generate-reply-completion";
 
 export type GenerateReplyQueueJobData = {

@@ -1,4 +1,4 @@
-import { RedditBot } from "../../src/engines/reddit/bot";
+import { RedditBot } from "../../src/bots/reddit/bot";
 import { redditInfo } from "../../secrets";
 
 async function testBot() {

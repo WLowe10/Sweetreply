@@ -1,5 +1,5 @@
 {
-	"name": "@sweetreply/lead-engine",
+	"name": "@sweetreply/bots",
 	"version": "0.0.0",
 	"private": true,
 	"main": "./src/index.ts",

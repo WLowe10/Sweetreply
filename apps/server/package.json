@@ -19,7 +19,7 @@
 		"@aws-sdk/client-ses": "^3.535.0",
 		"@casl/ability": "^6.7.1",
 		"@faire/mjml-react": "^3.3.0",
-		"@sweetreply/lead-engine": "workspace:*",
+		"@sweetreply/bots": "workspace:*",
 		"@sweetreply/prisma": "workspace:*",
 		"@sweetreply/shared": "workspace:*",
 		"@trpc/server": "^10.45.1",

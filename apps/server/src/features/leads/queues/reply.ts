@@ -3,7 +3,7 @@ import { logger } from "@/lib/logger";
 import { prisma } from "@/lib/db";
 import { env } from "@/env";
 import { sleep } from "@sweetreply/shared/lib/utils";
-import { RedditBot } from "@sweetreply/lead-engine";
+import { RedditBot } from "@sweetreply/bots";
 
 export type ReplyQueueJobData = {
 	lead_id: string;

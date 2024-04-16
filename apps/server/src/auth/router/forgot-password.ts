@@ -1,5 +1,4 @@
 import { unauthenticatedProcedure } from "@/trpc";
-import { UserRole } from "@sweetreply/prisma";
 import { forgotPasswordInputSchema } from "@sweetreply/shared/features/auth/schemas";
 
 export const forgotPasswordHandler = unauthenticatedProcedure

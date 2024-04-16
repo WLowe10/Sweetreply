@@ -5,7 +5,6 @@ import { prisma } from "@/lib/db";
 import { generateDescendingRedditIds, generateBatchedRedditInfoUrls } from "./utils";
 import { logger } from "@/lib/logger";
 import type { Prisma, Project } from "@sweetreply/prisma";
-import { replyQueue } from "../../queues/reply";
 
 export class RedditPostSlurper {
 	private client: Axios;

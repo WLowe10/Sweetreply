@@ -1,5 +1,4 @@
 import { prisma } from "@/lib/db";
-import { UserRole } from "@sweetreply/prisma";
 import argon2 from "argon2";
 
 /**
@@ -15,7 +14,7 @@ export async function runSeed() {
 	// 		password_hash: await argon2.hash("abc123"),
 	// 		first_name: "Admin",
 	// 		last_name: "Admin",
-	// 		role: UserRole.admin,
+	// 		role: "admin"
 	// 		verified_at: new Date(),
 	// 	},
 	// });

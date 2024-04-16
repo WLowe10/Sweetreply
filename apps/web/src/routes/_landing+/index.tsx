@@ -1,4 +1,4 @@
-import { Box, Button, Center, Flex, Text, Image } from "@mantine/core";
+import { Box, Button, Center, Flex, Text, Image, Paper } from "@mantine/core";
 import { IconArrowNarrowRight } from "@tabler/icons-react";
 import { appConfig } from "@sweetreply/shared/config";
 import type { MetaFunction } from "@remix-run/react";
@@ -30,7 +30,9 @@ export default function HomePage() {
 				</Flex>
 			</Center>
 			<Box p="lg" maw="72rem" mx="auto">
-				<Image src="https://socialkiwi.co/static/imgs/post-scheduler.png" alt="Demo" />
+				<Paper shadow="lg">
+					<Image src="hero.png" alt="Sweetreply demo" />
+				</Paper>
 			</Box>
 		</Box>
 	);

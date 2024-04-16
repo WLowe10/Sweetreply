@@ -19,25 +19,23 @@ export const generateReplyCompletion = async ({
 }) => {
 	const prompt = replyPrompt({ project, lead });
 
-	console.log(prompt);
+	const completion = await openAI.chat.completions.create({
+		model: "gpt-3.5-turbo",
+		messages: [
+			{
+				role: "user",
+				content: prompt,
+			},
+		],
+	});
 
-	// const completion = await openAI.chat.completions.create({
-	// 	model: "gpt-3.5-turbo",
-	// 	messages: [
-	// 		{
-	// 			role: "user",
-	// 			content: prompt,
-	// 		},
-	// 	],
-	// });
+	let resultObj;
 
-	// let resultObj;
+	try {
+		resultObj = JSON.parse(completion.choices[0].message.content as string);
+	} catch (err) {
+		throw new Error("Failed to parse completion");
+	}
 
-	// try {
-	// 	resultObj = JSON.parse(completion.choices[0].message.content as string);
-	// } catch (err) {
-	// 	throw new Error("Failed to parse completion");
-	// }
-
-	return replyPromptOutputSchema.parse({});
+	return replyPromptOutputSchema.parse(resultObj);
 };
