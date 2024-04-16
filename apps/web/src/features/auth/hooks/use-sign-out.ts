@@ -1,4 +1,3 @@
-import { useRouter } from "next/router";
 import { trpc } from "@/lib/trpc";
 import { useNavigate } from "@remix-run/react";
 import type { RouterInput } from "@server/router";
@@ -19,7 +18,7 @@ export const useSignOut = () => {
 				// for now, ill just use invalidate to force the refetch
 
 				trpcUtils.auth.getMe.invalidate();
-				navigate("/sign-in");
+				navigate("/");
 			},
 		});
 	};

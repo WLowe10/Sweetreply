@@ -2,6 +2,7 @@ import { authenticatedProcedure } from "@/trpc";
 import { paginationSchema, orderBySchema, skip } from "@/lib/pagination";
 import { z } from "zod";
 import type { Prisma } from "@sweetreply/prisma";
+import { projectNotFound } from "@/features/projects/errors";
 
 const getManyLeadsInputSchema = z.object({
 	projectId: z.string(),
@@ -26,7 +27,14 @@ const getManyLeadsInputSchema = z.object({
 export const getManyLeadsHandler = authenticatedProcedure
 	.input(getManyLeadsInputSchema)
 	.query(async ({ input, ctx }) => {
-		// todo verify user can read the project of these leads
+		const userOwnsProject = await ctx.projectsService.userOwnsProject({
+			userId: ctx.user.id,
+			projectId: input.projectId,
+		});
+
+		if (!userOwnsProject) {
+			throw projectNotFound();
+		}
 
 		const { pagination, query, filter, sort } = input;
 

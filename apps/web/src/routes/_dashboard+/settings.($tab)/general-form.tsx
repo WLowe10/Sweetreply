@@ -13,9 +13,7 @@ export const GeneralForm = () => {
 	const updateProjectMutation = trpc.projects.update.useMutation();
 	const trpcUtils = trpc.useUtils();
 
-	const form = useForm<
-		Pick<UpdateProjectInputType["data"], "name" | "description" | "website_url" | "query">
-	>({
+	const form = useForm<UpdateProjectInputType["data"]>({
 		resolver: zodResolver(updateProjectInputSchema.shape.data),
 		values: {
 			name: project?.name ?? "",

@@ -16,9 +16,7 @@ export const NotificationsForm = () => {
 	const form = useForm<UpdateProjectInputType["data"]>({
 		resolver: zodResolver(updateProjectInputSchema.shape.data),
 		values: {
-			name: project?.name ?? "",
-			description: project?.description ?? "",
-			query: project?.query ?? "",
+			webhook_url: project?.webhook_url ?? "",
 		},
 	});
 
@@ -51,11 +49,15 @@ export const NotificationsForm = () => {
 				<Stack>
 					<TextInput
 						label="Webhook"
-						error={form.formState.errors.name?.message}
+						error={form.formState.errors.webhook_url?.message}
 						description="The URL to send notifications to."
-						{...form.register("name")}
+						{...form.register("webhook_url")}
 					/>
-					<Button type="submit" loading={updateProjectMutation.isLoading}>
+					<Button
+						type="submit"
+						disabled={!form.formState.isDirty}
+						loading={updateProjectMutation.isLoading}
+					>
 						Save
 					</Button>
 				</Stack>

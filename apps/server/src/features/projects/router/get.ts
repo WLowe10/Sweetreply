@@ -10,9 +10,12 @@ const getProjectInputSchema = z.object({
 export const getProjectHandler = authenticatedProcedure
 	.input(getProjectInputSchema)
 	.query(async ({ input, ctx }) => {
-		const userCanReadProject = await ctx.projectsService.userOwnsProject(ctx.user.id, input.id);
+		const userOwnsProject = await ctx.projectsService.userOwnsProject({
+			userId: ctx.user.id,
+			projectId: input.id,
+		});
 
-		if (!userCanReadProject) {
+		if (!userOwnsProject) {
 			throw projectNotFound();
 		}
 
@@ -24,7 +27,10 @@ export const getProjectHandler = authenticatedProcedure
 				description: true,
 				query: true,
 				replies_enabled: true,
+				reply_mention_mode: true,
 				custom_reply_instructions: true,
+				reddit_included_subreddits: true,
+				reddit_excluded_subreddits: true,
 				webhook_url: true,
 				updated_at: true,
 				created_at: true,

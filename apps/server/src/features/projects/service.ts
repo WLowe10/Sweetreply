@@ -3,7 +3,13 @@ import { prisma } from "@/lib/db";
 import type { Project } from "@sweetreply/prisma";
 
 export class ProjectsService {
-	public async userOwnsProject(userId: string, projectId: string): Promise<Project | null> {
+	public async userOwnsProject({
+		userId,
+		projectId,
+	}: {
+		userId: string;
+		projectId: string;
+	}): Promise<Project | null> {
 		// const user = await authService.getUser(userId);
 
 		// if (!user) {

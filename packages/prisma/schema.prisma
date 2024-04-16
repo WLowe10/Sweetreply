@@ -143,6 +143,14 @@ model Project {
     replies_enabled           Boolean @default(true)
     custom_reply_instructions String?
 
+    reply_mention_mode String? @default("name")
+    // reply_should_include_url
+
+    // reddit settings
+
+    reddit_included_subreddits String[]
+    reddit_excluded_subreddits String[]
+
     webhook_url String?
     created_at  DateTime  @default(now())
     updated_at  DateTime? @updatedAt

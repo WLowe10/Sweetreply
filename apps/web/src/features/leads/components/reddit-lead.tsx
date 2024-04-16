@@ -8,6 +8,7 @@ import {
 	type TextProps,
 	Title,
 	Tooltip,
+	Spoiler,
 } from "@mantine/core";
 import { formatRelative } from "date-fns";
 import type { Lead } from "@sweetreply/prisma";
@@ -58,7 +59,9 @@ export const RedditLead = ({ lead }: Props) => {
 					</Group>
 					<Stack>
 						<Title order={4}>{lead.title}</Title>
-						<Text>{lead.content}</Text>
+						<Spoiler maxHeight={120} showLabel="Show more" hideLabel="hide">
+							{lead.content}
+						</Spoiler>
 					</Stack>
 				</Stack>
 			</Card>

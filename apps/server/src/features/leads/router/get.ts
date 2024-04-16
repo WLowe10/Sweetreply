@@ -1,5 +1,6 @@
 import { authenticatedProcedure } from "@/trpc";
 import { z } from "zod";
+import { leadNotFound } from "../errors";
 
 export const getLeadInputSchema = z.object({
 	id: z.string().uuid(),
@@ -7,12 +8,25 @@ export const getLeadInputSchema = z.object({
 
 export const getLeadHandler = authenticatedProcedure
 	.input(getLeadInputSchema)
-	.query(({ input, ctx }) => {
-		// check to make sure user can read lead
-
-		return ctx.prisma.lead.findFirst({
+	.query(async ({ input, ctx }) => {
+		const lead = await ctx.prisma.lead.findFirst({
 			where: {
 				id: input.id,
 			},
 		});
+
+		if (!lead) {
+			throw leadNotFound();
+		}
+
+		const userOwnsProject = await ctx.projectsService.userOwnsProject({
+			userId: ctx.user.id,
+			projectId: lead.project_id,
+		});
+
+		if (!userOwnsProject) {
+			throw leadNotFound();
+		}
+
+		return lead;
 	});

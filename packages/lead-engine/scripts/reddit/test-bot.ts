@@ -12,8 +12,8 @@ async function testBot() {
 	// should consider delays between significant requests (POST)
 
 	await redditBot.comment({
-		postId: "1bxqprr",
-		subredditName: "tarkovroyale",
+		postId: "kzmv3af",
+		subredditName: "replyon",
 		content: `Hello world ${Date.now()}`,
 	});
 }

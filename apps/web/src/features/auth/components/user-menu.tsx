@@ -5,6 +5,7 @@ import {
 	Button,
 	Group,
 	Menu,
+	Skeleton,
 	Text,
 	UnstyledButton,
 	useMantineTheme,
@@ -41,7 +42,7 @@ export const UserMenu = () => {
 							</Group>
 						</UnstyledButton>
 					) : (
-						<UnstyledButton>Please sign in</UnstyledButton>
+						<Skeleton height={75} />
 					)}
 				</Menu.Target>
 				<Menu.Dropdown>

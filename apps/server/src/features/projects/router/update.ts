@@ -5,12 +5,12 @@ import { projectNotFound } from "../errors";
 export const updateProjectHandler = authenticatedProcedure
 	.input(updateProjectInputSchema)
 	.mutation(async ({ input, ctx }) => {
-		const userCanUpdateProject = await ctx.projectsService.userOwnsProject(
-			ctx.user.id,
-			input.id
-		);
+		const userOwnsProject = await ctx.projectsService.userOwnsProject({
+			userId: ctx.user.id,
+			projectId: input.id,
+		});
 
-		if (!userCanUpdateProject) {
+		if (!userOwnsProject) {
 			throw projectNotFound();
 		}
 

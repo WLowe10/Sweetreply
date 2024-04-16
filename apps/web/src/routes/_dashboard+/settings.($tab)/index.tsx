@@ -3,8 +3,9 @@ import { ResourceContainer } from "@/components/resource-container";
 import { buildPageTitle } from "@/lib/utils";
 import { Tabs } from "@mantine/core";
 import { GeneralForm } from "./general-form";
-import { NotificationsForm } from "./notifications-form";
+import { SitesForm } from "./sites-form";
 import { ReplyForm } from "./reply-form";
+import { NotificationsForm } from "./notifications-form";
 
 export const meta: MetaFunction = () => [{ title: buildPageTitle("Settings") }];
 
@@ -21,11 +22,15 @@ export default function SettingsPage() {
 			>
 				<Tabs.List>
 					<Tabs.Tab value="general">General</Tabs.Tab>
+					<Tabs.Tab value="sites">Sites</Tabs.Tab>
 					<Tabs.Tab value="reply">Reply</Tabs.Tab>
 					<Tabs.Tab value="notifications">Notifications</Tabs.Tab>
 				</Tabs.List>
 				<Tabs.Panel value="general">
 					<GeneralForm />
+				</Tabs.Panel>
+				<Tabs.Panel value="sites">
+					<SitesForm />
 				</Tabs.Panel>
 				<Tabs.Panel value="reply">
 					<ReplyForm />

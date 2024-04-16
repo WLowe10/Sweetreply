@@ -8,14 +8,11 @@ import { ActionIcon, Badge, Flex, Menu, Skeleton, Table, Text } from "@mantine/c
 import { IconDots } from "@tabler/icons-react";
 import { useLocalProject } from "@/features/projects/hooks/use-local-project";
 import { useDisclosure } from "@mantine/hooks";
-import { PreviewLeadModal } from "@/features/leads/components/preview-lead-modal";
 import { Link, type MetaFunction } from "@remix-run/react";
 
 export const meta: MetaFunction = () => [{ title: buildPageTitle("Leads") }];
 
 const Row = (lead: any) => {
-	const [isOpen, { open, close }] = useDisclosure();
-
 	return (
 		<Table.Tr>
 			<Table.Td>
@@ -82,14 +79,19 @@ export default function LeadsPage() {
 	const [projectId] = useLocalProject();
 	const params = useDataTableParams();
 
-	const getLeadsQuery = trpc.leads.getMany.useQuery({
-		projectId: projectId,
-		query: params.query ?? undefined,
-		pagination: {
-			page: params.page - 1,
-			limit: params.limit,
+	const getLeadsQuery = trpc.leads.getMany.useQuery(
+		{
+			projectId: projectId,
+			query: params.query ?? undefined,
+			pagination: {
+				page: params.page - 1,
+				limit: params.limit,
+			},
 		},
-	});
+		{
+			enabled: !!projectId,
+		}
+	);
 
 	return (
 		<ResourceContainer title="Leads" subtitle="View all of your leads and replies">

@@ -13,6 +13,8 @@ export const envSchema = z.object({
 	DB_URL: z.string(),
 	COOKIE_SECRET: z.string(),
 	EMAIL_VERIFICATION_SECRET: z.string(),
+	JOBS_DISABLED: envBool.optional(),
+	AUTH_REGISTRATION_DISABLED: envBool.optional(),
 
 	// --- ADD CUSTOM ENV VARIABLES BELOW ---
 
@@ -23,13 +25,7 @@ export const envSchema = z.object({
 	AWS_SES_SENDER: z.string(),
 	AWS_S3_BUCKET: z.string(),
 	STRIPE_SECRET_KEY: z.string(),
-	JOBS_DISABLED: envBool.optional(),
-	AUTH_REGISTRATION_DISABLED: envBool.optional(),
-
-	REDDIT_CLIENT_ID: z.string(),
-	REDDIT_CLIENT_SECRET: z.string(),
-	REDDIT_USERNAME: z.string(),
-	REDDIT_PASSWORD: z.string(),
+	OPEN_AI_KEY: z.string(),
 });
 
 export const env = envSchema.parse(process.env);
