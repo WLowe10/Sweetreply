@@ -23,6 +23,7 @@ export const getProjectHandler = authenticatedProcedure
 			select: {
 				id: true,
 				name: true,
+				tokens: true,
 				website_url: true,
 				description: true,
 				query: true,

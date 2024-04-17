@@ -14,8 +14,9 @@ async function test() {
 	await new Promise((res) => setTimeout(res, 1000));
 
 	await bot.comment({
-		postId: "1c4dbi3",
-		content: "nested reply",
+		postId: "kzub0mc",
+		targetType: "comment",
+		content: "nested reply first automated test",
 		subredditName: "replyon",
 	});
 }

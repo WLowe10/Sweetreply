@@ -80,7 +80,7 @@ model BotError {
     id      String   @id @default(uuid())
     bot_id  String
     message String
-    date    DateTime
+    date    DateTime @default(now())
 
     bot Bot @relation(fields: [bot_id], references: [id], onDelete: Cascade)
 
@@ -142,15 +142,14 @@ model Project {
 
     reply_mention_mode        String? @default("name")
     custom_reply_instructions String?
-    // reply_should_include_url
 
     // reddit settings
-
     reddit_monitor_enabled     Boolean  @default(true)
     reddit_replies_enabled     Boolean  @default(true)
     reddit_included_subreddits String[]
     reddit_excluded_subreddits String[]
 
+    tokens      Int       @default(0)
     webhook_url String?
     created_at  DateTime  @default(now())
     updated_at  DateTime? @updatedAt

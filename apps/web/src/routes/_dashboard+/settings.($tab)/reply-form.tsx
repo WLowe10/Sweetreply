@@ -27,7 +27,6 @@ export const ReplyForm = () => {
 	const form = useForm<UpdateProjectInputType["data"]>({
 		resolver: zodResolver(updateProjectInputSchema.shape.data),
 		values: {
-			replies_enabled: project?.replies_enabled ?? false,
 			reply_mention_mode: (project?.reply_mention_mode as any) ?? "name",
 			custom_reply_instructions: project?.custom_reply_instructions ?? "",
 		},
@@ -60,23 +59,11 @@ export const ReplyForm = () => {
 		<Box mt={"sm"}>
 			<form onSubmit={handleSubmit}>
 				<Stack>
-					<Controller
-						name="replies_enabled"
-						control={form.control}
-						render={({ field }) => (
-							<Switch
-								label="Enable replies"
-								description="When enabled, we will automatically reply to leads on your behalf"
-								onChange={field.onChange}
-								checked={field.value}
-							/>
-						)}
-					/>
-					<Switch
+					{/* <Switch
 						label="Engagement (COMING SOON)"
 						description="When enabled, our bot will like the post and follow the user after replying"
 						disabled={true}
-					/>
+					/> */}
 					<Controller
 						name="reply_mention_mode"
 						control={form.control}
@@ -106,6 +93,8 @@ export const ReplyForm = () => {
 						autoComplete="off"
 						autoCapitalize="off"
 						spellCheck="false"
+						resize="vertical"
+						error={form.formState.errors.custom_reply_instructions?.message}
 						{...form.register("custom_reply_instructions")}
 					/>
 					<Button type="submit" disabled={!form.formState.isDirty}>

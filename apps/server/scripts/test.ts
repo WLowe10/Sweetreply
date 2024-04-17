@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { generateReplyQueue } from "../src/features/leads/queues/generate-reply";
+import { generateReplyQueue } from "../src/features/lead-engine/queues/process-lead";
 
 async function start() {
 	await new Promise((resolve) => setTimeout(resolve, 1000));

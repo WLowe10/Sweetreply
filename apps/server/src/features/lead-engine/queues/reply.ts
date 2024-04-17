@@ -4,10 +4,10 @@ import { prisma } from "@/lib/db";
 import { env } from "@/env";
 import { sleep } from "@sweetreply/shared/lib/utils";
 import { RedditBot } from "@sweetreply/bots";
+import { PassThrough } from "stream";
 
 export type ReplyQueueJobData = {
 	lead_id: string;
-	content: string;
 };
 
 const replyQueue = new Queue<ReplyQueueJobData>("reply", {
@@ -18,6 +18,7 @@ const replyQueue = new Queue<ReplyQueueJobData>("reply", {
 		duration: 1000,
 	},
 	defaultJobOptions: {
+		// for now, don't retry
 		attempts: 1,
 	},
 });
@@ -25,7 +26,7 @@ const replyQueue = new Queue<ReplyQueueJobData>("reply", {
 replyQueue.process(async (job) => {
 	const jobData = job.data;
 
-	logger.info(`Processing reply job for lead ${job.data.lead_id}`);
+	logger.info(`Processing reply job for lead ${jobData.lead_id}`);
 
 	const lead = await prisma.lead.findUnique({
 		where: {
@@ -33,12 +34,8 @@ replyQueue.process(async (job) => {
 		},
 	});
 
-	if (!lead) {
-		throw new Error(`Lead ${jobData.lead_id} not found`);
-	}
-
-	if (lead.replied_at) {
-		throw new Error(`Lead ${jobData.lead_id} already has a reply`);
+	if (!lead || lead.replied_at || !lead.reply) {
+		return;
 	}
 
 	const project = await prisma.project.findUnique({
@@ -48,7 +45,7 @@ replyQueue.process(async (job) => {
 	});
 
 	if (!project) {
-		throw new Error("Project not found");
+		return;
 	}
 
 	// the lead engine cycles through each bot
@@ -76,37 +73,54 @@ replyQueue.process(async (job) => {
 		},
 	});
 
-	if (lead.platform === "reddit") {
-		const replyBot = await new RedditBot(botAccount);
+	try {
+		if (lead.platform === "reddit") {
+			const replyBot = await new RedditBot({
+				username: botAccount.username,
+				password: botAccount.password,
+			});
 
-		console.log("logging in");
-		await replyBot.login();
+			await replyBot.login();
 
-		// wait 2.5 seconds before commenting after logging in. Might be worthwile to make this slightly random
-		await sleep(2500);
+			// wait 2.5 seconds before commenting after logging in. Might be worthwile to make this slightly random
+			await sleep(2500);
 
-		// a reddit lead will have a channel (the subreddit name)
-		console.log("commenting");
+			// a reddit lead will have a channel (the subreddit name)
 
-		await replyBot.comment({
-			postId: lead.remote_id,
-			content: jobData.content,
-			subredditName: lead.channel as string,
-		});
+			await replyBot.comment({
+				targetType: lead.type as "post" | "comment",
+				postId: lead.remote_id,
+				content: lead.reply,
+				subredditName: lead.channel as string,
+			});
 
-		await prisma.lead.update({
-			where: {
-				id: lead.id,
-			},
+			await prisma.lead.update({
+				where: {
+					id: lead.id,
+				},
+				data: {
+					replied_at: new Date(),
+					reply: lead.reply,
+					reply_bot_id: botAccount.id,
+				},
+			});
+		}
+	} catch (err: any) {
+		await prisma.botError.create({
 			data: {
-				replied_at: new Date(),
-				reply: jobData.content,
-				reply_bot_id: botAccount.id,
+				bot_id: botAccount.id,
+				message: err.message as string,
 			},
 		});
-	}
 
-	// logger.info(`Replying to lead ${lead_id} with bot account ${bot.username}`);
+		throw err;
+	}
+});
+
+replyQueue.on("failed", (job, err) => {
+	logger.error(
+		`Reply job [${job.id}][lead:${job.data.lead_id}] failed with error: ${err.message}`
+	);
 });
 
 export { replyQueue };

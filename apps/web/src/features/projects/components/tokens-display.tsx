@@ -2,8 +2,10 @@ import { Button, Card, Group, Stack, Text } from "@mantine/core";
 import { IconCoin, IconCoins } from "@tabler/icons-react";
 import { BuyTokensModal } from "./buy-tokens-modal";
 import { useDisclosure } from "@mantine/hooks";
+import { useCurrentProjectQuery } from "../hooks/use-current-project";
 
 export const TokensDisplay = () => {
+	const { data } = useCurrentProjectQuery();
 	const [opened, { open, close }] = useDisclosure(false);
 
 	return (
@@ -12,7 +14,7 @@ export const TokensDisplay = () => {
 			<Stack>
 				<Group gap="xs">
 					<IconCoins size={18} color="var(--mantine-color-yellow-5)" />
-					<Text size="sm">100 tokens</Text>
+					<Text size="sm">{data?.tokens} tokens</Text>
 				</Group>
 
 				<Button size="xs" onClick={open}>

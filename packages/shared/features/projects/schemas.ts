@@ -60,5 +60,11 @@ export const updateProjectInputSchema = z.object({
 		.partial(),
 });
 
+export const buyTokensInputSchema = z.object({
+	project_id: baseProjectSchema.shape.id,
+	amount: z.number().int().positive().max(10000),
+});
+
 export type CreateProjectInputType = z.infer<typeof createProjectInputSchema>;
 export type UpdateProjectInputType = z.infer<typeof updateProjectInputSchema>;
+export type BuyTokensInputType = z.infer<typeof buyTokensInputSchema>;

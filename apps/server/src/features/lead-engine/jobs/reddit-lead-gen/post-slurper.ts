@@ -5,6 +5,7 @@ import { prisma } from "@/lib/db";
 import { generateDescendingRedditIds, generateBatchedRedditInfoUrls } from "./utils";
 import { logger } from "@/lib/logger";
 import type { Prisma, Project } from "@sweetreply/prisma";
+import { processLeadQueue } from "../../queues/process-lead";
 
 export class RedditPostSlurper {
 	private client: Axios;
@@ -102,10 +103,9 @@ export class RedditPostSlurper {
 								},
 							});
 
-							// await replyQueue.add({
-							// 	lead_id: newLead.id,
-							// 	content: "Hello!",
-							// });
+							processLeadQueue.add({
+								lead_id: newLead.id,
+							});
 						}
 					}
 				}

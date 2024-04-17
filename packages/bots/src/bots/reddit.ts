@@ -80,10 +80,12 @@ export class RedditBot {
 
 	public async comment({
 		postId,
+		targetType,
 		subredditName,
 		content,
 	}: {
 		postId: string;
+		targetType: "post" | "comment";
 		subredditName: string;
 		content: string;
 	}) {
@@ -91,55 +93,82 @@ export class RedditBot {
 			throw new Error("Not authenticated");
 		}
 
-		const redditPostTypeId = `t3_${postId}`;
+		const redditPrefix = targetType === "post" ? "t3" : "t1";
+		const redditPrefixedId = `${redditPrefix}_${postId}`;
 
-		// get the page with the form id defined
+		// it seems like the id is optional. I'm not sure if it would minimize the change of being banned, but i'm ignoring it for now
 
-		const getCommentResponse = await axios.get(
-			`https://old.reddit.com/r/${subredditName}/comments/${postId}`,
-			{
-				maxRedirects: 1,
-				headers: {
-					"Accept":
-						"text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
-					"Accept-Language": "en-US,en;q=0.8",
-					"Connection": "keep-alive",
-					"Referer": `https://old.reddit.com/search?q=${subredditName}`,
-					"Sec-Fetch-Dest": "document",
-					"Sec-Fetch-Mode": "navigate",
-					"Sec-Fetch-Site": "same-origin",
-					"Sec-Fetch-User": "?1",
-					"Sec-GPC": "1",
-					"Upgrade-Insecure-Requests": "1",
-					"sec-ch-ua": '"Brave";v="123", "Not:A-Brand";v="8", "Chromium";v="123"',
-					"sec-ch-ua-mobile": "?0",
-					"sec-ch-ua-platform": '"Windows"',
-				},
-			}
-		);
+		// let commentData;
 
-		const root = parse(getCommentResponse.data);
-		const formElement = root.querySelector(".usertext.warn-on-unload");
+		// if (targetType === "post") {
+		// 	// get the page with the form id defined
+		// 	const getCommentResponse = await axios.get(
+		// 		`https://old.reddit.com/r/${subredditName}/comments/${postId}`,
+		// 		{
+		// 			maxRedirects: 1,
+		// 			headers: {
+		// 				"Accept":
+		// 					"text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+		// 				"Accept-Language": "en-US,en;q=0.8",
+		// 				"Connection": "keep-alive",
+		// 				"Referer": `https://old.reddit.com/search?q=${subredditName}`,
+		// 				"Sec-Fetch-Dest": "document",
+		// 				"Sec-Fetch-Mode": "navigate",
+		// 				"Sec-Fetch-Site": "same-origin",
+		// 				"Sec-Fetch-User": "?1",
+		// 				"Sec-GPC": "1",
+		// 				"Upgrade-Insecure-Requests": "1",
+		// 				"sec-ch-ua": '"Brave";v="123", "Not:A-Brand";v="8", "Chromium";v="123"',
+		// 				"sec-ch-ua-mobile": "?0",
+		// 				"sec-ch-ua-platform": '"Windows"',
+		// 			},
+		// 		}
+		// 	);
 
-		if (!formElement) {
-			throw new Error("Could not parse form");
-		}
+		// 	const root = parse(getCommentResponse.data);
+		// 	const formElement = root.querySelector(".usertext.warn-on-unload");
 
-		const formId = formElement.getAttribute("id");
+		// 	if (!formElement) {
+		// 		throw new Error("Could not parse form");
+		// 	}
 
-		const commentData = new URLSearchParams({
-			thing_id: redditPostTypeId,
-			text: content,
-			id: `#${formId}`,
+		// 	const formId = formElement.getAttribute("id");
+
+		// 	commentData = new URLSearchParams({
+		// 		thing_id: redditPrefixedId,
+		// 		r: subredditName,
+		// 		// id: `#${formId}`,
+		// 		text: content,
+		// 		uh: this.modhash as string,
+		// 		renderstyle: "html",
+		// 	});
+		// } else {
+		// 	commentData = new URLSearchParams({
+		// 		thing_id: redditPrefixedId,
+		// 		r: subredditName,
+		// 		id: `#commentreply_${redditPrefixedId}`,
+		// 		text: content,
+		// 		uh: this.modhash as string,
+		// 		renderstyle: "html",
+		// 	});
+		// }
+
+		const commentData: any = {
+			thing_id: redditPrefixedId,
 			r: subredditName,
+			text: content,
 			uh: this.modhash as string,
 			renderstyle: "html",
-		});
+		};
+
+		if (targetType === "comment") {
+			commentData.id = `#commentreply_${redditPrefixedId}`;
+		}
 
 		// submit the actual comment
 		const postCommentResponse = await this.client.post(
 			`${oldRedditBase}/comment`,
-			commentData,
+			new URLSearchParams(commentData),
 			{
 				headers: {
 					"Accept": "application/json, text/javascript, */*; q=0.01",

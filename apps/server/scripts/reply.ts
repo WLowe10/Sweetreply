@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { replyQueue } from "../src/features/leads/queues/reply";
+import { replyQueue } from "../src/features/lead-engine/queues/reply";
 
 async function start() {
 	replyQueue.add({

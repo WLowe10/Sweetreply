@@ -73,12 +73,13 @@ export const GeneralForm = () => {
 					/>
 					<Textarea
 						label="Description"
-						error={form.formState.errors.description?.message}
 						description="Describe your product or service. This will be used to generate replies."
 						autoCorrect="off"
 						autoComplete="off"
 						autoCapitalize="off"
 						spellCheck="false"
+						resize="vertical"
+						error={form.formState.errors.description?.message}
 						{...form.register("description")}
 					/>
 					<Textarea
@@ -88,6 +89,7 @@ export const GeneralForm = () => {
 						autoComplete="off"
 						autoCapitalize="off"
 						spellCheck="false"
+						resize="vertical"
 						error={form.formState.errors.query?.message}
 						{...form.register("query")}
 					/>
