@@ -19,7 +19,7 @@ const replyQueue = new Queue<ReplyQueueJobData>("reply", {
 	},
 	defaultJobOptions: {
 		// for now, don't retry
-		attempts: 1,
+		attempts: 3,
 	},
 });
 

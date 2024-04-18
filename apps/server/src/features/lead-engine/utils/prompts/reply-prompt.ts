@@ -18,19 +18,30 @@ export const replyPrompt = ({ project, lead }: ReplyPromptData) => {
 Consider the following information about a product: 
 
 * Product Name: ${project.name}
-* Product URL: ${project.website_url}
+${
+	project.reply_mention_mode === "name_or_url" || project.reply_mention_mode === "url"
+		? `* Product URL: ${project.website_url}\n`
+		: ""
+}
 * Product Description: ${project.description}
 
-Please note that you should only reply to the post if the it is relevant to the product.
-If a reply should be generated, generate a reply while considering the following
+You should only generate a reply to the post if it is relevant to the product.
+
+When generating a reply, take into account:
 
 * The tone and sentiment of the social media post.
 * The relevance of the product to the post.
 * Providing value or addressing any questions raised in the post.
 
-The reply should mention the product with ${mentionModeText}.
+Please ensure that the reply addresses the user's questions or concerns directly and offers relevant information about the product.
 
-Given a social media post, create a JSON object that satisfies the following JSON schema.
+The reply should mention the product with ${mentionModeText}. ${
+		project.custom_reply_instructions && project.custom_reply_instructions.length > 0
+			? project.custom_reply_instructions
+			: ""
+	}
+
+Given a social media post, create a JSON object that satisfies the following JSON schema:
 \`\`\`
 {
     "type": "object",
@@ -45,15 +56,6 @@ Given a social media post, create a JSON object that satisfies the following JSO
 }
 \`\`\`
 
-Here is the post.
-
-"""${lead.title ? `${lead.title}\n${lead.content}` : lead.content}"""
-
-Please ensure that the reply addresses the user's question and mentions ${mentionModeText} as instructed above.
-${
-	project.custom_reply_instructions && project.custom_reply_instructions.length > -1
-		? `Extra instuctions: ${project.custom_reply_instructions}\n`
-		: ""
-}
-`;
+Here is the post:
+\`\`\`${lead.title ? `${lead.title}\n${lead.content}` : lead.content}\`\`\``;
 };

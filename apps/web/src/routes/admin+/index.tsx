@@ -2,9 +2,10 @@ import { ResourceContainer } from "@/components/resource-container";
 import { StatCard } from "@/components/stat-card";
 import { useMe } from "@/features/auth/hooks";
 import { trpc } from "@/lib/trpc";
+import { buildPageTitle } from "@/lib/utils";
 import { Sparkline } from "@mantine/charts";
 import { Box, SimpleGrid, Skeleton } from "@mantine/core";
-import { Link } from "@remix-run/react";
+import { Link, MetaFunction } from "@remix-run/react";
 import {
 	IconRadar,
 	IconMessage,
@@ -14,6 +15,8 @@ import {
 	IconBox,
 	IconRobotFace,
 } from "@tabler/icons-react";
+
+export const meta: MetaFunction = () => [{ title: buildPageTitle("Home", "Sweetreply Admin") }];
 
 // obviously add auth checks here
 

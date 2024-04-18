@@ -19,6 +19,10 @@ import { trpc } from "@/lib/trpc";
 import { IconChevronUp, IconDots } from "@tabler/icons-react";
 import { useSearchParams } from "@remix-run/react";
 import { ResourceContainer } from "@/components/resource-container";
+import { buildPageTitle } from "@/lib/utils";
+import { MetaFunction } from "@remix-run/react";
+
+export const meta: MetaFunction = () => [{ title: buildPageTitle("Users", "Sweetreply Admin") }];
 
 export default function UsersPage() {
 	const [params, setParams] = useSearchParams();

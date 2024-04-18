@@ -16,7 +16,8 @@ export const WelcomeEmail = ({ firstName }: WelcomeEmailProps) => {
 		<Container>
 			<Header>Welcome to the team</Header>
 			<MjmlText>
-				Welcome {firstName}! We are so exited for you to try out {appConfig.name}
+				Welcome {firstName}! We are so exited for you to be part of the {appConfig.name}{" "}
+				team!
 			</MjmlText>
 			<MjmlSpacer />
 			<Button href={verifyLink}>Verify Email</Button>

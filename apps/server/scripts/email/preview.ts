@@ -6,7 +6,7 @@ import { render } from "@faire/mjml-react/utils/render";
 import { WelcomeEmail } from "../../src/email/templates/welcome";
 import { VerifyAccountEmail } from "../../src/email/templates/verify-account";
 import { PasswordResetEmail } from "../../src/email/templates/password-reset";
-import { TeamInvitationEmail } from "../../src/email/templates/team-invitation";
+import { LowOnTokensEmail } from "../../src/email/templates/low-on-tokens";
 
 const outDir = path.resolve(process.cwd(), "out", "email");
 
@@ -59,14 +59,12 @@ generateEmailPreview({
 });
 
 generateEmailPreview({
-	name: "team-invitation",
-	component: TeamInvitationEmail,
+	name: "low-on-tokens",
+	component: LowOnTokensEmail,
 	props: {
-		teamId: "123",
-		inviteeName: "Obama",
-		inviterName: "Joe Biden",
-		teamName: "USA",
-		inviterEmail: "jb@gmail.com",
+		firstName: "John",
+		projectId: "123",
+		projectName: "Olathe Mowing",
 	},
 });
 

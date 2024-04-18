@@ -1,9 +1,11 @@
 import { trpc } from "@/lib/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
+	Anchor,
 	Button,
 	Card,
 	Divider,
+	Flex,
 	Group,
 	Modal,
 	NumberInput,
@@ -16,7 +18,9 @@ import { buyTokensInputSchema } from "@sweetreply/shared/features/projects/schem
 import { IconCircleCheck } from "@tabler/icons-react";
 import { Controller, useForm } from "react-hook-form";
 import { useLocalProject } from "../hooks/use-local-project";
+import { getTokensPrice, getTokensTier } from "@sweetreply/shared/features/projects/utils";
 import type { z } from "zod";
+import { Link } from "@remix-run/react";
 
 export type BuyTokensModalProps = {
 	modalProps: ModalProps;
@@ -33,7 +37,7 @@ export const BuyTokensModal = ({ modalProps }: BuyTokensModalProps) => {
 	const form = useForm<z.infer<typeof buyTokensFormSchema>>({
 		resolver: zodResolver(buyTokensFormSchema),
 		defaultValues: {
-			amount: 20,
+			amount: 50,
 		},
 	});
 
@@ -52,6 +56,8 @@ export const BuyTokensModal = ({ modalProps }: BuyTokensModalProps) => {
 	});
 
 	const amount = form.watch("amount");
+	const tier = getTokensTier(amount);
+	const price = getTokensPrice(amount);
 
 	return (
 		<Modal
@@ -97,28 +103,38 @@ export const BuyTokensModal = ({ modalProps }: BuyTokensModalProps) => {
 				<Divider />
 				<form onSubmit={handleSubmit}>
 					<Stack>
-						<Controller
-							name="amount"
-							control={form.control}
-							render={({ field, fieldState }) => (
-								<NumberInput
-									label="Amount"
-									description="Enter the amount of tokens you'd like to purchase"
-									error={fieldState.error?.message}
-									value={field.value}
-									allowDecimal={false}
-									allowLeadingZeros={false}
-									allowNegative={false}
-									onChange={field.onChange}
-								/>
-							)}
-						/>
+						<div>
+							<Controller
+								name="amount"
+								control={form.control}
+								render={({ field, fieldState }) => (
+									<NumberInput
+										label="Amount"
+										description="Enter the amount of tokens you'd like to purchase"
+										error={fieldState.error?.message}
+										value={field.value}
+										allowDecimal={false}
+										allowLeadingZeros={false}
+										allowNegative={false}
+										onChange={field.onChange}
+									/>
+								)}
+							/>
+							<Flex justify="space-between" align="center" mt="xs">
+								<Anchor component={Link} to="/pricing" size="xs">
+									Pricing
+								</Anchor>
+								<Text size="xs">{`${tier?.name} ($${tier?.ppt.toFixed(
+									2
+								)}/token)`}</Text>
+							</Flex>
+						</div>
 						<Button
 							type="submit"
 							fullWidth
 							disabled={!form.formState.isValid}
 							loading={buyTokensMutation.isLoading}
-						>{`Buy ${amount} tokens ($${0.5 * amount})`}</Button>
+						>{`Buy ${amount} tokens ($${price.toFixed(2)})`}</Button>
 					</Stack>
 				</form>
 			</Stack>

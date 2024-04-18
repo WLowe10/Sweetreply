@@ -14,6 +14,7 @@ export const getEnv = (key?: string) => {
 // 	return key ? env[key] : env;
 // };
 
-export const buildPageTitle = (title: string) => `${title} | ${appConfig.name}`;
+export const buildPageTitle = (title: string, appName: string = appConfig.name) =>
+	`${title} | ${appName}`;
 
 export const buildAPIUrl = (path: string) => getEnv("API_URL") + path;

@@ -15,7 +15,8 @@ export const VerifyAccountEmail = ({ verificationToken }: VerifyAccountEmailProp
 		<Container>
 			<Header>Verify your account</Header>
 			<MjmlText>
-				Verify this email address for your Cybership account by clicking the link below.
+				Verify this email address for your {appConfig.name} account by clicking the link
+				below.
 			</MjmlText>
 			<MjmlSpacer />
 			<Button href={verifyLink}>Verify Email Address</Button>

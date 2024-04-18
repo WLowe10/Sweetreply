@@ -110,23 +110,34 @@ processLeadQueue.process(async (job) => {
 
 		const result = await generateReplyCompletion({ lead, project });
 
-		if (result.shouldReply) {
-			await prisma.lead.update({
-				where: {
-					id: lead.id,
+		await prisma.project.update({
+			where: {
+				id: project.id,
+			},
+			data: {
+				tokens: {
+					decrement: 1,
 				},
-				data: {
-					reply: result.reply,
-				},
-			});
+			},
+		});
 
+		await prisma.lead.update({
+			where: {
+				id: lead.id,
+			},
+			data: {
+				reply: result.reply,
+			},
+		});
+
+		if (result.shouldReply) {
 			// sends the lead to the reply queue after generating the reply
-			replyQueue.add(
-				{ lead_id: lead.id },
-				{
-					delay: 60000,
-				}
-			);
+			// replyQueue.add(
+			// 	{ lead_id: lead.id },
+			// 	{
+			// 		delay: 60000,
+			// 	}
+			// );
 		}
 	}
 });

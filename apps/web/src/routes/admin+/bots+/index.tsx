@@ -7,6 +7,10 @@ import { Table, Badge, Menu, ActionIcon, Skeleton, Center, Flex } from "@mantine
 import { useClipboard, useDisclosure } from "@mantine/hooks";
 import { IconCheck, IconCopy, IconDots, IconX } from "@tabler/icons-react";
 import { EditBotModal } from "@/features/admin/components/edit-bot-modal";
+import { MetaFunction } from "@remix-run/react";
+import { buildPageTitle } from "@/lib/utils";
+
+export const meta: MetaFunction = () => [{ title: buildPageTitle("Bots", "Sweetreply Admin") }];
 
 const Row = (bot: any) => {
 	const clipboard = useClipboard();

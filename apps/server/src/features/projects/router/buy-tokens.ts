@@ -1,7 +1,7 @@
 import { authenticatedProcedure } from "@/trpc";
 import { stripe } from "@/lib/client/stripe";
 import { buyTokensInputSchema } from "@sweetreply/shared/features/projects/schemas";
-import { projectConstants } from "@sweetreply/shared/features/projects/constants";
+import { getTokensPrice } from "@sweetreply/shared/features/projects/utils";
 import { buildFrontendUrl } from "@/lib/utils";
 import { TokenCheckoutMetadataType } from "../schemas";
 import { projectNotFound } from "../errors";
@@ -47,8 +47,9 @@ export const buyTokensHandler = authenticatedProcedure
 						currency: "usd",
 						product_data: {
 							name: `${input.amount} Sweetreply tokens`,
+							description: `${input.amount} tokens to use on Sweetreply`,
 						},
-						unit_amount: projectConstants.token_price * 100 * input.amount, // converts to cents as an integer
+						unit_amount: Math.floor(getTokensPrice(tokenAmount) * 100),
 					},
 				},
 			],
