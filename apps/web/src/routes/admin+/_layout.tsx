@@ -1,7 +1,14 @@
 import { UserMenu } from "@/features/auth/components/user-menu";
 import { Badge, Box, Flex, NavLink, Stack } from "@mantine/core";
 import { Link, Outlet, useLocation } from "@remix-run/react";
-import { IconLayoutDashboard, IconMessageReply, IconSettings } from "@tabler/icons-react";
+import {
+	IconBox,
+	IconHome,
+	IconLayoutDashboard,
+	IconMessageReply,
+	IconSettings,
+	IconUser,
+} from "@tabler/icons-react";
 
 export default function AdminLayout() {
 	const location = useLocation();
@@ -22,22 +29,33 @@ export default function AdminLayout() {
 					<Box>
 						<NavLink
 							component={Link}
-							active={location.pathname.includes("users")}
+							active={location.pathname === "/admin"}
 							color="gray"
-							to="./users"
-							label="Users"
-							leftSection={
-								<IconLayoutDashboard
-									size={18}
-									color="var(--mantine-color-gray-6)"
-								/>
-							}
+							to=""
+							label="Home"
+							leftSection={<IconHome size={18} color="var(--mantine-color-gray-6)" />}
 						/>
 						<NavLink
 							component={Link}
-							active={location.pathname.includes("social-accounts")}
+							active={location.pathname.includes("users")}
 							color="gray"
-							to="./bots"
+							to="users"
+							label="Users"
+							leftSection={<IconUser size={18} color="var(--mantine-color-gray-6)" />}
+						/>
+						<NavLink
+							component={Link}
+							active={location.pathname.includes("projects")}
+							color="gray"
+							to="projects"
+							label="Projects"
+							leftSection={<IconBox size={18} color="var(--mantine-color-gray-6)" />}
+						/>
+						<NavLink
+							component={Link}
+							active={location.pathname.includes("bots")}
+							color="gray"
+							to="bots"
 							label="Bots"
 							leftSection={
 								<IconMessageReply size={18} color="var(--mantine-color-gray-6)" />
