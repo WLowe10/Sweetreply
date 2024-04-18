@@ -10,7 +10,7 @@ import {
 	useMantineTheme,
 } from "@mantine/core";
 import { useMe, useSignOut } from "../hooks";
-import { IconDoor, IconDoorExit, IconDoorOff, IconShield, IconUser } from "@tabler/icons-react";
+import { IconDoorOff, IconShield, IconUser } from "@tabler/icons-react";
 import { ProfileModal } from "./profile-modal";
 import { useDisclosure } from "@mantine/hooks";
 import { Link } from "@remix-run/react";
@@ -22,7 +22,9 @@ export const UserMenu = () => {
 
 	return (
 		<>
-			<ProfileModal modalProps={{ opened: isOpen, onClose: close }} />
+			<ProfileModal
+				modalProps={{ opened: isOpen || (me && !me.verified_at), onClose: close }}
+			/>
 			<Menu width="target">
 				<Menu.Target>
 					{me ? (

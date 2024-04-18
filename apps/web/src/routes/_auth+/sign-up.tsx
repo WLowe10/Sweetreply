@@ -40,8 +40,6 @@ export default function SignUpPage() {
 		resolver: zodResolver(signUpFormSchema),
 	});
 
-	console.log(form.formState.errors);
-
 	return (
 		<AuthFormContainer
 			title="Sign-up for an account"

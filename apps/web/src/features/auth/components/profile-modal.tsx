@@ -19,10 +19,11 @@ import {
 } from "@mantine/core";
 import { updateMeInputSchema } from "@sweetreply/shared/features/auth/schemas";
 import { useForm } from "react-hook-form";
-import { useMe, useSignOut } from "../hooks";
-import { useRequestVerification } from "../hooks/use-request-verification";
 import z from "zod";
+import { useMe, useSignOut } from "../hooks";
 import { IconAlertTriangle, IconCheck } from "@tabler/icons-react";
+import { trpc } from "@/lib/trpc";
+import { notifications } from "@mantine/notifications";
 
 export type ProfileModalProps = {
 	modalProps: ModalProps;
@@ -31,8 +32,9 @@ export type ProfileModalProps = {
 export const ProfileModal = ({ modalProps }: ProfileModalProps) => {
 	const { me, updateMe, mutation: updateMeMutation } = useMe();
 	const { signOut } = useSignOut();
-	const { requestVerification, isLoading: isRequestVerificationLoading } =
-		useRequestVerification();
+
+	const requestVerificationMutation = trpc.auth.requestVerification.useMutation();
+	const requestPasswordResetMutation = trpc.auth.requestPasswordReset.useMutation();
 
 	const form = useForm<z.infer<typeof updateMeInputSchema>>({
 		resolver: zodResolver(updateMeInputSchema),
@@ -41,6 +43,42 @@ export const ProfileModal = ({ modalProps }: ProfileModalProps) => {
 			last_name: me?.last_name,
 		},
 	});
+
+	const requestVerification = () => {
+		requestVerificationMutation.mutate(undefined, {
+			onSuccess: () => {
+				notifications.show({
+					title: "Verification email sent",
+					message: "Make sure to check your spam",
+				});
+			},
+			onError: (err) => {
+				notifications.show({
+					color: "red",
+					title: "Failed to request send verification",
+					message: err.message,
+				});
+			},
+		});
+	};
+
+	const requestPasswordReset = () => {
+		requestPasswordResetMutation.mutate(undefined, {
+			onSuccess: () => {
+				notifications.show({
+					title: "Password reset sent",
+					message: "Make sure to check your spam",
+				});
+			},
+			onError: (err) => {
+				notifications.show({
+					color: "red",
+					title: "Failed to request password reset",
+					message: err.message,
+				});
+			},
+		});
+	};
 
 	const isVerified = me?.verified_at !== null;
 
@@ -84,7 +122,7 @@ export const ProfileModal = ({ modalProps }: ProfileModalProps) => {
 								</Text>
 								<Button
 									size="xs"
-									loading={isRequestVerificationLoading}
+									loading={requestVerificationMutation.isLoading}
 									onClick={requestVerification}
 								>
 									Request verification
@@ -101,14 +139,23 @@ export const ProfileModal = ({ modalProps }: ProfileModalProps) => {
 						>
 							Save changes
 						</Button>
-						<Button type="submit" color="gray" variant="light">
-							Change password
+						<Button
+							color="gray"
+							variant="light"
+							loading={requestPasswordResetMutation.isLoading}
+							onClick={requestPasswordReset}
+						>
+							Reset password
 						</Button>
 						<Button
 							type="submit"
 							color="gray"
 							variant="light"
-							onClick={() => signOut()}
+							onClick={() =>
+								signOut({
+									all: false,
+								})
+							}
 						>
 							Sign out
 						</Button>

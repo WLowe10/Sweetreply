@@ -16,7 +16,12 @@ import {
 	subject as passwordResetEmailSubject,
 	type PasswordResetEmailProps,
 } from "./templates/password-reset";
-import { TeamInvitationEmail, TeamInvitationEmailProps } from "./templates/team-invitation";
+import {
+	LowOnTokensEmail,
+	subject as lowOnTokensEmailSubject,
+	type LowOnTokensEmailProps,
+} from "./templates/low-on-tokens";
+import { env } from "@/env";
 
 export type SendEmailData = {
 	to: string | string[];
@@ -38,8 +43,8 @@ export type RenderedTemplateType = {
 
 export class EmailService {
 	public sendEmail(email: SendEmailData) {
-		const source = email.source || `"Sweetreply" <account@sweetreply.com>`;
-		const replyTo = email.replyTo || [`"Sweetreply Support" <wes@sweetreply.com>`];
+		const source = email.source || `"Sweetreply" <notifications@${env.AWS_SES_SENDER}>`;
+		const replyTo = email.replyTo || [`"Sweetreply Support" <wes@${env.AWS_SES_SENDER}>`];
 		const to = Array.isArray(email.to) ? email.to : [email.to];
 
 		return ses.sendEmail({
@@ -122,10 +127,24 @@ export class EmailService {
 		});
 	}
 
-	public sendTeamInvitation(data: SendTemplateEmailData<TeamInvitationEmailProps>) {
+	// public sendTeamInvitation(data: SendTemplateEmailData<TeamInvitationEmailProps>) {
+	// 	const { html, subject } = this.renderTemplate({
+	// 		template: TeamInvitationEmail,
+	// 		subject: passwordResetEmailSubject,
+	// 		data: data.data,
+	// 	});
+
+	// 	return this.sendEmail({
+	// 		to: data.to,
+	// 		subject,
+	// 		body: html,
+	// 	});
+	// }
+
+	public sendLowOnTokens(data: SendTemplateEmailData<LowOnTokensEmailProps>) {
 		const { html, subject } = this.renderTemplate({
-			template: TeamInvitationEmail,
-			subject: passwordResetEmailSubject,
+			template: LowOnTokensEmail,
+			subject: lowOnTokensEmailSubject,
 			data: data.data,
 		});
 

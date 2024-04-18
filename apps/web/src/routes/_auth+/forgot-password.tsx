@@ -42,7 +42,7 @@ export default function ForgotPasswordPage() {
 						{error}
 					</Alert>
 				)}
-				<Button type="submit" mt="xl" loading={isLoading} fullWidth>
+				<Button type="submit" loading={isLoading} fullWidth>
 					Reset password
 				</Button>
 			</Card>

@@ -6,6 +6,7 @@ import { replyQueue } from "./reply";
 import axios from "axios";
 import { isDiscordWebhookURL } from "@/lib/regex";
 import { buildFrontendUrl } from "@/lib/utils";
+import { projectsService } from "@/features/projects/service";
 
 export type ProcessLeadQueueJobData = {
 	lead_id: string;
@@ -110,16 +111,8 @@ processLeadQueue.process(async (job) => {
 
 		const result = await generateReplyCompletion({ lead, project });
 
-		await prisma.project.update({
-			where: {
-				id: project.id,
-			},
-			data: {
-				tokens: {
-					decrement: 1,
-				},
-			},
-		});
+		// deduct token after generating reply
+		await projectsService.deductToken(project.id);
 
 		await prisma.lead.update({
 			where: {
