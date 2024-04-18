@@ -4,7 +4,7 @@ import { prisma } from "@/lib/db";
 import { env } from "@/env";
 import { sleep } from "@sweetreply/shared/lib/utils";
 import { RedditBot } from "@sweetreply/bots";
-import { PassThrough } from "stream";
+import { botsService } from "@/features/bots/service";
 
 export type ReplyQueueJobData = {
 	lead_id: string;
@@ -48,30 +48,14 @@ replyQueue.process(async (job) => {
 		return;
 	}
 
-	// the lead engine cycles through each bot
-	const botAccount = await prisma.bot.findFirst({
-		where: {
-			platform: lead.platform,
-			active: true,
-		},
-		orderBy: {
-			last_used_at: "asc",
-		},
-	});
+	// the bot service cycles through each bot
+	const botAccount = await botsService.getTop(lead.platform);
 
 	if (!botAccount) {
 		throw new Error(`Lead ${jobData.lead_id} could not find an account to reply with`);
 	}
 
 	// move this bot to the bottom of the stack
-	await prisma.bot.update({
-		where: {
-			id: botAccount.id,
-		},
-		data: {
-			last_used_at: new Date(),
-		},
-	});
 
 	try {
 		if (lead.platform === "reddit") {

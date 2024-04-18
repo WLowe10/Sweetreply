@@ -6,6 +6,8 @@ import { buildPageTitle } from "@/lib/utils";
 import { Card, Center, SimpleGrid, Skeleton, Stack, Text, Title } from "@mantine/core";
 import { formatRelative } from "date-fns";
 import type { MetaFunction } from "@remix-run/react";
+import { StatCard } from "@/features/projects/components/stat-card";
+import { IconCoin, IconMessage, IconRadar } from "@tabler/icons-react";
 
 export const meta: MetaFunction = () => [{ title: buildPageTitle("Dashboard") }];
 
@@ -32,40 +34,21 @@ export default function DashboardPage() {
 					</>
 				) : (
 					<>
-						<Card>
-							<Title order={3}>Leads</Title>
-							<Center p="2rem">
-								<Text size="3rem" fw="bold">
-									{getStatsQuery.data?.leads.count}
-								</Text>
-							</Center>
-							{getStatsQuery.data?.leads.mostRecent && (
-								<Text>
-									Most recent lead{" "}
-									{formatRelative(
-										getStatsQuery.data?.leads.mostRecent,
-										new Date()
-									)}
-								</Text>
-							)}
-						</Card>
-						<Card>
-							<Title order={3}>Replies</Title>
-							<Center p="2rem">
-								<Text size="3rem" fw="bold">
-									{getStatsQuery.data?.replies.count}
-								</Text>
-							</Center>
-							{getStatsQuery.data?.replies.mostRecent && (
-								<Text>
-									Most recent reply{" "}
-									{formatRelative(
-										getStatsQuery.data?.replies.mostRecent,
-										new Date()
-									)}
-								</Text>
-							)}
-						</Card>
+						<StatCard
+							title="Leads"
+							value={getStatsQuery.data?.leads.count || 0}
+							icon={IconRadar}
+						/>
+						<StatCard
+							title="Replies"
+							value={getStatsQuery.data?.replies.count || 0}
+							icon={IconMessage}
+						/>
+						<StatCard
+							title="Tokens"
+							value={getStatsQuery.data?.tokens.count || 0}
+							icon={IconCoin}
+						/>
 					</>
 				)}
 			</SimpleGrid>

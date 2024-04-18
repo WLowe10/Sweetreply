@@ -8,6 +8,12 @@ export const getEnv = (key?: string) => {
 	return key ? env[key] : env;
 };
 
+// export const getPublicEnv = (key?: keyof typeof window.ENV) => {
+// 	const env = isBrowser() ? window.ENV : ({} as any);
+
+// 	return key ? env[key] : env;
+// };
+
 export const buildPageTitle = (title: string) => `${title} | ${appConfig.name}`;
 
 export const buildAPIUrl = (path: string) => getEnv("API_URL") + path;

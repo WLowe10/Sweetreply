@@ -3,6 +3,7 @@ import { logger } from "../lib/logger";
 import { authService } from "../auth/service";
 import { emailService } from "../email/service";
 import { projectsService } from "@/features/projects/service";
+import { botsService } from "@/features/bots/service";
 import type { CreateExpressContextOptions } from "@trpc/server/adapters/express";
 import type { Request, Response } from "express";
 
@@ -20,6 +21,7 @@ function createInnerContext(opts: CreateContextOptions) {
 		authService,
 		emailService,
 		projectsService: projectsService,
+		botsService,
 		user: null,
 		session: null,
 	};

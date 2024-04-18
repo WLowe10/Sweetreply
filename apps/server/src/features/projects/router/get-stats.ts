@@ -61,6 +61,9 @@ export const getStatsHandler = authenticatedProcedure
 		});
 
 		return {
+			tokens: {
+				count: userOwnsProject.tokens,
+			},
 			leads: {
 				count: leadCount,
 				mostRecent: mostRecentLead?.created_at,
