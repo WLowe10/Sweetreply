@@ -62,7 +62,11 @@ export const updateProjectInputSchema = z.object({
 
 export const buyTokensInputSchema = z.object({
 	project_id: baseProjectSchema.shape.id,
-	amount: z.number().int().positive().max(10000),
+	amount: z
+		.number()
+		.int()
+		.positive()
+		.max(10000, { message: "You can't purchase more than 10000 tokens at a time" }),
 });
 
 export type CreateProjectInputType = z.infer<typeof createProjectInputSchema>;

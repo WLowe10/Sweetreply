@@ -30,15 +30,6 @@ export default function LandingLayout() {
 						variant="subtle"
 						color="gray"
 						size="compact-sm"
-						to="/features"
-					>
-						Features
-					</Button>
-					<Button
-						component={Link}
-						variant="subtle"
-						color="gray"
-						size="compact-sm"
 						to="/pricing"
 					>
 						Pricing
@@ -73,7 +64,7 @@ export default function LandingLayout() {
 						Sweetreply
 					</Text>
 					<Box>
-						<Text tt="uppercase">Worldwide</Text>
+						<Text>As sweet as candy</Text>
 						<Text c="dimmed">© {new Date().getFullYear()}</Text>
 					</Box>
 					<Group>

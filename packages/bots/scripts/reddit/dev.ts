@@ -7,16 +7,16 @@ async function test() {
 		password: redditInfo.password,
 	});
 
-	console.log("logging in");
-
 	await bot.login();
 
 	await new Promise((res) => setTimeout(res, 1000));
 
+	console.log("commenting");
+
 	await bot.comment({
-		postId: "kzub0mc",
-		targetType: "comment",
-		content: "nested reply first automated test",
+		postId: "1c6fb2j",
+		targetType: "post",
+		content: `hello world ${Date.now()}`,
 		subredditName: "replyon",
 	});
 }

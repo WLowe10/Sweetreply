@@ -30,6 +30,12 @@ export class RedditBot {
 		);
 	}
 
+	static async isBanned(username: string) {
+		const response = await axios.get(`https://www.reddit.com/user/${username}`);
+
+		return response.data.includes('<span slot="title">This account has been suspended</span>');
+	}
+
 	public async login() {
 		const formData = new URLSearchParams({
 			op: "login",

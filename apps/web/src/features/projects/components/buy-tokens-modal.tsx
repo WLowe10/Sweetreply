@@ -36,8 +36,6 @@ export const BuyTokensModal = ({ modalProps }: BuyTokensModalProps) => {
 		},
 	});
 
-	const amount = form.watch("amount");
-
 	const handleSubmit = form.handleSubmit((data) => {
 		buyTokensMutation.mutate(
 			{
@@ -51,6 +49,8 @@ export const BuyTokensModal = ({ modalProps }: BuyTokensModalProps) => {
 			}
 		);
 	});
+
+	const amount = form.watch("amount");
 
 	return (
 		<Modal
@@ -99,11 +99,11 @@ export const BuyTokensModal = ({ modalProps }: BuyTokensModalProps) => {
 						<Controller
 							name="amount"
 							control={form.control}
-							render={({ field }) => (
+							render={({ field, fieldState }) => (
 								<NumberInput
 									label="Amount"
 									description="Enter the amount of tokens you'd like to purchase"
-									error={form.formState.errors.amount?.message}
+									error={fieldState.error?.message}
 									value={field.value}
 									allowDecimal={false}
 									allowLeadingZeros={false}
