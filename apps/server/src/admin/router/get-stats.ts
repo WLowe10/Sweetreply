@@ -43,28 +43,25 @@ function queryUserData({
 
 export const getStatsHandler = adminProcedure.query(async ({ ctx }) => {
 	const userCount = await ctx.prisma.user.count();
-
-	const userChartData = await queryUserData({
-		startDate: new Date(Date.now() - 1000 * 60 * 60 * 24 * 7),
-		endDate: new Date(),
-		interval: "day",
-	});
-
+	const projectCount = await ctx.prisma.project.count();
 	const botCount = await ctx.prisma.bot.count();
-	const activeBotCount = await ctx.prisma.bot.count({
-		where: {
-			active: true,
-		},
-	});
+
+	// const userChartData = await queryUserData({
+	// 	startDate: new Date(Date.now() - 1000 * 60 * 60 * 24 * 7),
+	// 	endDate: new Date(),
+	// 	interval: "day",
+	// });
 
 	return {
 		users: {
-			total: userCount,
-			chart: userChartData,
+			count: userCount,
+			// chart: userChartData,
 		},
-		socialAccounts: {
-			total: botCount,
-			active: activeBotCount,
+		projects: {
+			count: projectCount,
+		},
+		bots: {
+			count: botCount,
 		},
 	};
 });

@@ -1,13 +1,12 @@
-import { ResourceContainer } from "@/components/resource-container";
 import { useMe } from "@/features/auth/hooks";
 import { useLocalProject } from "@/features/projects/hooks/use-local-project";
+import { ResourceContainer } from "@/components/resource-container";
 import { trpc } from "@/lib/trpc";
 import { buildPageTitle } from "@/lib/utils";
-import { Card, Center, SimpleGrid, Skeleton, Stack, Text, Title } from "@mantine/core";
-import { formatRelative } from "date-fns";
+import { SimpleGrid, Skeleton } from "@mantine/core";
+import { IconCalendar, IconCoin, IconMessage, IconRadar } from "@tabler/icons-react";
+import { StatCard } from "@/components/stat-card";
 import type { MetaFunction } from "@remix-run/react";
-import { StatCard } from "@/features/projects/components/stat-card";
-import { IconCoin, IconMessage, IconRadar } from "@tabler/icons-react";
 
 export const meta: MetaFunction = () => [{ title: buildPageTitle("Dashboard") }];
 
@@ -48,6 +47,11 @@ export default function DashboardPage() {
 							title="Tokens"
 							value={getStatsQuery.data?.tokens.count || 0}
 							icon={IconCoin}
+						/>
+						<StatCard
+							title="Project Created"
+							value={getStatsQuery.data?.project.created_at.toDateString() || ""}
+							icon={IconCalendar}
 						/>
 					</>
 				)}

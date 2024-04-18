@@ -1,8 +1,9 @@
-import axios, { Axios } from "axios";
+import axios, { type Axios, type AxiosProxyConfig } from "axios";
 import parse from "node-html-parser";
 import { wrapper } from "axios-cookiejar-support";
 import { CookieJar } from "tough-cookie";
 import { userAgents } from "../lib/constants";
+import { ProxyType } from "../utils/types";
 
 const redditBase = new URL("https://www.reddit.com/api");
 const oldRedditBase = new URL("https://old.reddit.com/api");
@@ -11,18 +12,21 @@ export class RedditBot {
 	private username: string;
 	private password: string;
 	private modhash: string | null;
+	private proxy: AxiosProxyConfig | undefined;
 	private client: Axios;
 	private cookieJar: CookieJar;
 
-	constructor(opts: { username: string; password: string }) {
+	constructor(opts: { username: string; password: string; proxy?: AxiosProxyConfig }) {
 		this.username = opts.username;
 		this.password = opts.password;
+		this.proxy = opts.proxy;
 		this.modhash = null;
 
 		this.cookieJar = new CookieJar();
 		this.client = wrapper(
 			axios.create({
 				jar: this.cookieJar,
+				proxy: this.proxy,
 				headers: {
 					"User-Agent": userAgents.chrome,
 				},

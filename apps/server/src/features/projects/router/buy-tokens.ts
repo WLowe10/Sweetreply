@@ -37,7 +37,7 @@ export const buyTokensHandler = authenticatedProcedure
 		const session = await stripe.checkout.sessions.create({
 			payment_method_types: ["card"],
 			mode: "payment",
-			customer: ctx.user.stripe_customer_id,
+			customer_email: ctx.user.email,
 			success_url: successUrl,
 			metadata: paymentMetadata,
 			line_items: [

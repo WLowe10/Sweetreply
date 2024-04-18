@@ -1,17 +1,17 @@
-import { Paper, Group, Text } from "@mantine/core";
+import { Paper, Group, Text, type PaperProps } from "@mantine/core";
 import classes from "./stat-card.module.css";
 import type { IconProps } from "@tabler/icons-react";
 import type { FunctionComponent } from "react";
 
-export type StatCardProps = {
+export type StatCardProps = PaperProps & {
 	title: string;
 	value: string | number;
 	icon: FunctionComponent<any>;
 };
 
-export const StatCard = ({ title, value, icon: Icon }: StatCardProps) => {
+export const StatCard = ({ title, value, icon: Icon, ...paperProps }: StatCardProps) => {
 	return (
-		<Paper withBorder p="md" radius="md">
+		<Paper withBorder p="md" radius="md" {...paperProps}>
 			<Group justify="space-between">
 				<Text size="xs" c="dimmed" className={classes.title}>
 					{title}

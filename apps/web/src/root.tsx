@@ -1,6 +1,7 @@
 import { LinksFunction, LoaderFunction, json } from "@remix-run/node";
 import { Links, Meta, Outlet, Scripts, ScrollRestoration, useLoaderData } from "@remix-run/react";
 import { ColorSchemeScript, MantineProvider } from "@mantine/core";
+import { Notifications } from "@mantine/notifications";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { env } from "@/env";
 import { TRPCProvider } from "@/lib/trpc";
@@ -9,6 +10,7 @@ import type { PropsWithChildren } from "react";
 
 import "@mantine/core/styles.css";
 import "@mantine/charts/styles.css";
+import "@mantine/notifications/styles.css";
 
 // only provide the env variables that are needed on the client
 const getPublicEnv = () => ({
@@ -77,6 +79,7 @@ function RootProviders({ children }: PropsWithChildren) {
 	return (
 		<MantineProvider forceColorScheme="dark" theme={theme}>
 			<TRPCProvider>{children}</TRPCProvider>
+			<Notifications />
 		</MantineProvider>
 	);
 }

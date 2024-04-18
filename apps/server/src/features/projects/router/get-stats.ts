@@ -9,12 +9,12 @@ const getStatsInputSchema = z.object({
 export const getStatsHandler = authenticatedProcedure
 	.input(getStatsInputSchema)
 	.query(async ({ input, ctx }) => {
-		const userOwnsProject = await ctx.projectsService.userOwnsProject({
+		const project = await ctx.projectsService.userOwnsProject({
 			userId: ctx.user.id,
 			projectId: input.projectId,
 		});
 
-		if (!userOwnsProject) {
+		if (!project) {
 			throw projectNotFound();
 		}
 
@@ -61,8 +61,11 @@ export const getStatsHandler = authenticatedProcedure
 		});
 
 		return {
+			project: {
+				created_at: project.created_at,
+			},
 			tokens: {
-				count: userOwnsProject.tokens,
+				count: project.tokens,
 			},
 			leads: {
 				count: leadCount,

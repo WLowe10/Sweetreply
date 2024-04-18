@@ -1,3 +1,10 @@
+export type ProxyType = {
+	host: string;
+	port: number;
+	username: string;
+	password: string;
+};
+
 export type GetLeadsInput<T = any> = {
 	keywords: string[];
 	negativeKeywords?: string[];

@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {
 	Avatar,
 	Box,
@@ -11,9 +10,10 @@ import {
 	useMantineTheme,
 } from "@mantine/core";
 import { useMe, useSignOut } from "../hooks";
-import { IconDoor, IconDoorExit, IconDoorOff, IconUser } from "@tabler/icons-react";
+import { IconDoor, IconDoorExit, IconDoorOff, IconShield, IconUser } from "@tabler/icons-react";
 import { ProfileModal } from "./profile-modal";
 import { useDisclosure } from "@mantine/hooks";
+import { Link } from "@remix-run/react";
 
 export const UserMenu = () => {
 	const { me } = useMe();
@@ -46,6 +46,17 @@ export const UserMenu = () => {
 					)}
 				</Menu.Target>
 				<Menu.Dropdown>
+					{me?.role === "admin" && (
+						<Menu.Item
+							component={Link}
+							to="/admin"
+							leftSection={
+								<IconShield size={18} color="var(--mantine-color-gray-6)" />
+							}
+						>
+							Admin panel
+						</Menu.Item>
+					)}
 					<Menu.Item
 						leftSection={<IconUser size={18} color="var(--mantine-color-gray-6)" />}
 						onClick={open}

@@ -37,7 +37,9 @@ model User {
     password_reset_requested_at    DateTime?
     password_reset_code            String?   @unique
     password_reset_code_expires_at DateTime?
-    stripe_customer_id             String
+
+    // not needed at this time, just using email for one time token payments
+    // stripe_customer_id             String
 
     sessions Session[]
     projects Project[]
@@ -63,6 +65,12 @@ model Bot {
     password String
     status   String
     active   Boolean @default(true)
+
+    // proxy
+    proxy_host String?
+    proxy_port Int?
+    proxy_user String?
+    proxy_pass String?
 
     // it may make sense to serialize and store sessions this way
     // session Json? @db.JsonB

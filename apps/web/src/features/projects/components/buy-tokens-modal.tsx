@@ -7,6 +7,7 @@ import {
 	Group,
 	Modal,
 	NumberInput,
+	Pill,
 	Stack,
 	Text,
 	type ModalProps,
@@ -86,8 +87,8 @@ export const BuyTokensModal = ({ modalProps }: BuyTokensModalProps) => {
 							<Stack>
 								<Text>AI powered sentiment analysis</Text>
 								<Text c="dimmed" size="sm">
-									Sweetreply will automatically engage with your leads. Imagine
-									finding new customers while you're sleeping.
+									Sweetreply will intelligently filter out the leads it shouldn't
+									reply to.
 								</Text>
 							</Stack>
 						</Group>
@@ -117,7 +118,7 @@ export const BuyTokensModal = ({ modalProps }: BuyTokensModalProps) => {
 							fullWidth
 							disabled={!form.formState.isValid}
 							loading={buyTokensMutation.isLoading}
-						>{`Buy ${amount} tokens`}</Button>
+						>{`Buy ${amount} tokens ($${0.5 * amount})`}</Button>
 					</Stack>
 				</form>
 			</Stack>
