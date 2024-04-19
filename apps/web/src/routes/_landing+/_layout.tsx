@@ -1,5 +1,16 @@
 import { Link, Outlet } from "@remix-run/react";
-import { Anchor, Box, Button, Flex, Group, Stack, Text, Title } from "@mantine/core";
+import {
+	Anchor,
+	Box,
+	Button,
+	Container,
+	Divider,
+	Flex,
+	Group,
+	Stack,
+	Text,
+	Title,
+} from "@mantine/core";
 import { useMe } from "@/features/auth/hooks";
 import { appConfig } from "@sweetreply/shared/config";
 import { IconBrandDiscordFilled, IconBrandXFilled } from "@tabler/icons-react";
@@ -48,76 +59,76 @@ export default function LandingLayout() {
 				</Group>
 			</Flex>
 			<Outlet />
-			<Flex
-				component="footer"
-				p="lg"
-				pb="3rem"
-				justify="space-between"
-				direction={{ base: "column", sm: "row" }}
-				gap={"lg"}
-				maw="60rem"
-				mx="auto"
-				w="100%"
-			>
-				<Stack>
-					<Text fw="bold" size="lg">
-						Sweetreply
-					</Text>
-					<Box>
-						<Text>As sweet as candy</Text>
-						<Text c="dimmed">© {new Date().getFullYear()}</Text>
-					</Box>
-					<Group>
-						<Anchor component={Link} c="dimmed" to="">
-							<IconBrandXFilled />
-						</Anchor>
-						<Anchor component={Link} c="dimmed" to="">
-							<IconBrandDiscordFilled />
-						</Anchor>
-					</Group>
-				</Stack>
-				<Stack gap="xs">
-					<Text fw="bold">Product</Text>
-					<Anchor component={Link} c="dimmed" to="/features">
-						Features
-					</Anchor>
-					<Anchor component={Link} c="dimmed" to="/pricing">
-						Pricing
-					</Anchor>
-					<Anchor component={Link} c="dimmed" to="/pricing">
-						What's new
-					</Anchor>
-					<Anchor component={Link} c="dimmed" to="/pricing">
-						Roadmap
-					</Anchor>
-				</Stack>
-				<Stack gap="xs">
-					<Text fw="bold">Help</Text>
-					<Anchor component={Link} c="dimmed" to="/features">
-						Get started
-					</Anchor>
-					<Anchor component={Link} c="dimmed" to="/pricing">
-						How-to guides
-					</Anchor>
-				</Stack>
-				<Stack>
+			<Box maw="60rem" mx="auto">
+				<Divider />
+				<Flex
+					component="footer"
+					p="lg"
+					pb="3rem"
+					justify="spacebetween"
+					direction={{ base: "column", sm: "row" }}
+					gap={"6rem"}
+				>
+					<Stack>
+						<Text fw="bold" size="lg">
+							Sweetreply
+						</Text>
+						<Box>
+							<Text>As sweet as candy</Text>
+							<Text c="dimmed">© {new Date().getFullYear()}</Text>
+						</Box>
+						<Group>
+							<Anchor component={Link} c="dimmed" to="">
+								<IconBrandXFilled />
+							</Anchor>
+							<Anchor component={Link} c="dimmed" to="">
+								<IconBrandDiscordFilled />
+							</Anchor>
+						</Group>
+					</Stack>
 					<Stack gap="xs">
-						<Text fw="bold">Resources</Text>
-						<Anchor component={Link} c="dimmed" to="/pricing">
-							Terms & Conditions
+						<Text fw="bold">Product</Text>
+						<Anchor component={Link} c="dimmed" to="/features">
+							Features
 						</Anchor>
 						<Anchor component={Link} c="dimmed" to="/pricing">
-							Privacy Policy
+							Pricing
+						</Anchor>
+						<Anchor component={Link} c="dimmed" to="/pricing">
+							What's new
+						</Anchor>
+						<Anchor component={Link} c="dimmed" to="/pricing">
+							Roadmap
 						</Anchor>
 					</Stack>
 					<Stack gap="xs">
-						<Text fw="bold">Compare</Text>
-						<Anchor component={Link} c="dimmed" to="/pricing">
-							ReplyGuy alternative
+						<Text fw="bold">Help</Text>
+						<Anchor component={Link} c="dimmed" to="/help/get-started">
+							Get started
+						</Anchor>
+						<Anchor component={Link} c="dimmed" to="">
+							How-to guides
 						</Anchor>
 					</Stack>
-				</Stack>
-			</Flex>
+					<Stack>
+						<Stack gap="xs">
+							<Text fw="bold">Resources</Text>
+							<Anchor component={Link} c="dimmed" to="/help/terms-conditions">
+								Terms & Conditions
+							</Anchor>
+							<Anchor component={Link} c="dimmed" to="/help/privacy-policy">
+								Privacy Policy
+							</Anchor>
+						</Stack>
+						<Stack gap="xs">
+							<Text fw="bold">Compare</Text>
+							<Anchor component={Link} c="dimmed" to="/compare/reply-guy">
+								ReplyGuy alternative
+							</Anchor>
+						</Stack>
+					</Stack>
+				</Flex>
+			</Box>
 		</Flex>
 	);
 }

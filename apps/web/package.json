@@ -38,6 +38,7 @@
 		"zod": "^3.22.4"
 	},
 	"devDependencies": {
+		"@mdx-js/rollup": "^3.0.1",
 		"@remix-run/dev": "^2.8.1",
 		"@sweetreply/tsconfig": "workspace:*",
 		"@types/react": "^18.2.20",
@@ -53,6 +54,9 @@
 		"postcss": "^8.4.35",
 		"postcss-preset-mantine": "^1.13.0",
 		"postcss-simple-vars": "^7.0.1",
+		"remark-frontmatter": "^5.0.0",
+		"remark-mdx-frontmatter": "^4.0.0",
+		"remark-toc": "^9.0.0",
 		"remix-flat-routes": "^0.6.4",
 		"typescript": "^5.1.6",
 		"vite": "^5.1.0",

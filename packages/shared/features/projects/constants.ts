@@ -9,13 +9,13 @@ export const projectConstants = {
 			},
 			{
 				name: "Pro",
-				maxTokens: 249,
-				ppt: 0.4,
+				maxTokens: 499,
+				ppt: 0.35,
 			},
 			{
 				name: "Enterprise",
 				maxTokens: Infinity,
-				ppt: 0.25,
+				ppt: 0.3,
 			},
 		],
 	},
