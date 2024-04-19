@@ -28,7 +28,12 @@ export default function LandingLayout() {
 				pos="sticky"
 				top={0}
 				p="md"
-				style={{ borderBottom: "1px solid dark", backdropFilter: "blur(4px)", zIndex: 99 }}
+				style={{
+					borderBottom: "1px solid dark",
+					WebkitBackdropFilter: "blur(4px)",
+					backdropFilter: "blur(4px)",
+					zIndex: 99,
+				}}
 				maw="72rem"
 				mb="10rem"
 				w={"100%"}
@@ -63,23 +68,25 @@ export default function LandingLayout() {
 			<Box component="main" px="lg">
 				<Outlet />
 			</Box>
-			<Box maw="60rem" mx="auto">
+			<Box component="footer" maw="64rem" mx="auto" w="100%">
 				<Divider />
 				<Flex
-					component="footer"
 					p="lg"
 					pb="3rem"
-					justify="spacebetween"
+					justify="space-between"
 					direction={{ base: "column", sm: "row" }}
-					gap={"6rem"}
+					gap={"2rem"}
+					mx="auto"
 				>
 					<Stack>
 						<Text fw="bold" size="lg">
 							Sweetreply
 						</Text>
 						<Box>
-							<Text>As sweet as candy</Text>
-							<Text c="dimmed">© {new Date().getFullYear()}</Text>
+							<Text size="sm">"As sweet as candy"</Text>
+							<Text size="sm" c="dimmed">
+								© {new Date().getFullYear()}
+							</Text>
 						</Box>
 						<Group>
 							<Anchor component={Link} c="dimmed" to="">

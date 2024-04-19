@@ -40,7 +40,7 @@ export default function HomePage() {
 				</Flex>
 			</Center>
 			<Box p="lg" maw="72rem" mb="12rem" mx="auto">
-				<Paper shadow="lg">
+				<Paper shadow="lg" withBorder={true} radius="lg" style={{ overflow: "hidden" }}>
 					<Image src="hero.png" alt="Sweetreply demo" />
 				</Paper>
 			</Box>

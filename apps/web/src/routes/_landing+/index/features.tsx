@@ -14,7 +14,7 @@ import classes from "./features.module.css";
 
 const featuresData = [
 	{
-		title: "Never Miss a Mention",
+		title: "Never miss a mention",
 		description:
 			"Our powerful monitoring system tracks mentions of your products across social media platforms, ensuring you never miss a customer interaction opportunity.",
 		icon: IconGauge,

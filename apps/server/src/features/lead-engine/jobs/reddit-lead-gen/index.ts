@@ -2,8 +2,17 @@ import { CronJob } from "cron";
 import { prisma } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { RedditPostSlurper } from "./post-slurper";
+import { Project } from "@sweetreply/prisma";
 
 const postSlurper = new RedditPostSlurper();
+
+const slurpPosts = async (projects: Project[]) => {
+	try {
+		await postSlurper.slurp(projects);
+	} catch (err) {
+		logger.error(err, "Reddit slurp failed");
+	}
+};
 
 // todo, job should not start if already running
 export const redditLeadGenJob = CronJob.from({
@@ -31,13 +40,6 @@ export const redditLeadGenJob = CronJob.from({
 			},
 		});
 
-		try {
-			await Promise.all([
-				postSlurper.slurp(projects),
-				// commentSlurper.slurp(projects),
-			]);
-		} catch (err) {
-			logger.error(err, "Reddit slurp failed");
-		}
+		await Promise.allSettled([slurpPosts(projects)]);
 	},
 });
