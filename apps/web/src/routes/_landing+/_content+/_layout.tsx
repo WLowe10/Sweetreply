@@ -3,7 +3,7 @@ import { Outlet } from "@remix-run/react";
 
 export default function HelpLayout() {
 	return (
-		<Box maw="52rem" mx="auto" w="100%" mb="10rem">
+		<Box maw="58rem" mx="auto" w="100%" mb="10rem">
 			<TypographyStylesProvider>
 				<Outlet />
 			</TypographyStylesProvider>

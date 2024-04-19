@@ -60,9 +60,9 @@ export default function LandingLayout() {
 					</Group>
 				</Group>
 			</Flex>
-			<main>
+			<Box component="main" px="lg">
 				<Outlet />
-			</main>
+			</Box>
 			<Box maw="60rem" mx="auto">
 				<Divider />
 				<Flex
