@@ -15,56 +15,64 @@ import { useMe } from "@/features/auth/hooks";
 import { appConfig } from "@sweetreply/shared/config";
 import { IconBrandDiscordFilled, IconBrandXFilled } from "@tabler/icons-react";
 import type { PropsWithChildren } from "react";
+import { useWindowScroll } from "@mantine/hooks";
 
 export default function LandingLayout() {
 	const { isAuthenticated } = useMe();
+	const [scroll] = useWindowScroll();
 
 	return (
 		<>
-			<Flex
+			<Box
 				component="header"
-				align="center"
-				justify="space-between"
 				pos="sticky"
 				top={0}
-				p="md"
 				style={{
-					borderBottom: "1px solid dark",
 					WebkitBackdropFilter: "blur(4px)",
 					backdropFilter: "blur(4px)",
 					zIndex: 99,
 				}}
-				maw="72rem"
 				mb="10rem"
-				w={"100%"}
-				mx="auto"
 			>
-				<Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
-					<Title order={2}>{appConfig.name}</Title>
-				</Link>
-				<Group>
-					<Button
-						component={Link}
-						variant="subtle"
-						color="gray"
-						size="compact-sm"
-						to="/pricing"
-					>
-						Pricing
-					</Button>
+				<Flex
+					maw="72rem"
+					mx="auto"
+					align="center"
+					justify="space-between"
+					p="md"
+					w={"100%"}
+				>
+					<Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
+						<Title order={2}>{appConfig.name}</Title>
+					</Link>
 					<Group>
-						{isAuthenticated ? (
-							<Button component={Link} to="/dashboard">
-								Dashboard
-							</Button>
-						) : (
-							<Button component={Link} to="/sign-in">
-								Sign in
-							</Button>
-						)}
+						<Button
+							component={Link}
+							variant="subtle"
+							color="gray"
+							size="compact-sm"
+							to="/pricing"
+						>
+							Pricing
+						</Button>
+						<Group>
+							{isAuthenticated ? (
+								<Button component={Link} to="/dashboard">
+									Dashboard
+								</Button>
+							) : (
+								<Button component={Link} to="/sign-in">
+									Sign in
+								</Button>
+							)}
+						</Group>
 					</Group>
-				</Group>
-			</Flex>
+				</Flex>
+				<Divider
+					opacity={scroll.y > 100 ? 1 : 0}
+					style={{ transition: "opacity .2s ease-in-out" }}
+				/>
+			</Box>
 			<Box component="main" px="lg">
 				<Outlet />
 			</Box>
@@ -99,7 +107,7 @@ export default function LandingLayout() {
 					</Stack>
 					<Stack gap="xs">
 						<Text fw="bold">Product</Text>
-						<Anchor component={Link} c="dimmed" to="/features">
+						<Anchor component={Link} c="dimmed" to="/#features">
 							Features
 						</Anchor>
 						<Anchor component={Link} c="dimmed" to="/pricing">

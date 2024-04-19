@@ -37,7 +37,7 @@ export const Features = () => {
 	const theme = useMantineTheme();
 
 	return (
-		<Container size="lg" py="xl">
+		<Container component="section" id="features" size="lg" py="xl">
 			<Group justify="center">
 				<Badge variant="filled" size="lg">
 					Features
