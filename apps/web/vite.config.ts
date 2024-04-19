@@ -4,9 +4,9 @@ import { defineConfig } from "vite";
 import { flatRoutes } from "remix-flat-routes";
 import tsconfigPaths from "vite-tsconfig-paths";
 import mdx from "@mdx-js/rollup";
+import rehypeSlug from "rehype-slug";
 import remarkFrontmatter from "remark-frontmatter";
 import remarkMdxFrontmatter from "remark-mdx-frontmatter";
-import remarkToc from "remark-toc";
 
 installGlobals();
 
@@ -17,7 +17,8 @@ export default defineConfig({
 	plugins: [
 		tsconfigPaths(),
 		mdx({
-			remarkPlugins: [remarkFrontmatter, remarkMdxFrontmatter, remarkToc],
+			rehypePlugins: [rehypeSlug],
+			remarkPlugins: [remarkFrontmatter, remarkMdxFrontmatter],
 		}),
 		remix({
 			appDirectory: "./src",

@@ -1,4 +1,4 @@
-import { Box, Container, Divider, TypographyStylesProvider } from "@mantine/core";
+import { Box, TypographyStylesProvider } from "@mantine/core";
 import { Outlet } from "@remix-run/react";
 
 export default function HelpLayout() {
