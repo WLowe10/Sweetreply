@@ -20,13 +20,15 @@ export default function LandingLayout() {
 	const { isAuthenticated } = useMe();
 
 	return (
-		<Flex mih="100vh" direction="column">
+		<>
 			<Flex
 				component="header"
 				align="center"
 				justify="space-between"
+				pos="sticky"
+				top={0}
 				p="md"
-				style={{ borderBottom: "1px solid dark" }}
+				style={{ borderBottom: "1px solid dark", backdropFilter: "blur(4px)", zIndex: 99 }}
 				maw="72rem"
 				mb="10rem"
 				w={"100%"}
@@ -58,7 +60,9 @@ export default function LandingLayout() {
 					</Group>
 				</Group>
 			</Flex>
-			<Outlet />
+			<main>
+				<Outlet />
+			</main>
 			<Box maw="60rem" mx="auto">
 				<Divider />
 				<Flex
@@ -129,6 +133,6 @@ export default function LandingLayout() {
 					</Stack>
 				</Flex>
 			</Box>
-		</Flex>
+		</>
 	);
 }
