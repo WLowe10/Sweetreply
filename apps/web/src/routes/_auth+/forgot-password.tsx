@@ -35,6 +35,9 @@ export default function ForgotPasswordPage() {
 							error={form.formState.errors.email?.message}
 							{...form.register("email")}
 						/>
+						<Button type="submit" loading={isLoading} fullWidth>
+							Reset password
+						</Button>
 					</Stack>
 				</form>
 				{isError && !isLoading && (
@@ -42,9 +45,6 @@ export default function ForgotPasswordPage() {
 						{error}
 					</Alert>
 				)}
-				<Button type="submit" loading={isLoading} fullWidth>
-					Reset password
-				</Button>
 			</Card>
 		</AuthFormContainer>
 	);

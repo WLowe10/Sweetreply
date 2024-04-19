@@ -95,9 +95,20 @@ export default function SignUpPage() {
 							{error}
 						</Alert>
 					)}
-					<Button type="submit" mt="xl" loading={isLoading} fullWidth>
+					<Button type="submit" mt="xl" mb="sm" loading={isLoading} fullWidth>
 						Sign up
 					</Button>
+					<Text size="xs" ta="center">
+						By signing up, you agree to our{" "}
+						<Anchor component={Link} to="/help/terms-conditions">
+							Terms and Conditions
+						</Anchor>{" "}
+						and{" "}
+						<Anchor component={Link} to="/help/privacy-policy">
+							Privacy Policy
+						</Anchor>
+						.
+					</Text>
 				</form>
 			</Card>
 		</AuthFormContainer>

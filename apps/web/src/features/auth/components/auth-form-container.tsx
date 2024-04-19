@@ -14,7 +14,7 @@ export const AuthFormContainer = ({
 }: PropsWithChildren<AuthPageLayoutProps>) => {
 	return (
 		<Stack align="center">
-			<Container miw={420} mt={40}>
+			<Container size={"xs"} mt={40} w="100%">
 				<Image w={64} mx="auto" mb="md" radius="md" src={"icon.jpg"} />
 				<Box mb={30} ta="center">
 					<Title ta="center" size="h3" order={1}>
