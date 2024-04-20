@@ -1,4 +1,5 @@
-import { Box, Container, Image, Stack, Text, Title } from "@mantine/core";
+import { Box, Center, Container, Image, Stack, Text, Title } from "@mantine/core";
+import { Link } from "@remix-run/react";
 import { appConfig } from "@sweetreply/shared/config";
 import type { PropsWithChildren, ReactNode } from "react";
 
@@ -14,8 +15,12 @@ export const AuthFormContainer = ({
 }: PropsWithChildren<AuthPageLayoutProps>) => {
 	return (
 		<Stack align="center">
-			<Container size={"xs"} mt={40} w="100%">
-				<Image w={64} mx="auto" mb="md" radius="md" src={"icon.jpg"} />
+			<Container size={"xs"} w="100%">
+				<Center mb="md">
+					<Link to="/">
+						<Image h="64px" w="64px" radius="md" src={"icon.jpg"} />
+					</Link>
+				</Center>
 				<Box mb={30} ta="center">
 					<Title ta="center" size="h3" order={1}>
 						{title}

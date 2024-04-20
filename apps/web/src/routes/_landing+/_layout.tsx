@@ -91,7 +91,9 @@ export default function LandingLayout() {
 							Sweetreply
 						</Text>
 						<Box>
-							<Text size="sm">"As sweet as candy"</Text>
+							<Text size="sm" fw="bold">
+								Worldwide
+							</Text>
 							<Text size="sm" c="dimmed">
 								© {new Date().getFullYear()}
 							</Text>

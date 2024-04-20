@@ -3,7 +3,7 @@ import { Outlet } from "@remix-run/react";
 
 export default function AuthLayout() {
 	return (
-		<Box mt="6rem">
+		<Box mt={{ base: 0, sm: "6rem" }}>
 			<Outlet />
 		</Box>
 	);
