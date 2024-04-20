@@ -67,9 +67,12 @@ export class RedditPostSlurper {
 				// should projects be processed in parallel here?
 				for (const project of projects) {
 					/**
-					 * Comment for later
 					 * To filter out NSFW reddit posts, the postData has a key called "over_18" which is a boolean
 					 */
+
+					if (!project.reddit_allow_nsfw && postData.over_18) {
+						continue;
+					}
 
 					if (
 						project.reddit_included_subreddits.length > 0 &&

@@ -3,12 +3,16 @@ import parse from "node-html-parser";
 import { wrapper } from "axios-cookiejar-support";
 import { CookieJar } from "tough-cookie";
 import { userAgents } from "../lib/constants";
-import { ProxyType } from "../utils/types";
+import { IBot, ProxyType } from "../types";
 
 const redditBase = new URL("https://www.reddit.com/api");
 const oldRedditBase = new URL("https://old.reddit.com/api");
 
-export class RedditBot {
+type TargetType = "post" | "comment";
+
+const redditThing = (type: TargetType, id: string) => (type === "post" ? `t3_${id}` : `t1_${id}`);
+
+export class RedditBot implements IBot {
 	private username: string;
 	private password: string;
 	private modhash: string | null;
@@ -85,7 +89,7 @@ export class RedditBot {
 
 		this.modhash = modhash;
 
-		return postLoginResponse;
+		// return postLoginResponse;
 	}
 
 	public async comment({
@@ -95,7 +99,7 @@ export class RedditBot {
 		content,
 	}: {
 		postId: string;
-		targetType: "post" | "comment";
+		targetType: TargetType;
 		subredditName: string;
 		content: string;
 	}) {
@@ -103,8 +107,7 @@ export class RedditBot {
 			throw new Error("Not authenticated");
 		}
 
-		const redditPrefix = targetType === "post" ? "t3" : "t1";
-		const redditPrefixedId = `${redditPrefix}_${postId}`;
+		const redditPrefixedId = redditThing(targetType, postId);
 
 		// it seems like the id is optional. I'm not sure if it would minimize the change of being banned, but i'm ignoring it for now
 
@@ -205,10 +208,147 @@ export class RedditBot {
 			throw new Error(`Failed to comment: ${errorMsg}`);
 		}
 
-		return postCommentResponse;
+		let data;
+
+		for (const item of postCommentResponse.data.jquery) {
+			const type = item[2];
+			const value = item[3];
+
+			if (type === "call" && Array.isArray(value)) {
+				const dataArray = value[0];
+
+				if (Array.isArray(dataArray)) {
+					const newComment = dataArray[0];
+
+					if (newComment) {
+						data = newComment.data;
+					}
+				}
+			}
+		}
+
+		return data;
+	}
+
+	public async deleteComment({
+		commentId,
+		subredditName,
+	}: {
+		commentId: string;
+		subredditName: string;
+	}) {
+		// if (!this.isAuthenticated()) {
+		// 	throw new Error("Not authenticated");
+		// }
+
+		const thingId = redditThing("comment", commentId);
+
+		const response = await this.client.post(
+			`${oldRedditBase}/del`,
+			new URLSearchParams({
+				id: thingId,
+				r: subredditName,
+				uh: this.modhash!,
+				executed: "deleted",
+				renderstyle: "html",
+			}),
+			{
+				headers: {
+					"accept": "application/json, text/javascript, */*; q=0.01",
+					"accept-language": "en-US,en;q=0.5",
+					"cache-control": "no-cache",
+					"content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+					// "cookie":
+					// 	"csv=2; edgebucket=jePKTP09eoJfaGVVRx; reddit_session=97401946053696%2C2024-04-20T14%3A22%3A28%2Cfa454aa566a98713483443af40c9764b40596348; loid=000000000yixu3u4ao.2.1713394883176.Z0FBQUFBQm1JOC1sZ2hFdDZtSWpORTdscC1HQzlVQTdvYUhSMU1oNXFKN0RJNXo1WWVYc3U0ZzJQYUgyQ0Z2eUdyMGswMHZVU1JqRnlwQ3dqMU9PNHBmRUV4akxIR3NmLWdCdTVocjEzUTZSR1dIUjBmMmRMaXpsMGNyNnNvM0hRanhuRGdFYXlQYm8; pc=lx; Less-Tear-8895_recentclicks2=t3_1blgh0s%2C; session_tracker=mbkkmpigrmbeeielkd.0.1713622989010.Z0FBQUFBQm1JOF9OTm1fb3k3S2dBbTNNYU9abVpvSlFVcXd2c1p1Y2ZRdzFYQ2tTYUtPZU5jd0xEQzlNX1BTRExubFVlRExLZndHS2JqSmE4UmxrMzZ1WnRWeGZuT3g1SHNxN2YxR0VHYVhtNFF3NGxIS1VaVlNwU1ctTDJxQ29NT0dZUWthV0RWV1g",
+					"origin": "https://old.reddit.com",
+					"pragma": "no-cache",
+					"priority": "u=1, i",
+					// "referer": "https://old.reddit.com/r/replyon/comments/1blgh0s/hello_world/",
+					"sec-ch-ua": '"Chromium";v="124", "Brave";v="124", "Not-A.Brand";v="99"',
+					"sec-ch-ua-mobile": "?0",
+					"sec-ch-ua-platform": '"Windows"',
+					"sec-fetch-dest": "empty",
+					"sec-fetch-mode": "cors",
+					"sec-fetch-site": "same-origin",
+					"sec-gpc": "1",
+					"x-requested-with": "XMLHttpRequest",
+				},
+			}
+		);
+
+		if (response.data.success === false) {
+			throw new Error(`Failed to delete comment ${commentId}`);
+		}
+
+		return response;
+	}
+
+	// todo
+	public async upvote({
+		postId,
+		subredditName,
+		targetType,
+	}: {
+		postId: string;
+		subredditName: string;
+		targetType: TargetType;
+	}) {
+		if (!this.isAuthenticated()) {
+			throw new Error("Not authenticated");
+		}
+
+		const upvoteResponse = await this.client.post(
+			"https://old.reddit.com/api/vote",
+			new URLSearchParams({
+				id: redditThing(targetType, postId),
+				dir: "1", // 1 is upvote
+				// vh comes from the html of the page
+				vh: "qpDloBMTymxKq5IJOeCC4oWggtuacw6AELF/rG/2eqJ6YwJliYJllikO9CBwDrxkb6Nobmhcc02llv0u0eWQw/gAc3Z8KyzfctjZRQFy5GLafBikvE7T/wNnC83teb/rSp4pSTO9NMC80xU+hAr3x8Yp0iArmQiqfVNi30brWxA=",
+				isTrusted: "true",
+				vote_event_data: '{"page_type":"self","sort":"confidence"}',
+				r: "replyon",
+				uh: this.modhash!,
+				renderstyle: "html",
+			}),
+			{
+				params: {
+					dir: "1",
+					id: "t3_1blgh0s",
+					sr: "replyon",
+				},
+				headers: {
+					"accept": "application/json, text/javascript, */*; q=0.01",
+					"accept-language": "en-US,en;q=0.5",
+					"cache-control": "no-cache",
+					"content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+					"origin": "https://old.reddit.com",
+					"pragma": "no-cache",
+					"priority": "u=1, i",
+					// "referer": "https://old.reddit.com/r/replyon/comments/1blgh0s/hello_world/",
+					"sec-ch-ua": '"Chromium";v="124", "Brave";v="124", "Not-A.Brand";v="99"',
+					"sec-ch-ua-mobile": "?0",
+					"sec-ch-ua-platform": '"Windows"',
+					"sec-fetch-dest": "empty",
+					"sec-fetch-mode": "cors",
+					"sec-fetch-site": "same-origin",
+					"sec-gpc": "1",
+					"user-agent":
+						"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+					"x-requested-with": "XMLHttpRequest",
+				},
+			}
+		);
+
+		if (upvoteResponse.data.success === false) {
+			throw new Error("Failed to upvote");
+		}
 	}
 
 	public isAuthenticated() {
 		return this.modhash !== null;
 	}
 }
+
+// del
+
+// l0gd2u2

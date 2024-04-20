@@ -31,6 +31,7 @@ export const SitesForm = () => {
 		values: {
 			reddit_monitor_enabled: project?.reddit_monitor_enabled ?? false,
 			reddit_replies_enabled: project?.reddit_replies_enabled ?? false,
+			reddit_allow_nsfw: project?.reddit_allow_nsfw ?? false,
 			reddit_included_subreddits: project?.reddit_included_subreddits ?? [],
 			reddit_excluded_subreddits: project?.reddit_excluded_subreddits ?? [],
 		},
@@ -79,7 +80,19 @@ export const SitesForm = () => {
 										render={({ field }) => (
 											<Switch
 												label="Enable monitoring"
-												description="Monitor Reddit for mentions of your project."
+												description="Monitor Reddit for mentions of your project"
+												checked={field.value}
+												onChange={field.onChange}
+											/>
+										)}
+									/>
+									<Controller
+										control={form.control}
+										name="reddit_allow_nsfw"
+										render={({ field }) => (
+											<Switch
+												label="Allow NSFW"
+												description="Allows the monitor to find NSFW posts"
 												checked={field.value}
 												onChange={field.onChange}
 											/>
@@ -91,7 +104,7 @@ export const SitesForm = () => {
 										render={({ field }) => (
 											<Switch
 												label="Enable replies"
-												description="Automatically reply to mentions on Reddit."
+												description="Automatically reply to mentions on Reddit"
 												checked={field.value}
 												onChange={field.onChange}
 											/>

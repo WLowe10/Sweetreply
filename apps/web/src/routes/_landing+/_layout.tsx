@@ -141,12 +141,12 @@ export default function LandingLayout() {
 								Privacy Policy
 							</Anchor>
 						</Stack>
-						<Stack gap="xs">
+						{/* <Stack gap="xs">
 							<Text fw="bold">Compare</Text>
 							<Anchor component={Link} c="dimmed" to="/compare/reply-guy">
 								ReplyGuy alternative
 							</Anchor>
-						</Stack>
+						</Stack> */}
 					</Stack>
 				</Flex>
 			</Box>

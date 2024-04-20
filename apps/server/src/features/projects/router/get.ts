@@ -30,6 +30,7 @@ export const getProjectHandler = authenticatedProcedure
 				reply_mention_mode: true,
 				custom_reply_instructions: true,
 				reddit_monitor_enabled: true,
+				reddit_allow_nsfw: true,
 				reddit_replies_enabled: true,
 				reddit_included_subreddits: true,
 				reddit_excluded_subreddits: true,

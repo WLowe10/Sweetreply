@@ -119,12 +119,6 @@ model BotError {
 //     @@map(name: "team")
 // }
 
-// enum TeamMemberRole {
-//     owner
-//     admin
-//     member
-// }
-
 // model TeamMember {
 //     role TeamMemberRole @default(member)
 
@@ -153,6 +147,7 @@ model Project {
 
     // reddit settings
     reddit_monitor_enabled     Boolean  @default(true)
+    reddit_allow_nsfw          Boolean  @default(false)
     reddit_replies_enabled     Boolean  @default(true)
     reddit_included_subreddits String[]
     reddit_excluded_subreddits String[]
@@ -171,24 +166,29 @@ model Project {
 // Lead
 
 model Lead {
-    id                String    @id @default(uuid())
-    type              String    @default("post")
-    platform          String
-    remote_id         String
-    remote_user_id    String
-    channel           String? // Ex: subreddit name for reddit
-    remote_channel_id String?
+    id         String @id @default(uuid())
+    type       String @default("post")
+    project_id String
+    platform   String
+
+    // social media post
     username          String
     name              String?
     title             String?
     content           String
     remote_url        String?
-    date              DateTime
-    created_at        DateTime  @default(now())
-    project_id        String
-    reply             String?
-    replied_at        DateTime?
-    reply_bot_id      String?
+    date              DateTime @db.Timestamptz()
+    remote_id         String
+    remote_user_id    String
+    channel           String? // Ex: subreddit name for reddit
+    remote_channel_id String?
+    created_at        DateTime @default(now()) @db.Timestamptz()
+
+    // reply
+    remote_reply_id String?
+    reply_text      String?
+    replied_at      DateTime?
+    reply_bot_id    String?
 
     project   Project @relation(fields: [project_id], references: [id], onDelete: Cascade)
     reply_bot Bot?    @relation(fields: [reply_bot_id], references: [id])

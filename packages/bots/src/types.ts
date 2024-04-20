@@ -19,3 +19,7 @@ export interface IEngine {
 	getLeads: (input: GetLeadsInput) => any[] | Promise<any[]>;
 	reply: (input: ReplyInput) => void;
 }
+
+export interface IBot {
+	login: () => Promise<void>;
+}
