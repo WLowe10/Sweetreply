@@ -3,11 +3,10 @@ import classes from "./faq.module.css";
 
 export const FAQ = () => {
 	return (
-		<Container size="sm" py="xl">
+		<Container size="md" py="xl" w="100%">
 			<Title order={2} className={classes.title} ta="center" mb={50}>
 				Frequently Asked Questions
 			</Title>
-
 			<Accordion>
 				<Accordion.Item value="sites">
 					<Accordion.Control>What social media sites do you support?</Accordion.Control>
