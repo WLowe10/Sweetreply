@@ -5,6 +5,7 @@ import { env } from "@/env";
 import { sleep } from "@sweetreply/shared/lib/utils";
 import { RedditBot } from "@sweetreply/bots";
 import { botsService } from "@/features/bots/service";
+import { projectsService } from "@/features/projects/service";
 
 export type ReplyQueueJobData = {
 	lead_id: string;
@@ -34,7 +35,7 @@ replyQueue.process(async (job) => {
 		},
 	});
 
-	if (!lead || lead.replied_at || !lead.reply) {
+	if (!lead || lead.replied_at || !lead.reply_text) {
 		return;
 	}
 
@@ -71,12 +72,15 @@ replyQueue.process(async (job) => {
 
 			// a reddit lead will have a channel (the subreddit name)
 
-			await replyBot.comment({
+			const result = await replyBot.comment({
 				targetType: lead.type as "post" | "comment",
 				postId: lead.remote_id,
-				content: lead.reply,
+				content: lead.reply_text,
 				subredditName: lead.channel as string,
 			});
+
+			// remove the t3_
+			const commentId = result.id.slice(3);
 
 			await prisma.lead.update({
 				where: {
@@ -84,7 +88,7 @@ replyQueue.process(async (job) => {
 				},
 				data: {
 					replied_at: new Date(),
-					reply: lead.reply,
+					remote_reply_id: commentId,
 					reply_bot_id: botAccount.id,
 				},
 			});
@@ -99,6 +103,9 @@ replyQueue.process(async (job) => {
 
 		throw err;
 	}
+
+	// the reply was successful, now deduct the token
+	await projectsService.deductToken(project.id);
 });
 
 replyQueue.on("failed", (job, err) => {

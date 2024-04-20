@@ -3,12 +3,27 @@ import { ResourceContainer } from "@/components/resource-container";
 import { useDataTableParams } from "@/hooks/use-data-table-params";
 import { DataTable } from "@/components/data-table";
 import { trpc } from "@/lib/trpc";
-import { Table, Badge, Menu, ActionIcon, Skeleton, Center, Flex } from "@mantine/core";
+import {
+	Table,
+	Badge,
+	Menu,
+	ActionIcon,
+	Skeleton,
+	Center,
+	Flex,
+	Button,
+	Group,
+	Box,
+	Text,
+	Stack,
+	Card,
+} from "@mantine/core";
 import { useClipboard, useDisclosure } from "@mantine/hooks";
 import { IconCheck, IconCopy, IconDots, IconX } from "@tabler/icons-react";
 import { EditBotModal } from "@/features/admin/components/edit-bot-modal";
 import { MetaFunction } from "@remix-run/react";
 import { buildPageTitle } from "@/lib/utils";
+import { CreateBotModal } from "@/features/admin/components/create-bot-modal";
 
 export const meta: MetaFunction = () => [{ title: buildPageTitle("Bots", "Sweetreply Admin") }];
 
@@ -106,6 +121,7 @@ const LoadingRow = () => {
 
 export default function BotsPage() {
 	const params = useDataTableParams();
+	const [isOpen, { open, close }] = useDisclosure();
 
 	const getBotsQuery = trpc.admin.bots.getMany.useQuery({
 		query: params.query ?? undefined,
@@ -115,8 +131,30 @@ export default function BotsPage() {
 		},
 	});
 
+	const getActiveCountsQuery = trpc.admin.bots.getActiveCounts.useQuery();
+
 	return (
 		<ResourceContainer title="Bots" subtitle="Manage and view all bots">
+			<Flex justify="space-between" mb="xl">
+				<Card>
+					<Stack>
+						<Text size="sm">Active bots</Text>
+						<Group>
+							<Group>
+								<PlatformIcon
+									platform="reddit"
+									tooltip={true}
+									height={24}
+									width={24}
+								/>
+								<Text>{getActiveCountsQuery.data?.reddit ?? 0}</Text>
+							</Group>
+						</Group>
+					</Stack>
+				</Card>
+				<Button onClick={open}>Create</Button>
+			</Flex>
+			<CreateBotModal opened={isOpen} onClose={close} />
 			<DataTable
 				data={getBotsQuery.data?.data ?? []}
 				searchPlaceholder="Search bots"

@@ -30,13 +30,13 @@ model User {
     last_name                      String
     password_hash                  String
     avatar_url                     String?
-    created_at                     DateTime  @default(now())
-    updated_at                     DateTime? @updatedAt
-    verified_at                    DateTime?
-    verification_requested_at      DateTime?
-    password_reset_requested_at    DateTime?
+    created_at                     DateTime  @default(now()) @db.Timestamptz()
+    updated_at                     DateTime? @updatedAt @db.Timestamptz()
+    verified_at                    DateTime? @db.Timestamptz()
+    verification_requested_at      DateTime? @db.Timestamptz()
+    password_reset_requested_at    DateTime? @db.Timestamptz()
     password_reset_code            String?   @unique
-    password_reset_code_expires_at DateTime?
+    password_reset_code_expires_at DateTime? @db.Timestamptz()
 
     // not needed at this time, just using email for one time token payments
     // stripe_customer_id             String
@@ -50,7 +50,7 @@ model User {
 model Session {
     id         String   @id @default(uuid())
     user_id    String
-    expires_at DateTime
+    expires_at DateTime @db.Timestamptz()
     user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
     @@map(name: "session")
@@ -75,8 +75,8 @@ model Bot {
     // it may make sense to serialize and store sessions this way
     // session Json? @db.JsonB
 
-    created_at   DateTime  @default(now())
-    last_used_at DateTime?
+    created_at   DateTime  @default(now()) @db.Timestamptz()
+    last_used_at DateTime? @db.Timestamptz()
 
     errors BotError[]
     leads  Lead[]
@@ -88,7 +88,7 @@ model BotError {
     id      String   @id @default(uuid())
     bot_id  String
     message String
-    date    DateTime @default(now())
+    date    DateTime @default(now()) @db.Timestamptz()
 
     bot Bot @relation(fields: [bot_id], references: [id], onDelete: Cascade)
 
@@ -154,8 +154,8 @@ model Project {
 
     tokens      Int       @default(0)
     webhook_url String?
-    created_at  DateTime  @default(now())
-    updated_at  DateTime? @updatedAt
+    created_at  DateTime  @default(now()) @db.Timestamptz()
+    updated_at  DateTime? @updatedAt @db.Timestamptz()
 
     user  User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
     leads Lead[]
@@ -187,7 +187,7 @@ model Lead {
     // reply
     remote_reply_id String?
     reply_text      String?
-    replied_at      DateTime?
+    replied_at      DateTime? @db.Timestamptz()
     reply_bot_id    String?
 
     project   Project @relation(fields: [project_id], references: [id], onDelete: Cascade)

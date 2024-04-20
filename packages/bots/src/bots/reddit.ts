@@ -12,6 +12,16 @@ type TargetType = "post" | "comment";
 
 const redditThing = (type: TargetType, id: string) => (type === "post" ? `t3_${id}` : `t1_${id}`);
 
+export type RedditCommentData = {
+	id: string;
+	parent: string;
+	content: string;
+	contentText: string;
+	contentHTML: string;
+	link: string;
+	replies: string;
+};
+
 export class RedditBot implements IBot {
 	private username: string;
 	private password: string;
@@ -81,7 +91,7 @@ export class RedditBot implements IBot {
 		const { data } = postLoginResponse;
 
 		if (data.json.errors.length > 0) {
-			throw new Error("Failed to authenticate");
+			throw new Error(`${this.username} failed to authenticate`);
 		}
 
 		const modhash = data.json.data.modhash;
@@ -102,7 +112,7 @@ export class RedditBot implements IBot {
 		targetType: TargetType;
 		subredditName: string;
 		content: string;
-	}) {
+	}): Promise<RedditCommentData> {
 		if (!this.isAuthenticated()) {
 			throw new Error("Not authenticated");
 		}
@@ -225,6 +235,10 @@ export class RedditBot implements IBot {
 					}
 				}
 			}
+		}
+
+		if (!data) {
+			throw new Error("Failed to parse new Reddit comment");
 		}
 
 		return data;

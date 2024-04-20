@@ -19,8 +19,6 @@ export const generateReplyCompletion = async ({
 }) => {
 	const prompt = replyPrompt({ project, lead });
 
-	console.log(prompt);
-
 	const completion = await openAI.chat.completions.create({
 		model: "gpt-3.5-turbo",
 		temperature: 0.7, // ? experiementng

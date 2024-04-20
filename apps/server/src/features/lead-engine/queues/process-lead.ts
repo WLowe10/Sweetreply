@@ -111,26 +111,28 @@ processLeadQueue.process(async (job) => {
 
 		const result = await generateReplyCompletion({ lead, project });
 
+		console.log(result.shouldReply);
+
 		// deduct token after generating reply
-		await projectsService.deductToken(project.id);
+		// !!!! this needs to be done with generate reply, in fact, generate reply should be its own queue
 
 		await prisma.lead.update({
 			where: {
 				id: lead.id,
 			},
 			data: {
-				reply: result.reply,
+				reply_text: result.reply,
 			},
 		});
 
 		if (result.shouldReply) {
 			// sends the lead to the reply queue after generating the reply
-			// replyQueue.add(
-			// 	{ lead_id: lead.id },
-			// 	{
-			// 		delay: 60000,
-			// 	}
-			// );
+			replyQueue.add(
+				{ lead_id: lead.id }
+				// {
+				// 	delay: 60000,
+				// }
+			);
 		}
 	}
 });

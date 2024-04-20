@@ -22,4 +22,17 @@ export const updateBotInputSchema = z.object({
 		.partial(),
 });
 
+export const createBotInputSchema = baseBotSchema.pick({
+	platform: true,
+	username: true,
+	active: true,
+	status: true,
+	password: true,
+	proxy_host: true,
+	proxy_port: true,
+	proxy_user: true,
+	proxy_pass: true,
+});
+
+export type CreateBotInputType = z.infer<typeof createBotInputSchema>;
 export type UpdateBotInputType = z.infer<typeof updateBotInputSchema>;
