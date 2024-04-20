@@ -6,6 +6,7 @@ import { sleep } from "@sweetreply/shared/lib/utils";
 import { RedditBot } from "@sweetreply/bots";
 import { botsService } from "@/features/bots/service";
 import { projectsService } from "@/features/projects/service";
+import { createBotHandler } from "@/features/bots/utils/create-bot-handler";
 
 export type ReplyQueueJobData = {
 	lead_id: string;
@@ -59,40 +60,24 @@ replyQueue.process(async (job) => {
 	// move this bot to the bottom of the stack
 
 	try {
-		if (lead.platform === "reddit") {
-			const replyBot = await new RedditBot({
-				username: botAccount.username,
-				password: botAccount.password,
-			});
+		const handler = createBotHandler({ bot: botAccount, lead });
 
-			await replyBot.login();
+		await handler.login();
 
-			// wait 2.5 seconds before commenting after logging in. Might be worthwile to make this slightly random
-			await sleep(2500);
+		await sleep(2500);
 
-			// a reddit lead will have a channel (the subreddit name)
+		const result = await handler.reply();
 
-			const result = await replyBot.comment({
-				targetType: lead.type as "post" | "comment",
-				postId: lead.remote_id,
-				content: lead.reply_text,
-				subredditName: lead.channel as string,
-			});
-
-			// remove the t3_
-			const commentId = result.id.slice(3);
-
-			await prisma.lead.update({
-				where: {
-					id: lead.id,
-				},
-				data: {
-					replied_at: new Date(),
-					remote_reply_id: commentId,
-					reply_bot_id: botAccount.id,
-				},
-			});
-		}
+		await prisma.lead.update({
+			where: {
+				id: lead.id,
+			},
+			data: {
+				replied_at: new Date(),
+				remote_reply_id: result.remote_reply_id,
+				reply_bot_id: botAccount.id,
+			},
+		});
 	} catch (err: any) {
 		await prisma.botError.create({
 			data: {

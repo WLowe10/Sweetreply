@@ -57,7 +57,7 @@ export const getManyLeadsHandler = authenticatedProcedure
 					},
 				},
 				{
-					reply: {
+					reply_text: {
 						contains: query,
 						mode: "insensitive",
 					},
@@ -101,6 +101,14 @@ export const getManyLeadsHandler = authenticatedProcedure
 			skip: skip(pagination.page, pagination.limit),
 			orderBy: {
 				created_at: "desc",
+			},
+			select: {
+				id: true,
+				username: true,
+				remote_url: true,
+				reply_text: true,
+				replied_at: true,
+				platform: true,
 			},
 		});
 

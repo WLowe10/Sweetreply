@@ -5,6 +5,8 @@ import { leadNotFound } from "../errors";
 import { RedditBot } from "@sweetreply/bots";
 import { TRPCError } from "@trpc/server";
 import { sleep } from "@sweetreply/shared/lib/utils";
+import { RedditBotHandler } from "@/features/bots/handlers/reddit";
+import { createBotHandler } from "@/features/bots/utils/create-bot-handler";
 
 const deleteReplyInputSchema = z.object({
 	lead_id: z.string(),
@@ -53,21 +55,13 @@ export const deleteReplyHandler = authenticatedProcedure
 		}
 
 		try {
-			if (lead.platform === "reddit") {
-				const bot = new RedditBot({
-					username: botAccount.username,
-					password: botAccount.password,
-				});
+			const handler = createBotHandler({ bot: botAccount, lead });
 
-				await bot.login();
+			await handler.login();
 
-				await sleep(2500);
+			await sleep(2500);
 
-				await bot.deleteComment({
-					commentId: lead.remote_reply_id,
-					subredditName: lead.channel,
-				});
-			}
+			await handler.deleteReply();
 		} catch {
 			throw new TRPCError({
 				code: "INTERNAL_SERVER_ERROR",

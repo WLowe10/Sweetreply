@@ -15,6 +15,11 @@
 		"baseUrl": "./src",
 		"paths": {
 			"@/*": ["*"]
+			// "@auth/*": ["./auth"],
+			// "@controllers/*": ["./controllers"],
+			// "@email/*": ["./email"],
+			// "@features/*": ["./features"],
+			// "@lib/*": ["./lib"],
 		}
 	}
 }

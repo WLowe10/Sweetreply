@@ -1,17 +1,12 @@
 import { RedditBot } from "@sweetreply/bots";
-import type { Bot, Lead } from "@sweetreply/prisma";
+import type { IBotHandler, BotHandlerConstructor } from "../types";
+import type { Lead } from "@sweetreply/prisma";
 
-export interface ILeadBot {
-	login(): Promise<any>;
-	reply(): Promise<any>;
-	deleteReply(): Promise<any>;
-}
-
-export class RedditLeadBot implements ILeadBot {
+export class RedditBotHandler implements IBotHandler {
 	private redditBot: RedditBot;
 	private lead: Lead;
 
-	constructor({ bot, lead }: { bot: Bot; lead: Lead }) {
+	constructor({ bot, lead }: BotHandlerConstructor) {
 		this.lead = lead;
 
 		this.redditBot = new RedditBot({
@@ -24,20 +19,20 @@ export class RedditLeadBot implements ILeadBot {
 		return this.redditBot.login();
 	}
 
-	public reply() {
-		return this.redditBot.comment({
+	public async reply() {
+		const result = await this.redditBot.comment({
 			postId: this.lead.remote_id,
 			targetType: this.lead.type as "post" | "comment",
 			subredditName: this.lead.channel as string,
 			content: this.lead.content,
 		});
+
+		return {
+			remote_reply_id: result.id.slice(3),
+		};
 	}
 
 	public deleteReply() {
-		if (!this.lead.remote_reply_id) {
-			throw new Error("Lead does not have a remote reply id");
-		}
-
 		return this.redditBot.deleteComment({
 			commentId: this.lead.remote_reply_id as string,
 			subredditName: this.lead.channel as string,
