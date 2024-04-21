@@ -19,7 +19,6 @@ const replyQueue = new Queue<ReplyQueueJobData>("reply", {
 		duration: 1000,
 	},
 	defaultJobOptions: {
-		// for now, don't retry
 		attempts: 3,
 	},
 });
@@ -83,12 +82,7 @@ replyQueue.process(async (job) => {
 			},
 		});
 	} catch (err: any) {
-		await prisma.botError.create({
-			data: {
-				bot_id: botAccount.id,
-				message: err.message as string,
-			},
-		});
+		await botsService.appendError(botAccount.id, err.message);
 
 		throw err;
 	}

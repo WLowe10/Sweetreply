@@ -37,6 +37,40 @@ export class BotsService {
 		return updatedBot;
 	}
 
+	public async appendError(botId: string, message: string) {
+		const newError = await prisma.botError.create({
+			data: {
+				bot_id: botId,
+				message: message,
+			},
+		});
+
+		const errorCountLast24Hours = await prisma.botError.count({
+			where: {
+				bot_id: botId,
+				date: {
+					gt: new Date(new Date().getTime() - 24 * 60 * 60 * 1000), // 24 hours ago
+					lte: new Date(),
+				},
+			},
+		});
+
+		// if there are more than 3 errors in the last 24 hours, the bot will become inactive, requiring manual verification
+		if (errorCountLast24Hours > 3) {
+			await prisma.bot.update({
+				where: {
+					id: botId,
+				},
+				data: {
+					active: false,
+					status: "error",
+				},
+			});
+		}
+
+		return newError;
+	}
+
 	public async checkBanned(botId: string) {
 		const bot = await this.getBot(botId);
 
