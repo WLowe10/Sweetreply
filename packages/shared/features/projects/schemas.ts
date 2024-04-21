@@ -12,7 +12,7 @@ export const baseProjectSchema = projectModel.extend({
 	reply_mention_mode: z.enum(["name", "name_or_url", "url"]),
 	reply_daily_limit: z.number().int().nonnegative().safe(),
 	custom_reply_instructions: z.string().max(1024),
-	webhook_url: z.string().url().max(128),
+	webhook_url: z.string().url().max(128).nullable(),
 
 	reddit_included_subreddits: z
 		.array(subredditNameSchema)

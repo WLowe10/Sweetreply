@@ -6,3 +6,9 @@ export const tokenCheckoutMetadataSchema = z.object({
 });
 
 export type TokenCheckoutMetadataType = z.infer<typeof tokenCheckoutMetadataSchema>;
+
+export const subscriptionCheckoutMetadataSchema = z.object({
+	project_id: z.string(),
+});
+
+export type SubscriptionCheckoutMetadataSchema = z.infer<typeof tokenCheckoutMetadataSchema>;

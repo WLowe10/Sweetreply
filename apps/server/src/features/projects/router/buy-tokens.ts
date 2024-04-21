@@ -1,5 +1,4 @@
 import { authenticatedProcedure } from "@/trpc";
-import { stripe } from "@/lib/client/stripe";
 import { buyTokensInputSchema } from "@sweetreply/shared/features/projects/schemas";
 import { getTokensPrice } from "@sweetreply/shared/features/projects/utils";
 import { buildFrontendUrl } from "@/lib/utils";
@@ -34,7 +33,7 @@ export const buyTokensHandler = authenticatedProcedure
 			token_amount: tokenAmount,
 		} as const;
 
-		const session = await stripe.checkout.sessions.create({
+		const session = await ctx.stripe.checkout.sessions.create({
 			payment_method_types: ["card"],
 			mode: "payment",
 			customer_email: ctx.user.email,

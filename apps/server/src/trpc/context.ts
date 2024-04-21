@@ -6,6 +6,7 @@ import { projectsService } from "@/features/projects/service";
 import { botsService } from "@/features/bots/service";
 import type { CreateExpressContextOptions } from "@trpc/server/adapters/express";
 import type { Request, Response } from "express";
+import { stripe } from "@/lib/client/stripe";
 
 type CreateContextOptions = {
 	req: Request;
@@ -18,6 +19,7 @@ function createInnerContext(opts: CreateContextOptions) {
 		res: opts.res,
 		logger,
 		prisma,
+		stripe,
 		authService,
 		emailService,
 		projectsService: projectsService,

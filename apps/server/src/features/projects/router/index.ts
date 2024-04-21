@@ -5,7 +5,9 @@ import { createProjectHandler } from "./create";
 import { updateProjectHandler } from "./update";
 import { deleteProjectHandler } from "./delete";
 import { getStatsHandler } from "./get-stats";
-import { buyTokensHandler } from "./buy-tokens";
+import { subscribeHandler } from "./subscribe";
+import { getBillingPortalHandler } from "./get-billing-portal";
+// import { buyTokensHandler } from "./buy-tokens";
 
 export const projectsRouter = router({
 	get: getProjectHandler,
@@ -14,5 +16,8 @@ export const projectsRouter = router({
 	update: updateProjectHandler,
 	delete: deleteProjectHandler,
 	getStats: getStatsHandler,
-	buyTokens: buyTokensHandler,
+
+	subscribe: subscribeHandler,
+	getBillingPortal: getBillingPortalHandler,
+	// buyTokens: buyTokensHandler,
 });
