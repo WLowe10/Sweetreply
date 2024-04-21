@@ -6,7 +6,8 @@ import { replyQueue } from "./reply";
 import axios from "axios";
 import { isDiscordWebhookURL } from "@/lib/regex";
 import { buildFrontendUrl } from "@/lib/utils";
-import { projectsService } from "@/features/projects/service";
+import { subDays } from "date-fns";
+import { logger } from "@/lib/logger";
 
 export type ProcessLeadQueueJobData = {
 	lead_id: string;
@@ -105,37 +106,67 @@ processLeadQueue.process(async (job) => {
 
 	const shouldGenerateRedditReply = lead.platform === "reddit" && project.reddit_replies_enabled;
 
+	if (!shouldGenerateRedditReply) {
+		return;
+	}
+
+	// if the daily limit is zero, it means that the project does not have a reply limit
 	// add more checks here once other platforms are supported
-	if (shouldGenerateRedditReply) {
-		console.log("generating reply");
 
-		const result = await generateReplyCompletion({ lead, project });
+	// counts all of the replies within the last 24 hours
+	const repliesLast24Hours = await prisma.lead.count({
+		where: {
+			reply_status: "replied",
+			AND: [
+				{
+					replied_at: {
+						not: null,
+					},
+				},
+				{
+					replied_at: {
+						gte: subDays(new Date(), 1),
+					},
+				},
+			],
+		},
+	});
 
-		console.log(result.shouldReply);
+	if (project.reply_daily_limit && repliesLast24Hours >= project.reply_daily_limit) {
+		// daily limit reached, don't generate a reply
+		logger.info(`${project.name} has reached the daily reply limit`);
 
-		// deduct token after generating reply
-		// !!!! this needs to be done with generate reply, in fact, generate reply should be its own queue
+		return;
+	}
 
-		// add reply text
-		await prisma.lead.update({
-			where: {
-				id: lead.id,
+	console.log("generating reply");
+
+	const result = await generateReplyCompletion({ lead, project });
+
+	console.log(result.shouldReply);
+
+	// add reply text
+	await prisma.lead.update({
+		where: {
+			id: lead.id,
+		},
+		data: {
+			reply_text: result.reply,
+			reply_status: "pending",
+			replies_generated: {
+				increment: 1,
 			},
-			data: {
-				reply_text: result.reply,
-				reply_status: "pending",
-			},
-		});
+		},
+	});
 
-		if (result.shouldReply) {
-			// sends the lead to the reply queue after generating the reply
-			replyQueue.add(
-				{ lead_id: lead.id }
-				// {
-				// 	delay: 60000,
-				// }
-			);
-		}
+	if (result.shouldReply) {
+		// sends the lead to the reply queue after generating the reply
+		replyQueue.add(
+			{ lead_id: lead.id }
+			// {
+			// 	delay: 60000,
+			// }
+		);
 	}
 });
 

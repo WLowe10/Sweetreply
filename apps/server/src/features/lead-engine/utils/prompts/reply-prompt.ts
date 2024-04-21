@@ -1,8 +1,11 @@
 import type { Project, Lead } from "@sweetreply/prisma";
 
 export type ReplyPromptData = {
-	project: Project;
-	lead: Lead;
+	project: Pick<
+		Project,
+		"name" | "reply_mention_mode" | "website_url" | "description" | "custom_reply_instructions"
+	>;
+	lead: Pick<Lead, "title" | "content">;
 };
 
 export const replyPrompt = ({ project, lead }: ReplyPromptData) => {

@@ -44,6 +44,16 @@ export default function DashboardPage() {
 							icon={IconMessage}
 						/>
 						<StatCard
+							title="Leads last 24 hours"
+							value={getStatsQuery.data?.leads.last24HoursCount || 0}
+							icon={IconRadar}
+						/>
+						<StatCard
+							title="Replies last 24 hours"
+							value={getStatsQuery.data?.replies.last24HoursCount || 0}
+							icon={IconMessage}
+						/>
+						<StatCard
 							title="Tokens"
 							value={getStatsQuery.data?.tokens.count || 0}
 							icon={IconCoin}

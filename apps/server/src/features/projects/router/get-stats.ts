@@ -1,6 +1,7 @@
 import { authenticatedProcedure } from "@/trpc";
 import { z } from "zod";
 import { projectNotFound } from "../errors";
+import { subDays } from "date-fns";
 
 const getStatsInputSchema = z.object({
 	projectId: z.string(),
@@ -60,6 +61,25 @@ export const getStatsHandler = authenticatedProcedure
 			},
 		});
 
+		const leadsLast24Hours = await ctx.prisma.lead.count({
+			where: {
+				project_id: input.projectId,
+				created_at: {
+					gte: subDays(new Date(), 1),
+				},
+			},
+		});
+
+		const repliesLast24Hours = await ctx.prisma.lead.count({
+			where: {
+				project_id: input.projectId,
+				reply_status: "replied",
+				replied_at: {
+					gte: subDays(new Date(), 1),
+				},
+			},
+		});
+
 		return {
 			project: {
 				created_at: project.created_at,
@@ -69,10 +89,12 @@ export const getStatsHandler = authenticatedProcedure
 			},
 			leads: {
 				count: leadCount,
+				last24HoursCount: leadsLast24Hours,
 				mostRecent: mostRecentLead?.created_at,
 			},
 			replies: {
 				count: replyCount,
+				last24HoursCount: repliesLast24Hours,
 				mostRecent: mostRecentReply?.replied_at,
 			},
 		};

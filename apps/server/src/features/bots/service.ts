@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
 import { RedditBot } from "@sweetreply/bots";
+import { subDays } from "date-fns";
 
 export class BotsService {
 	public getBot(id: string) {
@@ -49,8 +50,7 @@ export class BotsService {
 			where: {
 				bot_id: botId,
 				date: {
-					gt: new Date(new Date().getTime() - 24 * 60 * 60 * 1000), // 24 hours ago
-					lte: new Date(),
+					gte: subDays(new Date(), 1),
 				},
 			},
 		});

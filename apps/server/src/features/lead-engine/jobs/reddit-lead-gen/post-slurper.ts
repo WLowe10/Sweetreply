@@ -4,8 +4,9 @@ import { userAgents } from "@/lib/constants";
 import { prisma } from "@/lib/db";
 import { generateDescendingRedditIds, generateBatchedRedditInfoUrls } from "./utils";
 import { logger } from "@/lib/logger";
-import type { Prisma, Project } from "@sweetreply/prisma";
 import { processLeadQueue } from "../../queues/process-lead";
+import pLimit from "p-limit";
+import type { Project } from "@sweetreply/prisma";
 
 export class RedditPostSlurper {
 	private client: Axios;
@@ -64,41 +65,46 @@ export class RedditPostSlurper {
 				// this currently doesn't allow filtering by subreddit in the query (e.g., "subreddit:replyon")
 				const searchDocument = this.getSearchDocument(postData);
 
-				// should projects be processed in parallel here?
-				for (const project of projects) {
-					/**
-					 * To filter out NSFW reddit posts, the postData has a key called "over_18" which is a boolean
-					 */
+				const limit = pLimit(20);
 
-					if (!project.reddit_allow_nsfw && postData.over_18) {
-						continue;
-					}
+				await Promise.all(
+					projects.map((project) =>
+						limit(async () => {
+							if (!project.reddit_allow_nsfw && postData.over_18) {
+								return;
+							}
 
-					if (
-						project.reddit_included_subreddits.length > 0 &&
-						!project.reddit_included_subreddits.includes(lead.channel)
-					) {
-						continue;
-					}
+							if (
+								project.reddit_included_subreddits.length > 0 &&
+								!project.reddit_included_subreddits.includes(lead.channel)
+							) {
+								return;
+							}
 
-					if (
-						project.reddit_excluded_subreddits.length > 0 &&
-						project.reddit_excluded_subreddits.includes(lead.channel)
-					) {
-						continue;
-					}
+							if (
+								project.reddit_excluded_subreddits.length > 0 &&
+								project.reddit_excluded_subreddits.includes(lead.channel)
+							) {
+								return;
+							}
 
-					const isMatch = test(parse(project.query as string), searchDocument);
+							const isMatch = test(parse(project.query as string), searchDocument);
 
-					if (isMatch) {
-						const existingLead = await prisma.lead.findFirst({
-							where: {
-								project_id: project.id,
-								remote_id: lead.remote_id,
-							},
-						});
+							if (!isMatch) {
+								return;
+							}
 
-						if (!existingLead) {
+							const existingLead = await prisma.lead.findFirst({
+								where: {
+									project_id: project.id,
+									remote_id: lead.remote_id,
+								},
+							});
+
+							if (existingLead) {
+								return;
+							}
+
 							const newLead = await prisma.lead.create({
 								data: {
 									...lead,
@@ -109,9 +115,9 @@ export class RedditPostSlurper {
 							processLeadQueue.add({
 								lead_id: newLead.id,
 							});
-						}
-					}
-				}
+						})
+					)
+				);
 			}
 		}
 

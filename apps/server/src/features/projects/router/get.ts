@@ -28,6 +28,7 @@ export const getProjectHandler = authenticatedProcedure
 				description: true,
 				query: true,
 				reply_mention_mode: true,
+				reply_daily_limit: true,
 				custom_reply_instructions: true,
 				reddit_monitor_enabled: true,
 				reddit_allow_nsfw: true,

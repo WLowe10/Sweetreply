@@ -143,6 +143,7 @@ model Project {
     query       String?
 
     reply_mention_mode        String? @default("name")
+    reply_daily_limit         Int?    @default(25)
     custom_reply_instructions String?
 
     // reddit settings
@@ -185,11 +186,12 @@ model Lead {
     created_at        DateTime @default(now()) @db.Timestamptz()
 
     // reply
-    reply_status    String?
-    remote_reply_id String?
-    reply_text      String?
-    replied_at      DateTime? @db.Timestamptz()
-    reply_bot_id    String?
+    reply_status      String?
+    remote_reply_id   String?
+    reply_text        String?
+    replied_at        DateTime? @db.Timestamptz()
+    reply_bot_id      String?
+    replies_generated Int?      @default(0)
 
     project   Project @relation(fields: [project_id], references: [id], onDelete: Cascade)
     reply_bot Bot?    @relation(fields: [reply_bot_id], references: [id])

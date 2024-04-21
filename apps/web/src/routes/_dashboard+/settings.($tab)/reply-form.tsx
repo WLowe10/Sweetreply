@@ -28,6 +28,7 @@ export const ReplyForm = () => {
 		resolver: zodResolver(updateProjectInputSchema.shape.data),
 		values: {
 			reply_mention_mode: (project?.reply_mention_mode as any) ?? "name",
+			reply_daily_limit: project?.reply_daily_limit ?? 0,
 			custom_reply_instructions: project?.custom_reply_instructions ?? "",
 		},
 	});
@@ -82,9 +83,21 @@ export const ReplyForm = () => {
 							</Radio.Group>
 						)}
 					/>
-					<NumberInput
-						label="Daily limit"
-						description="Automatic replies will stop after you reach your chosen daily limit. Set to 0 for no limit."
+					<Controller
+						name="reply_daily_limit"
+						control={form.control}
+						render={({ field, fieldState }) => (
+							<NumberInput
+								label="Daily limit"
+								description="Automatic replies will stop after you reach your chosen daily limit. Set to 0 for no limit."
+								allowDecimal={false}
+								allowNegative={false}
+								allowLeadingZeros={false}
+								error={fieldState.error?.message}
+								onChange={field.onChange}
+								value={field.value}
+							/>
+						)}
 					/>
 					<Textarea
 						label="Custom instructions"

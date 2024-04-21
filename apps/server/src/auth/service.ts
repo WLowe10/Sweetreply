@@ -16,22 +16,33 @@ import { env } from "@/env";
 import { stripe } from "@/lib/client/stripe";
 import { TRPCError } from "@trpc/server";
 import { isDev } from "@/lib/utils";
-import { type Session, type User } from "@sweetreply/prisma";
+import {
+	addMilliseconds,
+	subMilliseconds,
+	isAfter,
+	isBefore,
+	isPast,
+	minutesToMilliseconds,
+	hoursToMilliseconds,
+	weeksToDays,
+	millisecondsToMinutes,
+} from "date-fns";
 import type { SignUpInputType, SignInInputType } from "@sweetreply/shared/features/auth/schemas";
+import type { Session, User } from "@sweetreply/prisma";
 import type { Request, Response } from "express";
 
 type EmailVerificationTokenPayloadType = { user_id: string };
 
 export const authConstants = {
 	SESSION_ID_TOKEN: "sid",
-	SESSION_EXPIRATION: 1000 * 60 * 60 * 24 * 7, // 1 week
-	PASSWORD_RESET_EXPIRATION: 1000 * 60 * 60, // 1 hour
-	ACCOUNT_VERIFICATION_EXPIRATION: 1000 * 60 * 60, // 1 hour
-	EMAIL_COOLDOWN: 1000 * 60 * 5, // 5 minutes
+	SESSION_EXPIRATION: hoursToMilliseconds(24 * 7),
+	PASSWORD_RESET_EXPIRATION: hoursToMilliseconds(1),
+	ACCOUNT_VERIFICATION_EXPIRATION: hoursToMilliseconds(1),
+	EMAIL_COOLDOWN: minutesToMilliseconds(5),
 } as const;
 
-const expirationDate = (expirationMs: number) => new Date(Date.now() + expirationMs);
-const cooldownDate = (cooldownMs: number) => new Date(Date.now() - cooldownMs);
+const expirationDate = (expirationMs: number) => addMilliseconds(new Date(), expirationMs);
+const cooldownDate = (cooldownMs: number) => subMilliseconds(new Date(), cooldownMs);
 
 export class AuthService {
 	/**
@@ -224,7 +235,7 @@ export class AuthService {
 			return err(null);
 		}
 
-		if (session.expires_at < new Date()) {
+		if (isPast(session.expires_at)) {
 			await this.deleteSession(sessionId);
 
 			return err(null);
@@ -263,13 +274,18 @@ export class AuthService {
 		}
 
 		if (!opts?.ignoreRateLimit && user.password_reset_requested_at) {
-			if (user.password_reset_requested_at) {
-				if (user.password_reset_requested_at > cooldownDate(authConstants.EMAIL_COOLDOWN)) {
-					throw new TRPCError({
-						code: "TOO_MANY_REQUESTS",
-						message: "You can only request a password reset once every 5 minutes",
-					});
-				}
+			if (
+				isAfter(
+					user.password_reset_requested_at,
+					cooldownDate(authConstants.EMAIL_COOLDOWN)
+				)
+			) {
+				throw new TRPCError({
+					code: "TOO_MANY_REQUESTS",
+					message: `You can only request a password reset once every ${millisecondsToMinutes(
+						authConstants.EMAIL_COOLDOWN
+					)} minutes`,
+				});
 			}
 		}
 
@@ -314,14 +330,16 @@ export class AuthService {
 			return;
 		}
 
-		if (!opts?.ignoreRateLimit) {
-			if (user.verification_requested_at) {
-				if (user.verification_requested_at > cooldownDate(authConstants.EMAIL_COOLDOWN)) {
-					throw new TRPCError({
-						code: "TOO_MANY_REQUESTS",
-						message: "You can only request a verification email once every 5 minutes",
-					});
-				}
+		if (!opts?.ignoreRateLimit && user.verification_requested_at) {
+			if (
+				isAfter(user.verification_requested_at, cooldownDate(authConstants.EMAIL_COOLDOWN))
+			) {
+				throw new TRPCError({
+					code: "TOO_MANY_REQUESTS",
+					message: `You can only request a verification email once every ${millisecondsToMinutes(
+						authConstants.EMAIL_COOLDOWN
+					)} minutes`,
+				});
 			}
 		}
 
@@ -357,15 +375,14 @@ export class AuthService {
 			},
 		});
 
-		if (!user) {
+		if (!user || !user.password_reset_code_expires_at || !user.password_reset_code) {
 			throw new TRPCError({
 				code: "BAD_REQUEST",
 				message: "Invalid password reset code",
 			});
 		}
 
-		// @ts-ignore
-		if (user.password_reset_code_expires_at < new Date()) {
+		if (isPast(user.password_reset_code_expires_at)) {
 			throw new TRPCError({
 				code: "BAD_REQUEST",
 				message: "Password expiration expired, please request a new one",

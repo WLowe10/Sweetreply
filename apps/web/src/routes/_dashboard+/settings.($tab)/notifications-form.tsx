@@ -6,7 +6,8 @@ import {
 	UpdateProjectInputType,
 	updateProjectInputSchema,
 } from "@sweetreply/shared/features/projects/schemas";
-import { useForm } from "react-hook-form";
+import { IconX } from "@tabler/icons-react";
+import { Controller, useForm } from "react-hook-form";
 
 export const NotificationsForm = () => {
 	const { data: project } = useCurrentProjectQuery();
@@ -47,11 +48,31 @@ export const NotificationsForm = () => {
 		<Box mt={"sm"}>
 			<form onSubmit={handleSubmit}>
 				<Stack>
-					<TextInput
-						label="Webhook"
-						error={form.formState.errors.webhook_url?.message}
-						description="The URL to send notifications to."
-						{...form.register("webhook_url")}
+					<Controller
+						name="webhook_url"
+						control={form.control}
+						render={({ field, fieldState }) => (
+							<TextInput
+								label="Webhook"
+								description="The URL to send notifications to."
+								value={field.value ?? ""}
+								onChange={field.onChange}
+								error={fieldState.error?.message}
+								rightSection={
+									field.value ? (
+										<IconX
+											size={18}
+											style={{
+												display: "block",
+												opacity: 0.5,
+												cursor: "pointer",
+											}}
+											onClick={() => field.onChange(null)}
+										/>
+									) : null
+								}
+							/>
+						)}
 					/>
 					<Button
 						type="submit"

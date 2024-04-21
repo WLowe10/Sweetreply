@@ -107,7 +107,7 @@ export const RedditLead = () => {
 								<Avatar size="md">🍭</Avatar>
 								<Text component="span" size="sm">
 									Sweetreply •{" "}
-									<RelativeDate c="dimmed" date={lead.data.created_at} />
+									<RelativeDate c="dimmed" date={lead.data.replied_at!} />
 								</Text>
 							</Group>
 							<Menu>
