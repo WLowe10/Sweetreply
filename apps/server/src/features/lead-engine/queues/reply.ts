@@ -3,7 +3,6 @@ import { logger } from "@/lib/logger";
 import { prisma } from "@/lib/db";
 import { env } from "@/env";
 import { sleep } from "@sweetreply/shared/lib/utils";
-import { RedditBot } from "@sweetreply/bots";
 import { botsService } from "@/features/bots/service";
 import { projectsService } from "@/features/projects/service";
 import { createBotHandler } from "@/features/bots/utils/create-bot-handler";
@@ -59,9 +58,13 @@ replyQueue.process(async (job) => {
 
 	// move this bot to the bottom of the stack
 
-	try {
-		const handler = createBotHandler({ bot: botAccount, lead });
+	const handler = createBotHandler({ bot: botAccount, lead });
 
+	if (!handler) {
+		return;
+	}
+
+	try {
 		await handler.login();
 
 		await sleep(2500);
@@ -73,6 +76,7 @@ replyQueue.process(async (job) => {
 				id: lead.id,
 			},
 			data: {
+				reply_status: "replied",
 				replied_at: new Date(),
 				remote_reply_id: result.remote_reply_id,
 				reply_bot_id: botAccount.id,

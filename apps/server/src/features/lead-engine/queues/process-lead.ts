@@ -116,12 +116,14 @@ processLeadQueue.process(async (job) => {
 		// deduct token after generating reply
 		// !!!! this needs to be done with generate reply, in fact, generate reply should be its own queue
 
+		// add reply text
 		await prisma.lead.update({
 			where: {
 				id: lead.id,
 			},
 			data: {
 				reply_text: result.reply,
+				reply_status: "pending",
 			},
 		});
 

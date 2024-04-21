@@ -1,3 +1,4 @@
+import { Link, type MetaFunction } from "@remix-run/react";
 import { DataTable } from "@/components/data-table";
 import { PlatformIcon } from "@/components/platform-icon";
 import { ResourceContainer } from "@/components/resource-container";
@@ -8,7 +9,6 @@ import { ActionIcon, Badge, Flex, Menu, Skeleton, Table, Text } from "@mantine/c
 import { IconDots } from "@tabler/icons-react";
 import { useLocalProject } from "@/features/projects/hooks/use-local-project";
 import { useDisclosure } from "@mantine/hooks";
-import { Link, type MetaFunction } from "@remix-run/react";
 
 export const meta: MetaFunction = () => [{ title: buildPageTitle("Leads") }];
 
@@ -27,7 +27,17 @@ const Row = (lead: any) => {
 				</Text>
 			</Table.Td>
 			<Table.Td>
-				<Badge>{lead.replied_at ? "Replied" : "None"}</Badge>
+				<Badge
+					bg={
+						lead.reply_status === "replied"
+							? "blue"
+							: lead.reply_status === "deleted"
+								? "red"
+								: "gray"
+					}
+				>
+					{lead.reply_status ?? "none"}
+				</Badge>
 			</Table.Td>
 			<Table.Td>
 				<Menu transitionProps={{ transition: "pop" }}>

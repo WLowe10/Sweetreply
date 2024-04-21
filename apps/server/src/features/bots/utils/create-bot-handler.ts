@@ -1,10 +1,5 @@
 import { RedditBotHandler } from "../handlers/reddit";
-import type { BotHandlerConstructor } from "../types";
+import type { BotHandlerConstructor, IBotHandler } from "../types";
 
-export const createBotHandler = ({ bot, lead }: BotHandlerConstructor) => {
-	if (lead.platform === "reddit") {
-		return new RedditBotHandler({ bot, lead });
-	}
-
-	throw new Error(`Botting not supported for: ${lead.platform}`);
-};
+export const createBotHandler = ({ bot, lead }: BotHandlerConstructor): IBotHandler | null =>
+	lead.platform === "reddit" ? new RedditBotHandler({ bot, lead }) : null;

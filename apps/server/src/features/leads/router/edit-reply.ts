@@ -1,17 +1,11 @@
 import { authenticatedProcedure } from "@/trpc";
-import { leadAlreadyReplied, leadNotFound } from "../errors";
+import { editReplyInputSchema } from "@sweetreply/shared/features/leads/schemas";
+import { leadNotFound } from "../errors";
 import { projectNotFound } from "@/features/projects/errors";
-import { replyQueue } from "@/features/lead-engine/queues/reply";
-import { replyStatus } from "@sweetreply/shared/features/leads/constants";
-import { canReply } from "@sweetreply/shared/features/leads/utils";
-import { z } from "zod";
+import { TRPCError } from "@trpc/server";
 
-export const replyToLeadInputSchema = z.object({
-	lead_id: z.string(),
-});
-
-export const replyToLeadHandler = authenticatedProcedure
-	.input(replyToLeadInputSchema)
+export const editReplyHandler = authenticatedProcedure
+	.input(editReplyInputSchema)
 	.mutation(async ({ input, ctx }) => {
 		const lead = await ctx.prisma.lead.findUnique({
 			where: {
@@ -32,21 +26,19 @@ export const replyToLeadHandler = authenticatedProcedure
 			throw projectNotFound();
 		}
 
-		const leadCanReply = canReply(lead);
-
-		if (!leadCanReply) {
-			throw leadAlreadyReplied();
+		if (lead.reply_status === "replied") {
+			throw new TRPCError({
+				code: "BAD_REQUEST",
+				message: "You can't update a reply that has already been sent",
+			});
 		}
 
-		replyQueue.add({ lead_id: lead.id });
-
-		// set to pending (waiting for reply in the queue)
 		return await ctx.prisma.lead.update({
 			where: {
 				id: lead.id,
 			},
 			data: {
-				reply_status: "pending",
+				reply_text: input.data.reply_text,
 			},
 			select: {
 				id: true,

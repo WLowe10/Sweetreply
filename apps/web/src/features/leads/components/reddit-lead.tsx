@@ -5,58 +5,38 @@ import {
 	Group,
 	Stack,
 	Text,
-	type TextProps,
 	Title,
-	Tooltip,
 	Spoiler,
 	Flex,
 	Menu,
 	ActionIcon,
 	MenuLabel,
+	Badge,
+	Textarea,
+	Button,
+	ButtonGroup,
 } from "@mantine/core";
-import { formatRelative } from "date-fns";
-import type { Lead } from "@sweetreply/prisma";
 import { IconDots } from "@tabler/icons-react";
-import { trpc } from "@/lib/trpc";
-import { notifications } from "@mantine/notifications";
+import { RelativeDate } from "@/components/relative-date";
+import { useLeadContext } from "../hooks/use-lead-context";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+	EditReplyInputType,
+	editReplyInputSchema,
+} from "@sweetreply/shared/features/leads/schemas";
 
-type Props = {
-	lead: Lead;
-};
+export const RedditLead = () => {
+	const lead = useLeadContext();
+	const [isEditing, setIsEditing] = useState(false);
 
-const DateRelative = ({ date, ...textProps }: { date: Date } & TextProps) => {
-	return (
-		<Tooltip label={date.toDateString()}>
-			<Text component="time" {...textProps}>
-				{formatRelative(date, new Date())}
-			</Text>
-		</Tooltip>
-	);
-};
-
-export const RedditLead = ({ lead }: Props) => {
-	const deleteReplyMutation = trpc.leads.deleteReply.useMutation();
-
-	const handleDeleteReply = async () => {
-		deleteReplyMutation.mutate(
-			{ lead_id: lead.id },
-			{
-				onSuccess: () => {
-					notifications.show({
-						title: "Reply deleted",
-						message: "This reply has been removed from Reddit",
-					});
-				},
-				onError: (err) => {
-					notifications.show({
-						title: "Failed to delete reply",
-						message: err.message,
-						color: "red",
-					});
-				},
-			}
-		);
-	};
+	const form = useForm<EditReplyInputType["data"]>({
+		resolver: zodResolver(editReplyInputSchema.shape.data),
+		values: {
+			reply_text: lead.data.reply_text || "",
+		},
+	});
 
 	return (
 		<Stack>
@@ -68,21 +48,21 @@ export const RedditLead = ({ lead }: Props) => {
 							<div>
 								<Text size="sm">
 									<Anchor
-										href={`https://reddit.com/r/${lead.channel}`}
+										href={`https://reddit.com/r/${lead.data.channel}`}
 										target="_blank"
 										c="gray"
-									>{`r/${lead.channel}`}</Anchor>{" "}
+									>{`r/${lead.data.channel}`}</Anchor>{" "}
 									<Text component="span" c="dimmed">
-										• <DateRelative date={lead.created_at} />
+										• <RelativeDate date={lead.data.created_at} />
 									</Text>
 								</Text>
 								<Anchor
-									href={`https://reddit.com/user/${lead.username}`}
+									href={`https://reddit.com/user/${lead.data.username}`}
 									target="_blank"
 									size="sm"
 									c="gray"
 								>
-									{lead.username}
+									{lead.data.username}
 								</Anchor>
 							</div>
 						</Group>
@@ -94,28 +74,33 @@ export const RedditLead = ({ lead }: Props) => {
 							</Menu.Target>
 							<Menu.Dropdown>
 								<Menu.Label>Lead actions</Menu.Label>
-								<Menu.Item component="a" target="_blank" href={lead.remote_url!}>
+								<Menu.Item
+									component="a"
+									target="_blank"
+									href={lead.data.remote_url!}
+								>
 									View on Reddit
 								</Menu.Item>
 							</Menu.Dropdown>
 						</Menu>
 					</Flex>
 					<Stack>
-						<Title order={4}>{lead.title}</Title>
+						<Title order={4}>{lead.data.title}</Title>
 						<Spoiler maxHeight={120} showLabel="Show more" hideLabel="hide">
-							{lead.content}
+							{lead.data.content}
 						</Spoiler>
 					</Stack>
 				</Stack>
 			</Card>
-			{lead.reply_text && (
+			{lead.data.reply_status && (
 				<Card ml="6rem">
 					<Stack>
 						<Flex justify="space-between">
 							<Group align="center">
 								<Avatar size="md">🍭</Avatar>
 								<Text component="span" size="sm">
-									Sweetreply • <DateRelative c="dimmed" date={lead.created_at} />
+									Sweetreply •{" "}
+									<RelativeDate c="dimmed" date={lead.data.created_at} />
 								</Text>
 							</Group>
 							<Menu>
@@ -126,11 +111,57 @@ export const RedditLead = ({ lead }: Props) => {
 								</Menu.Target>
 								<Menu.Dropdown>
 									<Menu.Label>Reply actions</Menu.Label>
-									<Menu.Item onClick={handleDeleteReply}>Delete reply</Menu.Item>
+									{lead.canReply && (
+										<Menu.Item onClick={lead.reply}>Reply</Menu.Item>
+									)}
+									{lead.canUpdateReply && (
+										<Menu.Item onClick={() => setIsEditing(true)}>
+											Edit reply
+										</Menu.Item>
+									)}
+									{lead.canDeleteReply && (
+										<Menu.Item onClick={lead.deleteReply}>
+											Delete reply
+										</Menu.Item>
+									)}
 								</Menu.Dropdown>
 							</Menu>
 						</Flex>
-						<Text>{lead.reply_text}</Text>
+						{isEditing ? (
+							<form
+								onSubmit={form.handleSubmit((data) =>
+									lead.updateReply(data.reply_text)
+								)}
+							>
+								<Stack>
+									<Textarea autosize={true} {...form.register("reply_text")} />
+									<ButtonGroup>
+										<Button variant="subtle" color="gray">
+											Cancel
+										</Button>
+										<Button type="submit" disabled={!form.formState.isDirty}>
+											Save
+										</Button>
+									</ButtonGroup>
+								</Stack>
+							</form>
+						) : (
+							<Spoiler maxHeight={120} showLabel="Show more" hideLabel="hide">
+								{lead.data.reply_text}
+							</Spoiler>
+						)}
+						<Badge
+							size="sm"
+							// c={
+							// 	lead.data.reply_status === "deleted"
+							// 		? "red"
+							// 		: lead.data.reply_status === "replied"
+							// 			? "blue"
+							// 			: "dimmed"
+							// }
+						>
+							{lead.data.reply_status}
+						</Badge>
 					</Stack>
 				</Card>
 			)}

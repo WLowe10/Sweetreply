@@ -29,6 +29,7 @@ export const getLeadHandler = authenticatedProcedure
 				remote_id: true,
 				remote_url: true,
 				channel: true,
+				reply_status: true,
 				replied_at: true,
 				reply_text: true,
 				remote_reply_id: true,

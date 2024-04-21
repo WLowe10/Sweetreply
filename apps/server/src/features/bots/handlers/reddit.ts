@@ -1,4 +1,5 @@
 import { RedditBot } from "@sweetreply/bots";
+import { proxyIsDefined } from "../utils/proxy-is-defined";
 import type { IBotHandler, BotHandlerConstructor } from "../types";
 import type { Lead } from "@sweetreply/prisma";
 
@@ -12,6 +13,14 @@ export class RedditBotHandler implements IBotHandler {
 		this.redditBot = new RedditBot({
 			username: bot.username,
 			password: bot.password,
+			proxy: proxyIsDefined(bot) && {
+				host: bot.proxy_host!,
+				port: bot.proxy_port!,
+				auth: {
+					username: bot.proxy_user!,
+					password: bot.proxy_pass!,
+				},
+			},
 		});
 	}
 
@@ -24,7 +33,7 @@ export class RedditBotHandler implements IBotHandler {
 			postId: this.lead.remote_id,
 			targetType: this.lead.type as "post" | "comment",
 			subredditName: this.lead.channel as string,
-			content: this.lead.content,
+			content: this.lead.reply_text!,
 		});
 
 		return {
