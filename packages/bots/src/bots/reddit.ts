@@ -1,16 +1,15 @@
 import axios, { type Axios, type AxiosProxyConfig } from "axios";
-import parse from "node-html-parser";
 import { wrapper } from "axios-cookiejar-support";
 import { CookieJar } from "tough-cookie";
-import { userAgents } from "../lib/constants";
-import { IBot, ProxyType } from "../types";
+import { userAgents } from "../constants";
+import { createThing, extractIdFromThing } from "@sweetreply/shared/features/reddit/utils";
+import { redditThing, type RedditThing } from "@sweetreply/shared/features/reddit/constants";
+import type { IBot } from "../types";
 
 const redditBase = new URL("https://www.reddit.com/api");
 const oldRedditBase = new URL("https://old.reddit.com/api");
 
-type TargetType = "post" | "comment";
-
-const redditThing = (type: TargetType, id: string) => (type === "post" ? `t3_${id}` : `t1_${id}`);
+export type TargetType = Extract<RedditThing, "comment" | "link">;
 
 export type RedditCommentData = {
 	id: string;
@@ -117,7 +116,7 @@ export class RedditBot implements IBot {
 			throw new Error("Not authenticated");
 		}
 
-		const redditPrefixedId = redditThing(targetType, postId);
+		const redditPrefixedId = createThing(targetType, postId);
 
 		// it seems like the id is optional. I'm not sure if it would minimize the change of being banned, but i'm ignoring it for now
 
@@ -255,7 +254,7 @@ export class RedditBot implements IBot {
 		// 	throw new Error("Not authenticated");
 		// }
 
-		const thingId = redditThing("comment", commentId);
+		const thingId = createThing("comment", commentId);
 
 		const response = await this.client.post(
 			`${oldRedditBase}/del`,
@@ -307,62 +306,56 @@ export class RedditBot implements IBot {
 		subredditName: string;
 		targetType: TargetType;
 	}) {
-		if (!this.isAuthenticated()) {
-			throw new Error("Not authenticated");
-		}
-
-		const upvoteResponse = await this.client.post(
-			"https://old.reddit.com/api/vote",
-			new URLSearchParams({
-				id: redditThing(targetType, postId),
-				dir: "1", // 1 is upvote
-				// vh comes from the html of the page
-				vh: "qpDloBMTymxKq5IJOeCC4oWggtuacw6AELF/rG/2eqJ6YwJliYJllikO9CBwDrxkb6Nobmhcc02llv0u0eWQw/gAc3Z8KyzfctjZRQFy5GLafBikvE7T/wNnC83teb/rSp4pSTO9NMC80xU+hAr3x8Yp0iArmQiqfVNi30brWxA=",
-				isTrusted: "true",
-				vote_event_data: '{"page_type":"self","sort":"confidence"}',
-				r: "replyon",
-				uh: this.modhash!,
-				renderstyle: "html",
-			}),
-			{
-				params: {
-					dir: "1",
-					id: "t3_1blgh0s",
-					sr: "replyon",
-				},
-				headers: {
-					"accept": "application/json, text/javascript, */*; q=0.01",
-					"accept-language": "en-US,en;q=0.5",
-					"cache-control": "no-cache",
-					"content-type": "application/x-www-form-urlencoded; charset=UTF-8",
-					"origin": "https://old.reddit.com",
-					"pragma": "no-cache",
-					"priority": "u=1, i",
-					// "referer": "https://old.reddit.com/r/replyon/comments/1blgh0s/hello_world/",
-					"sec-ch-ua": '"Chromium";v="124", "Brave";v="124", "Not-A.Brand";v="99"',
-					"sec-ch-ua-mobile": "?0",
-					"sec-ch-ua-platform": '"Windows"',
-					"sec-fetch-dest": "empty",
-					"sec-fetch-mode": "cors",
-					"sec-fetch-site": "same-origin",
-					"sec-gpc": "1",
-					"user-agent":
-						"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-					"x-requested-with": "XMLHttpRequest",
-				},
-			}
-		);
-
-		if (upvoteResponse.data.success === false) {
-			throw new Error("Failed to upvote");
-		}
+		// if (!this.isAuthenticated()) {
+		// 	throw new Error("Not authenticated");
+		// }
+		// const upvoteResponse = await this.client.post(
+		// 	"https://old.reddit.com/api/vote",
+		// 	new URLSearchParams({
+		// 		id: createRedditThing(targetType, postId),
+		// 		dir: "1", // 1 is upvote
+		// 		// vh comes from the html of the page
+		// 		vh: "qpDloBMTymxKq5IJOeCC4oWggtuacw6AELF/rG/2eqJ6YwJliYJllikO9CBwDrxkb6Nobmhcc02llv0u0eWQw/gAc3Z8KyzfctjZRQFy5GLafBikvE7T/wNnC83teb/rSp4pSTO9NMC80xU+hAr3x8Yp0iArmQiqfVNi30brWxA=",
+		// 		isTrusted: "true",
+		// 		vote_event_data: '{"page_type":"self","sort":"confidence"}',
+		// 		r: "replyon",
+		// 		uh: this.modhash!,
+		// 		renderstyle: "html",
+		// 	}),
+		// 	{
+		// 		params: {
+		// 			dir: "1",
+		// 			id: "t3_1blgh0s",
+		// 			sr: "replyon",
+		// 		},
+		// 		headers: {
+		// 			"accept": "application/json, text/javascript, */*; q=0.01",
+		// 			"accept-language": "en-US,en;q=0.5",
+		// 			"cache-control": "no-cache",
+		// 			"content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+		// 			"origin": "https://old.reddit.com",
+		// 			"pragma": "no-cache",
+		// 			"priority": "u=1, i",
+		// 			// "referer": "https://old.reddit.com/r/replyon/comments/1blgh0s/hello_world/",
+		// 			"sec-ch-ua": '"Chromium";v="124", "Brave";v="124", "Not-A.Brand";v="99"',
+		// 			"sec-ch-ua-mobile": "?0",
+		// 			"sec-ch-ua-platform": '"Windows"',
+		// 			"sec-fetch-dest": "empty",
+		// 			"sec-fetch-mode": "cors",
+		// 			"sec-fetch-site": "same-origin",
+		// 			"sec-gpc": "1",
+		// 			"user-agent":
+		// 				"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+		// 			"x-requested-with": "XMLHttpRequest",
+		// 		},
+		// 	}
+		// );
+		// if (upvoteResponse.data.success === false) {
+		// 	throw new Error("Failed to upvote");
+		// }
 	}
 
 	public isAuthenticated() {
 		return this.modhash !== null;
 	}
 }
-
-// del
-
-// l0gd2u2

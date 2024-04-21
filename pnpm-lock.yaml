@@ -292,6 +292,9 @@ importers:
 
   packages/bots:
     dependencies:
+      '@sweetreply/shared':
+        specifier: workspace:*
+        version: link:../shared
       axios:
         specifier: ^1.6.8
         version: 1.6.8

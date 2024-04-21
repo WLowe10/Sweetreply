@@ -1,5 +1,5 @@
 import axios, { type Axios } from "axios";
-import { CHROME_USER_AGENT } from "../constants";
+import { CHROME_USER_AGENT } from "../../constants";
 
 export class RedditPublic {
 	private axios: Axios;

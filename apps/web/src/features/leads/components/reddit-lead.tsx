@@ -38,6 +38,13 @@ export const RedditLead = () => {
 		},
 	});
 
+	const handleEdit = form.handleSubmit((data) => {
+		lead.updateReply(data.reply_text);
+
+		// should ideally wait for the mutation to complete before setting isEditing to false
+		setIsEditing(false);
+	});
+
 	return (
 		<Stack>
 			<Card>
@@ -128,11 +135,7 @@ export const RedditLead = () => {
 							</Menu>
 						</Flex>
 						{isEditing ? (
-							<form
-								onSubmit={form.handleSubmit((data) =>
-									lead.updateReply(data.reply_text)
-								)}
-							>
+							<form onSubmit={handleEdit}>
 								<Stack>
 									<Textarea autosize={true} {...form.register("reply_text")} />
 									<ButtonGroup>

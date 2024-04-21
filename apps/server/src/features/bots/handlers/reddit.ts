@@ -1,7 +1,9 @@
 import { RedditBot } from "@sweetreply/bots";
 import { proxyIsDefined } from "../utils/proxy-is-defined";
+import { extractIdFromThing } from "@sweetreply/shared/features/reddit/utils";
 import type { IBotHandler, BotHandlerConstructor } from "../types";
 import type { Lead } from "@sweetreply/prisma";
+import type { RedditThing } from "@sweetreply/shared/features/reddit/constants";
 
 export class RedditBotHandler implements IBotHandler {
 	private redditBot: RedditBot;
@@ -29,15 +31,17 @@ export class RedditBotHandler implements IBotHandler {
 	}
 
 	public async reply() {
+		const targetType: RedditThing = this.lead.type === "post" ? "link" : "comment";
+
 		const result = await this.redditBot.comment({
 			postId: this.lead.remote_id,
-			targetType: this.lead.type as "post" | "comment",
+			targetType: targetType,
 			subredditName: this.lead.channel as string,
 			content: this.lead.reply_text!,
 		});
 
 		return {
-			remote_reply_id: result.id.slice(3),
+			remote_reply_id: extractIdFromThing(result.id),
 		};
 	}
 

@@ -13,6 +13,7 @@
 		"clean:modules": "rm -rf node_modules"
 	},
 	"dependencies": {
+		"@sweetreply/shared": "workspace:*",
 		"axios": "^1.6.8",
 		"axios-cookiejar-support": "^5.0.0",
 		"node-html-parser": "^6.1.13",

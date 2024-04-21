@@ -2,7 +2,7 @@ import { leadModel } from "@sweetreply/prisma/zod";
 import { z } from "zod";
 
 export const baseLeadSchema = leadModel.extend({
-	reply_text: z.string().min(6).max(1024), // todo reevaluate max length
+	reply_text: z.string().min(3).max(4096),
 });
 
 export const editReplyInputSchema = z.object({
