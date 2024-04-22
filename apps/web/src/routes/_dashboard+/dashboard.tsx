@@ -1,4 +1,4 @@
-import { useMe } from "@/features/auth/hooks";
+import { useMe } from "@/features/auth/hooks/use-me";
 import { useLocalProject } from "@/features/projects/hooks/use-local-project";
 import { ResourceContainer } from "@/components/resource-container";
 import { trpc } from "@/lib/trpc";

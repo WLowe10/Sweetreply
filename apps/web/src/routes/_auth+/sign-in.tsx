@@ -15,7 +15,7 @@ import {
 import { IconInfoCircle } from "@tabler/icons-react";
 import { signInInputSchema, type SignInInputType } from "@sweetreply/shared/features/auth/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMe, useSignIn } from "@/features/auth/hooks";
+import { useSignIn } from "@/features/auth/hooks/use-sign-in";
 import { AuthFormContainer } from "@/features/auth/components/auth-form-container";
 import { buildPageTitle } from "@/lib/utils";
 

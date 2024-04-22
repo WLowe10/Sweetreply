@@ -21,6 +21,8 @@ const replyQueue = new Queue<ReplyQueueJobData>("reply", {
 	},
 	defaultJobOptions: {
 		attempts: 3,
+		removeOnComplete: true,
+		removeOnFail: true,
 	},
 });
 
@@ -107,7 +109,10 @@ replyQueue.on("active", async (job) => {
 });
 
 replyQueue.on("completed", async (job) => {
-	// const jobData = job.data;
+	const jobData = job.data;
+
+	logger.info(`Completed reply job for lead ${jobData.lead_id}`);
+
 	// const lead = await prisma.lead.findUnique({
 	// 	where: {
 	// 		id: jobData.lead_id,

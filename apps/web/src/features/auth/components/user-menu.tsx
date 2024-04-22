@@ -9,7 +9,8 @@ import {
 	UnstyledButton,
 	useMantineTheme,
 } from "@mantine/core";
-import { useMe, useSignOut } from "../hooks";
+import { useMe } from "../hooks/use-me";
+import { useSignOut } from "../hooks/use-sign-out";
 import { IconDoorOff, IconShield, IconUser } from "@tabler/icons-react";
 import { ProfileModal } from "./profile-modal";
 import { useDisclosure } from "@mantine/hooks";

@@ -11,7 +11,7 @@ import {
 	Text,
 	Title,
 } from "@mantine/core";
-import { useMe } from "@/features/auth/hooks";
+import { useMe } from "@/features/auth/hooks/use-me";
 import { appConfig } from "@sweetreply/shared/config";
 import { IconBrandDiscordFilled, IconBrandXFilled } from "@tabler/icons-react";
 import type { PropsWithChildren } from "react";

@@ -1,29 +1,24 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-	Box,
-	Title,
-	Card,
 	Stack,
-	Group,
 	TextInput,
 	Button,
 	Modal,
 	Divider,
 	Alert,
-	Accordion,
-	Flex,
 	SimpleGrid,
-	type ModalProps,
 	Tooltip,
 	Text,
+	type ModalProps,
 } from "@mantine/core";
 import { updateMeInputSchema } from "@sweetreply/shared/features/auth/schemas";
 import { useForm } from "react-hook-form";
-import z from "zod";
-import { useMe, useSignOut } from "../hooks";
+import { useMe } from "../hooks/use-me";
+import { useSignOut } from "../hooks/use-sign-out";
 import { IconAlertTriangle, IconCheck } from "@tabler/icons-react";
 import { trpc } from "@/lib/trpc";
 import { notifications } from "@mantine/notifications";
+import z from "zod";
 
 export type ProfileModalProps = {
 	modalProps: ModalProps;

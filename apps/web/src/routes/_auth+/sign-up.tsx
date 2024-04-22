@@ -14,7 +14,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { IconInfoCircle } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
-import { useSignUp } from "@/features/auth/hooks";
+import { useSignUp } from "@/features/auth/hooks/use-sign-up";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AuthFormContainer } from "@/features/auth/components/auth-form-container";
 import { signUpInputSchema } from "@sweetreply/shared/features/auth/schemas";
