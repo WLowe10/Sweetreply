@@ -4,7 +4,7 @@ import { z } from "zod";
 import type { Prisma } from "@sweetreply/prisma";
 
 const getManyUsersInputSchema = z.object({
-	search: z.string().optional(),
+	query: z.string().optional(),
 	sort: z
 		.object({
 			created_at: orderBySchema,
@@ -25,29 +25,29 @@ const getManyUsersInputSchema = z.object({
 export const getManyUsersHandler = adminProcedure
 	.input(getManyUsersInputSchema)
 	.query(async ({ input, ctx }) => {
-		const { search, filter, pagination, sort } = input;
+		const { query, filter, pagination, sort } = input;
 
 		const queryWhere: Prisma.UserWhereInput = {};
 
 		const queryOrderBy: Prisma.UserOrderByWithRelationInput[] = [];
 
-		if (search && search.length > 0) {
+		if (query && query.length > 0) {
 			queryWhere.OR = [
 				{
 					first_name: {
-						contains: search,
+						contains: query,
 						mode: "insensitive",
 					},
 				},
 				{
 					last_name: {
-						contains: search,
+						contains: query,
 						mode: "insensitive",
 					},
 				},
 				{
 					email: {
-						contains: search,
+						contains: query,
 						mode: "insensitive",
 					},
 				},

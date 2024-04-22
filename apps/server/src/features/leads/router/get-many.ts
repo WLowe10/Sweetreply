@@ -106,6 +106,7 @@ export const getManyLeadsHandler = authenticatedProcedure
 				id: true,
 				username: true,
 				remote_url: true,
+				date: true,
 				content: true,
 				reply_status: true,
 				platform: true,

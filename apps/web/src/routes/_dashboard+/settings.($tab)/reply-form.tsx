@@ -90,23 +90,15 @@ export const ReplyForm = () => {
 						name="reply_delay"
 						control={form.control}
 						render={({ field, fieldState }) => (
-							<InputWrapper
+							<NumberInput
 								label="Reply delay"
-								description="The minimum amount of time between a lead and an automatic reply. Default is 10 minutes."
-							>
-								<Slider
-									mt="sm"
-									min={0}
-									max={60}
-									label={(value) => `${value} min`}
-									marks={[
-										{ value: 10, label: "10 min" },
-										{ value: 50, label: "50 min" },
-									]}
-									value={field.value}
-									onChange={field.onChange}
-								/>
-							</InputWrapper>
+								description="The minimum amount of minutes between a lead and an automatic reply. Default is 10 minutes."
+								value={field.value}
+								onChange={field.onChange}
+								error={fieldState.error?.message}
+								allowDecimal={false}
+								allowNegative={false}
+							/>
 						)}
 					/>
 					<Controller
@@ -115,7 +107,7 @@ export const ReplyForm = () => {
 						render={({ field, fieldState }) => (
 							<NumberInput
 								label="Daily limit"
-								description="Automatic replies will stop after you reach your chosen daily limit. Set to 0 for no limit."
+								description="Automatic replies will stop after you reach your daily limit. Set to 0 for no limit."
 								allowDecimal={false}
 								allowNegative={false}
 								allowLeadingZeros={false}
@@ -144,3 +136,24 @@ export const ReplyForm = () => {
 		</Box>
 	);
 };
+
+// <InputWrapper
+// 	label="Reply delay"
+// 	description="The minimum amount of time between a lead and an automatic reply. Default is 10 minutes."
+// 	mb="sm"
+// >
+{
+	/* <Slider
+		mt="sm"
+		min={0}
+		max={1440}
+		label={(value) => `${value} min`}
+		marks={[
+			{ value: 0, label: "0 min" },
+			{ value: 1440, label: "1 day" },
+		]}
+		value={field.value}
+		onChange={field.onChange}
+	/> */
+}
+// </InputWrapper>

@@ -93,10 +93,12 @@ replyQueue.process(async (job) => {
 	await projectsService.deductToken(project.id);
 });
 
-replyQueue.on("active", async (job) => {
+replyQueue.on("active", async (job, jobPromise) => {
 	const jobData = job.data;
 
 	logger.info(`Processing reply job for lead ${jobData.lead_id}`);
+
+	// todo check the project can reply, otherwise cancel and set status to draft
 
 	await prisma.lead.update({
 		where: {

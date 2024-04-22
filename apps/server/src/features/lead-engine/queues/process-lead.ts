@@ -14,7 +14,7 @@ export type ProcessLeadQueueJobData = {
 	lead_id: string;
 };
 
-const processLeadQueue = new Queue<ProcessLeadQueueJobData>("generate-reply", {
+const processLeadQueue = new Queue<ProcessLeadQueueJobData>("process-lead", {
 	redis: env.REDIS_URL,
 	defaultJobOptions: {
 		attempts: 3,
@@ -50,8 +50,6 @@ processLeadQueue.process(async (job) => {
 	if (project.webhook_url) {
 		try {
 			if (isDiscordWebhookURL(project.webhook_url)) {
-				console.log("sending discord webhook");
-
 				await axios.post(project.webhook_url, {
 					username: "Sweetreply",
 					avatar_url: "https://media.tenor.com/ueHM2kR20QQAAAAM/high-cat.gif",

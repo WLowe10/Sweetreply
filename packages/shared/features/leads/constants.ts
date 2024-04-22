@@ -2,11 +2,18 @@ export const leadPlatform = {
 	REDDIT: "reddit",
 } as const;
 
-export const replyStatus: Record<string, string | null> = {
+export const replyStatus = {
 	PENDING: "pending",
 	SCHEDULED: "scheduled",
 	DRAFT: "draft",
 	REPLIED: "replied",
-	DELETED: "deleted",
-	NONE: null,
+	NULL: null,
+} as const;
+
+export const replyStatusColors = {
+	[replyStatus.PENDING]: "teal",
+	[replyStatus.SCHEDULED]: "blue",
+	[replyStatus.DRAFT]: "gray",
+	[replyStatus.REPLIED]: "green",
+	NULL: "gray",
 } as const;

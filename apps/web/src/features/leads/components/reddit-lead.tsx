@@ -20,14 +20,8 @@ import {
 import { IconDots } from "@tabler/icons-react";
 import { RelativeDate } from "@/components/relative-date";
 import { useLeadContext } from "../hooks/use-lead-context";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import {
-	EditReplyInputType,
-	editReplyInputSchema,
-} from "@sweetreply/shared/features/leads/schemas";
 import { useReplyForm } from "../hooks/use-reply-form";
+import { replyStatus } from "@sweetreply/shared/features/leads/constants";
 
 export const RedditLead = () => {
 	const lead = useLeadContext();
@@ -61,7 +55,7 @@ export const RedditLead = () => {
 								</Anchor>
 							</div>
 						</Group>
-						<Menu>
+						<Menu withArrow>
 							<Menu.Target>
 								<ActionIcon variant="subtle" color="gray">
 									<IconDots size={18} />
@@ -96,7 +90,14 @@ export const RedditLead = () => {
 								Sweetreply
 								{lead.replyDate && (
 									<>
-										• <RelativeDate c="dimmed" date={lead.replyDate} />
+										{" "}
+										•{" "}
+										{lead.data.reply_status === replyStatus.SCHEDULED && (
+											<Text component="span" c="dimmed">
+												scheduled for{" "}
+											</Text>
+										)}
+										<RelativeDate c="dimmed" date={lead.replyDate} />
 									</>
 								)}
 							</Text>
