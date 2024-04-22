@@ -3,6 +3,7 @@ import { editReplyInputSchema } from "@sweetreply/shared/features/leads/schemas"
 import { leadNotFound } from "../errors";
 import { projectNotFound } from "@/features/projects/errors";
 import { TRPCError } from "@trpc/server";
+import { replyStatus } from "@sweetreply/shared/features/leads/constants";
 
 export const editReplyHandler = authenticatedProcedure
 	.input(editReplyInputSchema)
@@ -26,7 +27,7 @@ export const editReplyHandler = authenticatedProcedure
 			throw projectNotFound();
 		}
 
-		if (lead.reply_status === "replied") {
+		if (lead.reply_status === replyStatus.REPLIED) {
 			throw new TRPCError({
 				code: "BAD_REQUEST",
 				message: "You can't update a reply that has already been sent",
@@ -38,6 +39,7 @@ export const editReplyHandler = authenticatedProcedure
 				id: lead.id,
 			},
 			data: {
+				reply_status: lead.reply_status === null ? replyStatus.DRAFT : undefined,
 				reply_text: input.data.reply_text,
 			},
 			select: {

@@ -2,6 +2,7 @@ import { CronJob } from "cron";
 import { RedditBot } from "@sweetreply/bots";
 import { logger } from "@/lib/logger";
 import { prisma } from "@/lib/db";
+import { botStatus } from "../constants";
 
 // not currently enabled, POC
 export const checkBanJob = CronJob.from({
@@ -25,7 +26,7 @@ export const checkBanJob = CronJob.from({
 					},
 					data: {
 						active: false,
-						status: "banned",
+						status: botStatus.BANNED,
 					},
 				});
 			}

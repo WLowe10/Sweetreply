@@ -57,7 +57,6 @@ async function bootstrap() {
 
 	if (isDev()) {
 		// todo add openapi panel
-
 		// app.use("/dev/openapi", (req, res) => {
 		// });
 

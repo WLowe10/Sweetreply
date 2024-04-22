@@ -6,17 +6,9 @@ import { replyQueue } from "./reply";
 import axios from "axios";
 import { isDiscordWebhookURL } from "@/lib/regex";
 import { buildFrontendUrl } from "@/lib/utils";
-import {
-	addMilliseconds,
-	addMinutes,
-	differenceInMilliseconds,
-	isBefore,
-	isFuture,
-	isPast,
-	millisecondsToMinutes,
-	subDays,
-} from "date-fns";
+import { addMinutes, differenceInMilliseconds, isFuture, subDays } from "date-fns";
 import { logger } from "@/lib/logger";
+import { replyStatus } from "@sweetreply/shared/features/leads/constants";
 
 export type ProcessLeadQueueJobData = {
 	lead_id: string;
@@ -125,7 +117,7 @@ processLeadQueue.process(async (job) => {
 	// counts all of the replies within the last 24 hours
 	const repliesLast24Hours = await prisma.lead.count({
 		where: {
-			reply_status: "replied",
+			reply_status: replyStatus.REPLIED,
 			replied_at: {
 				gte: subDays(new Date(), 1),
 			},
@@ -148,7 +140,7 @@ processLeadQueue.process(async (job) => {
 	// add reply text
 
 	if (result.shouldReply && typeof result.reply !== "undefined") {
-		let scheduledAt = null;
+		let scheduledAt = new Date();
 		let delay = 0;
 
 		if (project.reply_delay > 0) {
@@ -165,7 +157,7 @@ processLeadQueue.process(async (job) => {
 				id: lead.id,
 			},
 			data: {
-				reply_status: delay > 0 ? "scheduled" : "pending",
+				reply_status: replyStatus.SCHEDULED,
 				reply_text: result.reply,
 				reply_scheduled_at: scheduledAt,
 				replies_generated: {

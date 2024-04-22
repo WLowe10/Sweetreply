@@ -1,7 +1,7 @@
 import { env } from "@/env";
 
 export function isDev(): boolean {
-	return process.env.NODE_ENV !== "production";
+	return env.NODE_ENV !== "production";
 }
 
 export function buildAPIUrl(path: string, query?: Record<string, string>): string {
@@ -21,7 +21,9 @@ type BuildFrontendUrlOptions = {
 
 export function buildFrontendUrl(options?: string | BuildFrontendUrlOptions): string {
 	const url = new URL(
-		options ? env.FRONTEND_URL + (typeof options === "string" ? options : options.path) : env.FRONTEND_URL
+		options
+			? env.FRONTEND_URL + (typeof options === "string" ? options : options.path)
+			: env.FRONTEND_URL
 	);
 
 	if (typeof options === "object") {

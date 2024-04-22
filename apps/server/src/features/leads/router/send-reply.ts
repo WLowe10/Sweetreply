@@ -3,15 +3,15 @@ import { leadAlreadyReplied, leadNotFound } from "../errors";
 import { projectNotFound } from "@/features/projects/errors";
 import { replyQueue } from "@/features/lead-engine/queues/reply";
 import { replyStatus } from "@sweetreply/shared/features/leads/constants";
-import { canReply } from "@sweetreply/shared/features/leads/utils";
+import { canSendReply } from "@sweetreply/shared/features/leads/utils";
 import { z } from "zod";
 
-export const replyToLeadInputSchema = z.object({
+export const sendReplyInputSchema = z.object({
 	lead_id: z.string(),
 });
 
-export const replyToLeadHandler = authenticatedProcedure
-	.input(replyToLeadInputSchema)
+export const sendReplyHandler = authenticatedProcedure
+	.input(sendReplyInputSchema)
 	.mutation(async ({ input, ctx }) => {
 		const lead = await ctx.prisma.lead.findUnique({
 			where: {
@@ -32,13 +32,13 @@ export const replyToLeadHandler = authenticatedProcedure
 			throw projectNotFound();
 		}
 
-		const leadCanReply = canReply(lead);
+		const leadCanSendReply = canSendReply(lead);
 
-		if (!leadCanReply) {
+		if (!leadCanSendReply) {
 			throw leadAlreadyReplied();
 		}
 
-		replyQueue.add({ lead_id: lead.id });
+		replyQueue.add({ lead_id: lead.id }, { jobId: lead.id });
 
 		// set to pending (waiting for reply in the queue)
 		return await ctx.prisma.lead.update({
@@ -46,7 +46,7 @@ export const replyToLeadHandler = authenticatedProcedure
 				id: lead.id,
 			},
 			data: {
-				reply_status: "pending",
+				reply_status: replyStatus.SCHEDULED,
 			},
 			select: {
 				id: true,

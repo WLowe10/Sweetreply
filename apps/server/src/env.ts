@@ -8,7 +8,7 @@ const envBool = z
 
 export const envSchema = z.object({
 	PORT: z.coerce.number().optional(),
-	NODE_ENV: z.enum(["development", "production"]).default("production"),
+	NODE_ENV: z.enum(["development", "production"]).optional(),
 	FRONTEND_URL: z.string(),
 	DB_URL: z.string(),
 	COOKIE_SECRET: z.string(),

@@ -1,19 +1,16 @@
-import { projectNotFound } from "@/features/projects/errors";
 import { authenticatedProcedure } from "@/trpc";
 import { z } from "zod";
-import { failedToDeleteReply, leadHasNoReply, leadNotFound } from "../errors";
-import { RedditBot } from "@sweetreply/bots";
-import { TRPCError } from "@trpc/server";
+import { failedToDeleteReply, failedToUndoReply, leadHasNoReply, leadNotFound } from "../errors";
 import { sleep } from "@sweetreply/shared/lib/utils";
-import { RedditBotHandler } from "@/features/bots/handlers/reddit";
 import { createBotHandler } from "@/features/bots/utils/create-bot-handler";
+import { replyStatus } from "@sweetreply/shared/features/leads/constants";
 
-const deleteReplyInputSchema = z.object({
+const undoReplyInputSchema = z.object({
 	lead_id: z.string(),
 });
 
-export const deleteReplyHandler = authenticatedProcedure
-	.input(deleteReplyInputSchema)
+export const undoReplyHandler = authenticatedProcedure
+	.input(undoReplyInputSchema)
 	.mutation(async ({ input, ctx }) => {
 		const lead = await ctx.prisma.lead.findUnique({
 			where: {
@@ -38,7 +35,7 @@ export const deleteReplyHandler = authenticatedProcedure
 			throw leadHasNoReply();
 		}
 
-		if (lead.reply_status !== "replied") {
+		if (lead.reply_status !== replyStatus.REPLIED) {
 			throw leadHasNoReply();
 		}
 
@@ -49,13 +46,13 @@ export const deleteReplyHandler = authenticatedProcedure
 		});
 
 		if (!botAccount) {
-			throw failedToDeleteReply();
+			throw failedToUndoReply();
 		}
 
 		const handler = createBotHandler({ bot: botAccount, lead });
 
 		if (!handler) {
-			throw failedToDeleteReply();
+			throw failedToUndoReply();
 		}
 
 		try {
@@ -76,7 +73,8 @@ export const deleteReplyHandler = authenticatedProcedure
 				replied_at: null,
 				reply_bot_id: null,
 				reply_remote_id: null,
-				reply_status: "deleted",
+				reply_scheduled_at: null,
+				reply_status: replyStatus.DRAFT,
 			},
 			select: {
 				id: true,

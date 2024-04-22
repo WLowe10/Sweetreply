@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/db";
 import { RedditBot } from "@sweetreply/bots";
 import { subDays } from "date-fns";
+import { botStatus } from "./constants";
 
 export class BotsService {
 	public getBot(id: string) {
@@ -63,7 +64,7 @@ export class BotsService {
 				},
 				data: {
 					active: false,
-					status: "error",
+					status: botStatus.RESTRICTED,
 				},
 			});
 		}

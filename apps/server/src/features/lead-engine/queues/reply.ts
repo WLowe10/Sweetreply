@@ -6,6 +6,7 @@ import { sleep } from "@sweetreply/shared/lib/utils";
 import { botsService } from "@/features/bots/service";
 import { projectsService } from "@/features/projects/service";
 import { createBotHandler } from "@/features/bots/utils/create-bot-handler";
+import { replyStatus } from "@sweetreply/shared/features/leads/constants";
 
 export type ReplyQueueJobData = {
 	lead_id: string;
@@ -25,8 +26,6 @@ const replyQueue = new Queue<ReplyQueueJobData>("reply", {
 
 replyQueue.process(async (job) => {
 	const jobData = job.data;
-
-	logger.info(`Processing reply job for lead ${jobData.lead_id}`);
 
 	const lead = await prisma.lead.findUnique({
 		where: {
@@ -92,10 +91,53 @@ replyQueue.process(async (job) => {
 	await projectsService.deductToken(project.id);
 });
 
-replyQueue.on("failed", (job, err) => {
+replyQueue.on("active", async (job) => {
+	const jobData = job.data;
+
+	logger.info(`Processing reply job for lead ${jobData.lead_id}`);
+
+	await prisma.lead.update({
+		where: {
+			id: jobData.lead_id,
+		},
+		data: {
+			reply_status: replyStatus.PENDING,
+		},
+	});
+});
+
+replyQueue.on("completed", async (job) => {
+	// const jobData = job.data;
+	// const lead = await prisma.lead.findUnique({
+	// 	where: {
+	// 		id: jobData.lead_id,
+	// 	},
+	// });
+	// if (!lead) {
+	// 	return;
+	// }
+	// await projectsService.deductToken(lead.project_id);
+});
+
+replyQueue.on("failed", async (job, err) => {
+	const jobData = job.data;
+
 	logger.error(
 		`Reply job [${job.id}][lead:${job.data.lead_id}] failed with error: ${err.message}`
 	);
+
+	await prisma.lead.update({
+		where: {
+			id: jobData.lead_id,
+		},
+		data: {
+			reply_status: "failed",
+		},
+	});
+});
+
+replyQueue.on("removed", (job) => {
+	console.log(`Removed job ${job.id}`);
 });
 
 export { replyQueue };

@@ -30,3 +30,15 @@ export const failedToDeleteReply = () =>
 		code: "INTERNAL_SERVER_ERROR",
 		message: "Failed to delete reply",
 	});
+
+export const failedToUndoReply = () =>
+	new TRPCError({
+		code: "INTERNAL_SERVER_ERROR",
+		message: "Failed to undo reply",
+	});
+
+export const failedToCancelReply = () =>
+	new TRPCError({
+		code: "INTERNAL_SERVER_ERROR",
+		message: "Failed to cancel scheduled reply",
+	});
