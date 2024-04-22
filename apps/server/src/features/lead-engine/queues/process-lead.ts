@@ -6,7 +6,16 @@ import { replyQueue } from "./reply";
 import axios from "axios";
 import { isDiscordWebhookURL } from "@/lib/regex";
 import { buildFrontendUrl } from "@/lib/utils";
-import { subDays } from "date-fns";
+import {
+	addMilliseconds,
+	addMinutes,
+	differenceInMilliseconds,
+	isBefore,
+	isFuture,
+	isPast,
+	millisecondsToMinutes,
+	subDays,
+} from "date-fns";
 import { logger } from "@/lib/logger";
 
 export type ProcessLeadQueueJobData = {
@@ -117,18 +126,9 @@ processLeadQueue.process(async (job) => {
 	const repliesLast24Hours = await prisma.lead.count({
 		where: {
 			reply_status: "replied",
-			AND: [
-				{
-					replied_at: {
-						not: null,
-					},
-				},
-				{
-					replied_at: {
-						gte: subDays(new Date(), 1),
-					},
-				},
-			],
+			replied_at: {
+				gte: subDays(new Date(), 1),
+			},
 		},
 	});
 
@@ -146,26 +146,40 @@ processLeadQueue.process(async (job) => {
 	console.log(result.shouldReply);
 
 	// add reply text
-	await prisma.lead.update({
-		where: {
-			id: lead.id,
-		},
-		data: {
-			reply_text: result.reply,
-			reply_status: "pending",
-			replies_generated: {
-				increment: 1,
-			},
-		},
-	});
 
-	if (result.shouldReply) {
-		// sends the lead to the reply queue after generating the reply
+	if (result.shouldReply && typeof result.reply !== "undefined") {
+		let scheduledAt = null;
+		let delay = 0;
+
+		if (project.reply_delay > 0) {
+			const replyDate = addMinutes(lead.date, project.reply_delay);
+
+			if (isFuture(replyDate)) {
+				scheduledAt = replyDate;
+				delay = differenceInMilliseconds(replyDate, new Date());
+			}
+		}
+
+		await prisma.lead.update({
+			where: {
+				id: lead.id,
+			},
+			data: {
+				reply_status: delay > 0 ? "scheduled" : "pending",
+				reply_text: result.reply,
+				reply_scheduled_at: scheduledAt,
+				replies_generated: {
+					increment: 1,
+				},
+			},
+		});
+
 		replyQueue.add(
-			{ lead_id: lead.id }
-			// {
-			// 	delay: 60000,
-			// }
+			{ lead_id: lead.id },
+			{
+				jobId: lead.id,
+				delay,
+			}
 		);
 	}
 });

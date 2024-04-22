@@ -5,8 +5,10 @@ import {
 	Button,
 	Checkbox,
 	Group,
+	InputWrapper,
 	NumberInput,
 	Radio,
+	Slider,
 	Stack,
 	Switch,
 	TextInput,
@@ -28,8 +30,9 @@ export const ReplyForm = () => {
 		resolver: zodResolver(updateProjectInputSchema.shape.data),
 		values: {
 			reply_mention_mode: (project?.reply_mention_mode as any) ?? "name",
+			reply_delay: project?.reply_delay ?? 10,
 			reply_daily_limit: project?.reply_daily_limit ?? 0,
-			custom_reply_instructions: project?.custom_reply_instructions ?? "",
+			reply_custom_instructions: project?.reply_custom_instructions ?? "",
 		},
 	});
 
@@ -84,6 +87,29 @@ export const ReplyForm = () => {
 						)}
 					/>
 					<Controller
+						name="reply_delay"
+						control={form.control}
+						render={({ field, fieldState }) => (
+							<InputWrapper
+								label="Reply delay"
+								description="The minimum amount of time between a lead and an automatic reply. Default is 10 minutes."
+							>
+								<Slider
+									mt="sm"
+									min={0}
+									max={60}
+									label={(value) => `${value} min`}
+									marks={[
+										{ value: 10, label: "10 min" },
+										{ value: 50, label: "50 min" },
+									]}
+									value={field.value}
+									onChange={field.onChange}
+								/>
+							</InputWrapper>
+						)}
+					/>
+					<Controller
 						name="reply_daily_limit"
 						control={form.control}
 						render={({ field, fieldState }) => (
@@ -107,8 +133,8 @@ export const ReplyForm = () => {
 						autoCapitalize="off"
 						spellCheck="false"
 						resize="vertical"
-						error={form.formState.errors.custom_reply_instructions?.message}
-						{...form.register("custom_reply_instructions")}
+						error={form.formState.errors.reply_custom_instructions?.message}
+						{...form.register("reply_custom_instructions")}
 					/>
 					<Button type="submit" disabled={!form.formState.isDirty}>
 						Save

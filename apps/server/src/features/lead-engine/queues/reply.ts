@@ -77,7 +77,8 @@ replyQueue.process(async (job) => {
 			data: {
 				reply_status: "replied",
 				replied_at: new Date(),
-				remote_reply_id: result.remote_reply_id,
+				reply_remote_id: result.reply_remote_id,
+				reply_scheduled_at: null,
 				reply_bot_id: botAccount.id,
 			},
 		});

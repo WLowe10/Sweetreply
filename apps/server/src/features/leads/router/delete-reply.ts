@@ -31,7 +31,7 @@ export const deleteReplyHandler = authenticatedProcedure
 		});
 
 		if (!userOwnsProject) {
-			throw projectNotFound();
+			throw leadNotFound();
 		}
 
 		if (lead.reply_bot_id === null) {
@@ -75,7 +75,7 @@ export const deleteReplyHandler = authenticatedProcedure
 			data: {
 				replied_at: null,
 				reply_bot_id: null,
-				remote_reply_id: null,
+				reply_remote_id: null,
 				reply_status: "deleted",
 			},
 			select: {
@@ -97,7 +97,8 @@ export const deleteReplyHandler = authenticatedProcedure
 				reply_status: true,
 				replied_at: true,
 				reply_text: true,
-				remote_reply_id: true,
+				reply_remote_id: true,
+				reply_scheduled_at: true,
 				reply_bot: {
 					select: {
 						username: true,

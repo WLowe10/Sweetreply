@@ -1,18 +1,18 @@
 import { authenticatedProcedure } from "@/trpc";
-import { leadAlreadyReplied, leadNotFound } from "../errors";
-import { projectNotFound } from "@/features/projects/errors";
 import { replyQueue } from "@/features/lead-engine/queues/reply";
-import { replyStatus } from "@sweetreply/shared/features/leads/constants";
-import { canReply } from "@sweetreply/shared/features/leads/utils";
 import { z } from "zod";
+import { TRPCError } from "@trpc/server";
+import { leadNotFound } from "../errors";
+import { projectNotFound } from "@/features/projects/errors";
 
-export const replyToLeadInputSchema = z.object({
+const cancelReplyInputSchema = z.object({
 	lead_id: z.string(),
 });
 
-export const replyToLeadHandler = authenticatedProcedure
-	.input(replyToLeadInputSchema)
+export const cancelReplyHandler = authenticatedProcedure
+	.input(cancelReplyInputSchema)
 	.mutation(async ({ input, ctx }) => {
+		// consider checking if the time is past replied_at
 		const lead = await ctx.prisma.lead.findUnique({
 			where: {
 				id: input.lead_id,
@@ -29,24 +29,44 @@ export const replyToLeadHandler = authenticatedProcedure
 		});
 
 		if (!userOwnsProject) {
-			throw projectNotFound();
+			throw leadNotFound();
 		}
 
-		const leadCanReply = canReply(lead);
-
-		if (!leadCanReply) {
-			throw leadAlreadyReplied();
+		if (lead.reply_status !== "scheduled") {
+			throw new TRPCError({
+				code: "FORBIDDEN",
+				message: "This reply is not scheduled",
+			});
 		}
 
-		replyQueue.add({ lead_id: lead.id });
+		const job = await replyQueue.getJob(input.lead_id);
 
-		// set to pending (waiting for reply in the queue)
-		return await ctx.prisma.lead.update({
+		if (!job) {
+			throw new TRPCError({
+				code: "INTERNAL_SERVER_ERROR",
+				message: "Could not cancel reply",
+			});
+		}
+
+		// todo research job states
+		const isDelayed = await job.isDelayed();
+
+		if (!isDelayed) {
+			throw new TRPCError({
+				code: "INTERNAL_SERVER_ERROR",
+				message: "Could not cancel reply",
+			});
+		}
+
+		await job.remove();
+
+		return ctx.prisma.lead.update({
 			where: {
-				id: lead.id,
+				id: input.lead_id,
 			},
 			data: {
-				reply_status: "pending",
+				replied_at: null,
+				reply_status: null,
 			},
 			select: {
 				id: true,

@@ -10,8 +10,9 @@ export const baseProjectSchema = projectModel.extend({
 	query: z.string().max(512),
 
 	reply_mention_mode: z.enum(["name", "name_or_url", "url"]),
+	reply_delay: z.number().int().nonnegative().max(60),
 	reply_daily_limit: z.number().int().nonnegative().safe(),
-	custom_reply_instructions: z.string().max(1024),
+	reply_custom_instructions: z.string().max(1024),
 	webhook_url: z.string().url().max(128).nullable(),
 
 	reddit_included_subreddits: z
@@ -42,16 +43,18 @@ export const updateProjectInputSchema = z.object({
 			website_url: true,
 			description: true,
 			query: true,
-			replies_enabled: true,
+
 			reply_mention_mode: true,
+			reply_delay: true,
 			reply_daily_limit: true,
-			custom_reply_instructions: true,
+			reply_custom_instructions: true,
+			webhook_url: true,
+
 			reddit_monitor_enabled: true,
 			reddit_allow_nsfw: true,
 			reddit_replies_enabled: true,
 			reddit_included_subreddits: true,
 			reddit_excluded_subreddits: true,
-			webhook_url: true,
 		})
 		.partial(),
 });

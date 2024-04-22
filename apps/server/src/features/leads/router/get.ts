@@ -32,7 +32,8 @@ export const getLeadHandler = authenticatedProcedure
 				reply_status: true,
 				replied_at: true,
 				reply_text: true,
-				remote_reply_id: true,
+				reply_remote_id: true,
+				reply_scheduled_at: true,
 				reply_bot: {
 					select: {
 						username: true,

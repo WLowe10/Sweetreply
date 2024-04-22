@@ -41,13 +41,13 @@ export class RedditBotHandler implements IBotHandler {
 		});
 
 		return {
-			remote_reply_id: extractIdFromThing(result.id),
+			reply_remote_id: extractIdFromThing(result.id),
 		};
 	}
 
 	public deleteReply() {
 		return this.redditBot.deleteComment({
-			commentId: this.lead.remote_reply_id as string,
+			commentId: this.lead.reply_remote_id as string,
 			subredditName: this.lead.channel as string,
 		});
 	}
