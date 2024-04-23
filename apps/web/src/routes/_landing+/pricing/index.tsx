@@ -1,4 +1,4 @@
-import { Box, Container, SimpleGrid, Title } from "@mantine/core";
+import { Box, Center, Container, SimpleGrid, Text, Title } from "@mantine/core";
 import { PricingCard, type PricingItem } from "./components/pricing-card";
 import classes from "./pricing.module.css";
 
@@ -63,9 +63,14 @@ export default function PricingPage() {
 	return (
 		<Box component="main" mb="4rem" mih="100vh">
 			<Container size="lg">
-				<Title className={classes.title} mb="4rem" fw={900} ta="center">
-					We believe in straightforward pricing
-				</Title>
+				<Box className={classes.title} ta="center" mb="4rem">
+					<Title fw={900} mb="sm">
+						We believe in straightforward pricing
+					</Title>
+					<Text size="lg" c="dimmed">
+						No hidden fees, cancel anytime
+					</Text>
+				</Box>
 				<SimpleGrid cols={{ base: 1, md: 2, lg: 4 }}>
 					{plans.map((plan) => (
 						<PricingCard key={plan.title} {...plan} />
