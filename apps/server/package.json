@@ -60,7 +60,6 @@
 		"@types/jsonwebtoken": "^9.0.6",
 		"@types/node": "^20",
 		"pino-pretty": "^10.3.1",
-		"tsc-alias": "^1.8.8",
 		"typescript": "^5"
 	}
 }
