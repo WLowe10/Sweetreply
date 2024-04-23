@@ -14,11 +14,11 @@ export const canUndoReply = (lead: Pick<Lead, "reply_status">) =>
 export const canEditReply = (lead: Pick<Lead, "reply_status">) =>
 	lead.reply_status === replyStatus.DRAFT ||
 	lead.reply_status === replyStatus.SCHEDULED ||
-	lead.reply_status === replyStatus.NULL;
+	lead.reply_status === replyStatus.NONE;
 
 export const canCancelReply = (lead: Pick<Lead, "reply_status">) =>
 	lead.reply_status === replyStatus.SCHEDULED;
 
 export const getReplyStatusColor = (status: string | null): string | undefined =>
 	//@ts-ignore
-	status === null ? replyStatus.NULL : replyStatusColors[status];
+	status === null ? replyStatusColors.NONE : replyStatusColors[status];

@@ -1,13 +1,17 @@
 import { z } from "zod";
 import { projectModel } from "@sweetreply/prisma/zod";
 import { subredditNameSchema } from "../reddit/schemas";
+import { isValidLiqeString } from "../../lib/utils";
 
 export const baseProjectSchema = projectModel.extend({
 	id: z.string().uuid(),
 	name: projectModel.shape.name.min(3).max(32),
 	website_url: z.string().url().max(128),
 	description: z.string().min(6).max(1024),
-	query: z.string().max(512),
+	query: z
+		.string()
+		.max(512)
+		.refine((query) => isValidLiqeString(query), { message: "Invalid query" }),
 
 	reply_mention_mode: z.enum(["name", "name_or_url", "url"]),
 	reply_delay: z

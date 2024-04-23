@@ -45,7 +45,7 @@ const columns: SimpleTableColumns = [
 		id: "reply_status",
 		Header: () => "Reply Status",
 		Cell: (data) => (
-			<Badge bg={getReplyStatusColor(data.reply_status)}>{data.reply_status}</Badge>
+			<Badge bg={getReplyStatusColor(data.reply_status)}>{data.reply_status || "none"}</Badge>
 		),
 	},
 	{

@@ -8,8 +8,8 @@
 		"lib"
 	],
 	"scripts": {
-        "clean": "pnpm clean:modules",
-        "clean:modules": "rm -rf node_modules"
+		"clean": "pnpm clean:modules",
+		"clean:modules": "rm -rf node_modules"
 	},
 	"dependencies": {
 		"@sweetreply/prisma": "workspace:*",

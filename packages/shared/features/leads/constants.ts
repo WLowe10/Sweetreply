@@ -7,7 +7,7 @@ export const replyStatus = {
 	SCHEDULED: "scheduled",
 	DRAFT: "draft",
 	REPLIED: "replied",
-	NULL: null,
+	NONE: null,
 } as const;
 
 export const replyStatusColors = {
@@ -15,5 +15,5 @@ export const replyStatusColors = {
 	[replyStatus.SCHEDULED]: "blue",
 	[replyStatus.DRAFT]: "gray",
 	[replyStatus.REPLIED]: "green",
-	NULL: "gray",
+	NONE: "gray",
 } as const;

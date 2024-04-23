@@ -22,6 +22,7 @@ import { RelativeDate } from "@/components/relative-date";
 import { useLeadContext } from "../hooks/use-lead-context";
 import { useReplyForm } from "../hooks/use-reply-form";
 import { replyStatus } from "@sweetreply/shared/features/leads/constants";
+import { getReplyStatusColor } from "@sweetreply/shared/features/leads/utils";
 
 export const RedditLead = () => {
 	const lead = useLeadContext();
@@ -156,8 +157,14 @@ export const RedditLead = () => {
 							No reply yet
 						</Text>
 					)}
-					<Divider />
-					{lead.data.reply_status && <Badge size="sm">{lead.data.reply_status}</Badge>}
+					{lead.data.reply_status && (
+						<>
+							<Divider />
+							<Badge size="sm" bg={getReplyStatusColor(lead.data.reply_status)}>
+								{lead.data.reply_status}
+							</Badge>
+						</>
+					)}
 				</Stack>
 			</Card>
 		</Stack>

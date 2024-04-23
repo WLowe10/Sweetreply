@@ -1,11 +1,7 @@
 import axios, { type Axios } from "axios";
-import { parse, test } from "liqe";
 import { userAgents } from "@/lib/constants";
-import { prisma } from "@/lib/db";
 import { generateDescendingRedditIds, generateBatchedRedditInfoUrls } from "./utils";
 import { logger } from "@/lib/logger";
-import { processLeadQueue } from "../../queues/process-lead";
-import pLimit from "p-limit";
 import type { Project } from "@sweetreply/prisma";
 
 export class RedditPostSlurper {
@@ -20,7 +16,7 @@ export class RedditPostSlurper {
 		});
 	}
 
-	public async slurp(projects: Project[]) {
+	public async slurp() {
 		const newLatestPostId = await this.getLatestPostId();
 
 		// should set max
@@ -34,10 +30,6 @@ export class RedditPostSlurper {
 		const ids = generateDescendingRedditIds(newLatestPostId, slurpAmount, "t3");
 		const urls = generateBatchedRedditInfoUrls(ids);
 
-		const startTimestamp = Date.now();
-
-		logger.info(`Began slurping ${slurpAmount} reddit posts`);
-
 		const newPostsResults = await Promise.all(
 			urls.map(async (url) => {
 				const response = await this.client.get(url);
@@ -45,6 +37,8 @@ export class RedditPostSlurper {
 				return response.data;
 			})
 		);
+
+		let posts = [];
 
 		for (const newPostGroup of newPostsResults) {
 			const newPosts = newPostGroup["data"]["children"];
@@ -62,70 +56,13 @@ export class RedditPostSlurper {
 					continue;
 				}
 
-				// this currently doesn't allow filtering by subreddit in the query (e.g., "subreddit:replyon")
-				const searchDocument = this.getSearchDocument(postData);
-
-				const limit = pLimit(20);
-
-				await Promise.all(
-					projects.map((project) =>
-						limit(async () => {
-							if (!project.reddit_allow_nsfw && postData.over_18) {
-								return;
-							}
-
-							if (
-								project.reddit_included_subreddits.length > 0 &&
-								!project.reddit_included_subreddits.includes(lead.channel)
-							) {
-								return;
-							}
-
-							if (
-								project.reddit_excluded_subreddits.length > 0 &&
-								project.reddit_excluded_subreddits.includes(lead.channel)
-							) {
-								return;
-							}
-
-							const isMatch = test(parse(project.query as string), searchDocument);
-
-							if (!isMatch) {
-								return;
-							}
-
-							const existingLead = await prisma.lead.findFirst({
-								where: {
-									project_id: project.id,
-									remote_id: lead.remote_id,
-								},
-							});
-
-							if (existingLead) {
-								return;
-							}
-
-							const newLead = await prisma.lead.create({
-								data: {
-									...lead,
-									project_id: project.id,
-								},
-							});
-
-							processLeadQueue.add({
-								lead_id: newLead.id,
-							});
-						})
-					)
-				);
+				posts.push(postData);
 			}
 		}
 
 		this.prevSuccessfulBatchStartId = newLatestPostId;
 
-		logger.info(
-			`Finished slurping ${slurpAmount} reddit posts in ${Date.now() - startTimestamp}ms`
-		);
+		return posts;
 	}
 
 	public async getLatestPostId(): Promise<string> {

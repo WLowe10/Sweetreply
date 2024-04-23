@@ -11,9 +11,7 @@ export const DataTableRange = (textProps: TextProps) => {
 
 	return (
 		<Text {...textProps}>
-			{total
-				? `Showing ${start} - ${end} of ${pluralize(total, noun)}`
-				: `No ${pluralize(0, noun)}`}
+			{total ? `Showing ${start} - ${end} of ${pluralize(total, noun)}` : `No ${noun + "s"}`}
 		</Text>
 	);
 };

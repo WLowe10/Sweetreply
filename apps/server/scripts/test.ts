@@ -1,12 +1,12 @@
 import "dotenv/config";
-import { generateReplyQueue } from "../src/features/lead-engine/queues/process-lead";
+import { parse, highlight } from "liqe";
 
 async function start() {
-	await new Promise((resolve) => setTimeout(resolve, 1000));
-
-	generateReplyQueue.add({
-		lead_id: "45345572-53ee-43ab-9a74-449db033f533",
-	});
+	// const text = "hello world world hello";
+	// const matches = highlight(parse("hello"), {
+	// 	text: "hello",
+	// });
+	// console.log(matches);
 }
 
 start();

@@ -9,7 +9,7 @@ export const DataTablePagination = () => {
 	return (
 		<Pagination
 			total={totalPages}
-			value={params.page + 1}
+			value={params.page}
 			onChange={(pageNum) => params.setPage(pageNum)}
 		/>
 	);
