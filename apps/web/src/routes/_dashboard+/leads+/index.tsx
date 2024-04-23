@@ -66,7 +66,7 @@ const columns: SimpleTableColumns<RouterOutput["leads"]["getMany"]["data"][0]> =
 						to={data.id}
 						leftSection={<IconArrowRight size={18} />}
 					>
-						View lead
+						View
 					</Menu.Item>
 					{data.remote_url && (
 						<Menu.Item

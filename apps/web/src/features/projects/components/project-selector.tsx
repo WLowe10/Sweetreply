@@ -13,11 +13,13 @@ export const ProjectSelector = () => {
 
 	const [
 		projectsPopoverOpened,
-		{ open: openTeamsPopover, close: closeTeamsPopover, toggle: toggleTeamsPopover },
+		{ open: openProjectsPopover, close: closeProjectsPopover, toggle: toggleProjectsPopover },
 	] = useDisclosure(false);
 
-	const [createTeamModalOpened, { open: openCreateTeamModal, close: closeCreateTeamModal }] =
-		useDisclosure(false);
+	const [
+		createProjectModalOpened,
+		{ open: openCreateProjectModal, close: closeCreateProjectModal },
+	] = useDisclosure(false);
 
 	return (
 		<>
@@ -25,7 +27,7 @@ export const ProjectSelector = () => {
 				position="bottom-start"
 				width="target"
 				opened={projectsPopoverOpened}
-				onChange={(status) => (status ? openTeamsPopover() : closeTeamsPopover())}
+				onChange={(status) => (status ? openProjectsPopover() : closeProjectsPopover())}
 			>
 				<Popover.Target>
 					<Button
@@ -34,7 +36,7 @@ export const ProjectSelector = () => {
 						fullWidth
 						justify="space-between"
 						rightSection={<IconSwitchVertical size={16} />}
-						onClick={toggleTeamsPopover}
+						onClick={toggleProjectsPopover}
 					>
 						{currentProject?.name}
 					</Button>
@@ -60,8 +62,8 @@ export const ProjectSelector = () => {
 						}}
 						leftSection={<IconPlus size={16} />}
 						onClick={() => {
-							closeTeamsPopover();
-							openCreateTeamModal();
+							closeProjectsPopover();
+							openCreateProjectModal();
 						}}
 					>
 						Create Project
@@ -71,8 +73,8 @@ export const ProjectSelector = () => {
 			<CreateProjectModal
 				modalProps={{
 					centered: true,
-					opened: createTeamModalOpened,
-					onClose: closeCreateTeamModal,
+					opened: createProjectModalOpened,
+					onClose: closeCreateProjectModal,
 				}}
 			/>
 		</>

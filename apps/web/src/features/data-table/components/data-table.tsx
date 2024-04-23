@@ -1,4 +1,4 @@
-import { Flex, Group, Skeleton } from "@mantine/core";
+import { ActionIcon, Flex, Group, Skeleton } from "@mantine/core";
 import { SimpleTable, type SimpleTableProps } from "@/components/simple-table";
 import { DataTableProvider, DataTableProviderProps } from "./data-table-provider";
 import { DataTableSearch } from "./data-table-search";
@@ -6,6 +6,8 @@ import { DataTableLimit } from "./data-table-limit";
 import { DataTablePagination } from "./data-table-pagination";
 import { DataTableRange } from "./data-table-range";
 import { DataTableLoader } from "./data-table-loader";
+import { DataTableFilter } from "./data-table-filter";
+import { DataTableSort } from "./data-table-sort";
 
 export type DataTableProps = DataTableProviderProps & Pick<SimpleTableProps, "columns" | "getId">;
 
@@ -19,7 +21,10 @@ export const DataTable = (props: DataTableProps) => {
 					<DataTableSearch />
 					<DataTableLoader />
 				</Group>
-				<DataTableLimit />
+				<ActionIcon.Group>
+					<DataTableSort />
+					<DataTableFilter />
+				</ActionIcon.Group>
 			</Flex>
 			{props.isLoading ? (
 				<SimpleTable
@@ -31,6 +36,7 @@ export const DataTable = (props: DataTableProps) => {
 			)}
 			<Group mt="md">
 				<DataTablePagination />
+				<DataTableLimit />
 				<DataTableRange size="sm" c="dimmed" />
 			</Group>
 		</DataTableProvider>

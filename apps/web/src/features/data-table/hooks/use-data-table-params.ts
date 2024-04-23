@@ -3,7 +3,8 @@ import { useEffect } from "react";
 
 const pageParamKey = "p";
 const limitParamKey = "l";
-const queryParamKey = "q";
+const queryParamKey = "query";
+const filterParamKey = "filter";
 
 export const useDataTableParams = (opts?: { defaultLimit: number }) => {
 	const [params, setParams] = useSearchParams();
@@ -12,6 +13,9 @@ export const useDataTableParams = (opts?: { defaultLimit: number }) => {
 	const page = Number(params.get(pageParamKey)) || 1;
 	const limit = (Number(params.get(limitParamKey)) || opts?.defaultLimit) ?? 25;
 	const query = params.get(queryParamKey);
+
+	const rawFilter = params.get(filterParamKey);
+	const filter = rawFilter ? JSON.parse(rawFilter) : {};
 
 	const setPage = (newPage: number | null) => {
 		setParams((prev) => {
@@ -49,6 +53,23 @@ export const useDataTableParams = (opts?: { defaultLimit: number }) => {
 		});
 	};
 
+	const setFilter = (newFilter: object | ((prevFilter: object) => object)) => {
+		setParams((prev) => {
+			const prevRawFilter = prev.get(filterParamKey);
+			const prevFilter = prevRawFilter ? JSON.parse(prevRawFilter) : {};
+			const newFilterData =
+				typeof newFilter === "function" ? newFilter(prevFilter) : newFilter;
+
+			if (Object.keys(newFilterData).length === 0) {
+				clearFilter();
+			} else {
+				prev.set(filterParamKey, JSON.stringify(newFilter));
+			}
+
+			return prev;
+		});
+	};
+
 	const clearPage = () => {
 		setParams((prev) => {
 			prev.delete(pageParamKey);
@@ -70,6 +91,13 @@ export const useDataTableParams = (opts?: { defaultLimit: number }) => {
 		});
 	};
 
+	const clearFilter = () => {
+		setParams((prev) => {
+			prev.delete(filterParamKey);
+			return prev;
+		});
+	};
+
 	// useEffect(() => {
 	// 	if (page === 1) {
 	// 		clearPage();
@@ -84,11 +112,14 @@ export const useDataTableParams = (opts?: { defaultLimit: number }) => {
 		page,
 		limit,
 		query,
+		filter,
 		setPage,
 		setLimit,
 		setQuery,
+		setFilter,
 		clearPage,
 		clearLimit,
 		clearQuery,
+		clearFilter,
 	};
 };

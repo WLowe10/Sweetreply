@@ -168,6 +168,9 @@ importers:
       '@mantine/core':
         specifier: ^7.6.2
         version: 7.6.2(@mantine/hooks@7.6.2)(@types/react@18.2.46)(react-dom@18.2.0)(react@18.2.0)
+      '@mantine/dates':
+        specifier: ^7.8.0
+        version: 7.8.0(@mantine/core@7.6.2)(@mantine/hooks@7.6.2)(dayjs@1.11.10)(react-dom@18.2.0)(react@18.2.0)
       '@mantine/hooks':
         specifier: ^7.6.2
         version: 7.6.2(react@18.2.0)
@@ -207,6 +210,9 @@ importers:
       date-fns:
         specifier: ^3.6.0
         version: 3.6.0
+      dayjs:
+        specifier: ^1.11.10
+        version: 1.11.10
       isbot:
         specifier: ^4.1.0
         version: 4.4.0
@@ -360,9 +366,6 @@ importers:
       '@sweetreply/prisma':
         specifier: workspace:*
         version: link:../prisma
-      liqe:
-        specifier: ^3.8.0
-        version: 3.8.0
       zod:
         specifier: ^3.22.4
         version: 3.22.4
@@ -2253,6 +2256,23 @@ packages:
       type-fest: 4.13.0
     transitivePeerDependencies:
       - '@types/react'
+    dev: false
+
+  /@mantine/dates@7.8.0(@mantine/core@7.6.2)(@mantine/hooks@7.6.2)(dayjs@1.11.10)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-9jjiYMwP3jQOpOLKkjhp9uf2BGhtEbOnOzyAlpLOS0CJJlYtB0tO6dJ3JaogrOZ/Yfee7ZUBgouCG5EkR4/qtQ==}
+    peerDependencies:
+      '@mantine/core': 7.8.0
+      '@mantine/hooks': 7.8.0
+      dayjs: '>=1.0.0'
+      react: ^18.2.0
+      react-dom: ^18.2.0
+    dependencies:
+      '@mantine/core': 7.6.2(@mantine/hooks@7.6.2)(@types/react@18.2.46)(react-dom@18.2.0)(react@18.2.0)
+      '@mantine/hooks': 7.6.2(react@18.2.0)
+      clsx: 2.1.0
+      dayjs: 1.11.10
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
     dev: false
 
   /@mantine/hooks@7.6.2(react@18.2.0):
@@ -5278,6 +5298,10 @@ packages:
   /dateformat@4.6.3:
     resolution: {integrity: sha512-2P0p0pFGzHS5EMnhdxQi7aJN+iMheud0UhG4dlE1DLAlvL8JHjJJTX/CSm4JXwV0Ka5nGk3zC5mcb5bUQUxxMA==}
     dev: true
+
+  /dayjs@1.11.10:
+    resolution: {integrity: sha512-vjAczensTgRcqDERK0SR2XMwsF/tSvnvlv6VcF2GIhg6Sx4yOIt/irsr1RDJsKiIyBzJDpCoXiWWq28MqH2cnQ==}
+    dev: false
 
   /debug@2.6.9:
     resolution: {integrity: sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==}

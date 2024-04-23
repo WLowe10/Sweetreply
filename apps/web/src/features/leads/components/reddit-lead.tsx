@@ -165,10 +165,11 @@ export const RedditLead = () => {
 					</Flex>
 					{isEditing ? (
 						<form onSubmit={onSubmit}>
-							<Stack>
+							<Stack align="end">
 								<Textarea
 									autosize={true}
 									error={form.formState.errors.reply_text?.message}
+									w="100%"
 									{...form.register("reply_text")}
 								/>
 								<ButtonGroup>
