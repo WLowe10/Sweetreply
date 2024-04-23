@@ -6,7 +6,7 @@ import { DataTableLimit } from "./data-table-limit";
 import { DataTablePagination } from "./data-table-pagination";
 import { DataTableRange } from "./data-table-range";
 
-export type DataTableProps = DataTableProviderProps & Pick<SimpleTableProps, "columns">;
+export type DataTableProps = DataTableProviderProps & Pick<SimpleTableProps, "columns" | "getId">;
 
 const LoadingCell = () => <Skeleton height={30} />;
 

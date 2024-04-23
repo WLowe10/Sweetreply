@@ -8,7 +8,7 @@ import {
 	IconMessageReply,
 	IconSettings,
 } from "@tabler/icons-react";
-import { TokensDisplay } from "@/features/projects/components/tokens-display";
+import { ReplyCreditsDisplay } from "@/features/projects/components/reply-credits-display";
 
 export default function DashboardLayout() {
 	const location = useLocation();
@@ -63,7 +63,7 @@ export default function DashboardLayout() {
 					</Box>
 				</Stack>
 				<Stack>
-					<TokensDisplay />
+					<ReplyCreditsDisplay />
 					<Divider />
 					<UserMenu />
 				</Stack>

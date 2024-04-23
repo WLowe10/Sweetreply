@@ -5,16 +5,17 @@ import { useDataTableParams } from "@/features/data-table/hooks/use-data-table-p
 import { trpc } from "@/lib/trpc";
 import { buildPageTitle } from "@/lib/utils";
 import { ActionIcon, Badge, Flex, Menu, Skeleton, Table, Text } from "@mantine/core";
-import { IconClock, IconDots } from "@tabler/icons-react";
+import { IconArrowRight, IconClock, IconDots } from "@tabler/icons-react";
 import { useLocalProject } from "@/features/projects/hooks/use-local-project";
 import { RelativeDate } from "@/components/relative-date";
 import { getReplyStatusColor } from "@sweetreply/shared/features/leads/utils";
-import type { SimpleTableColumns } from "@/components/simple-table";
 import { DataTable } from "@/features/data-table/components/data-table";
+import type { SimpleTableColumns } from "@/components/simple-table";
+import type { RouterOutput } from "@server/router";
 
 export const meta: MetaFunction = () => [{ title: buildPageTitle("Leads") }];
 
-const columns: SimpleTableColumns = [
+const columns: SimpleTableColumns<RouterOutput["leads"]["getMany"]["data"][0]> = [
 	{
 		id: "platform",
 		Header: () => "Platform",
@@ -52,7 +53,7 @@ const columns: SimpleTableColumns = [
 		id: "controls",
 		Header: () => null,
 		Cell: (data) => (
-			<Menu transitionProps={{ transition: "pop" }} withArrow>
+			<Menu withArrow position="bottom-end" transitionProps={{ transition: "pop" }}>
 				<Menu.Target>
 					<ActionIcon variant="subtle" color="gray">
 						<IconDots size={18} />
@@ -60,11 +61,26 @@ const columns: SimpleTableColumns = [
 				</Menu.Target>
 				<Menu.Dropdown>
 					<Menu.Label>Actions</Menu.Label>
-					<Menu.Item component={Link} to={data.id}>
+					<Menu.Item
+						component={Link}
+						to={data.id}
+						leftSection={<IconArrowRight size={18} />}
+					>
 						View lead
 					</Menu.Item>
 					{data.remote_url && (
-						<Menu.Item component="a" href={data.remote_url} target="_blank">
+						<Menu.Item
+							component="a"
+							href={data.remote_url}
+							target="_blank"
+							leftSection={
+								<PlatformIcon
+									height={18}
+									width={18}
+									platform={data.platform as any}
+								/>
+							}
+						>
 							View on {data.platform}
 						</Menu.Item>
 					)}

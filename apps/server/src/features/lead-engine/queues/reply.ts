@@ -20,13 +20,19 @@ const replyQueue = new Queue<ReplyQueueJobData>("reply", {
 		duration: 1000,
 	},
 	defaultJobOptions: {
-		attempts: 3,
+		attempts: 5,
 		removeOnComplete: true,
 		removeOnFail: true,
+		backoff: {
+			type: "exponential",
+			delay: 4000,
+		},
 	},
 });
 
 replyQueue.process(async (job) => {
+	console.log("Processing reply job");
+
 	const jobData = job.data;
 
 	const lead = await prisma.lead.findUnique({
@@ -90,7 +96,7 @@ replyQueue.process(async (job) => {
 	}
 
 	// the reply was successful, now deduct the token
-	await projectsService.deductToken(project.id);
+	await projectsService.deductReplyCredit(project.id);
 });
 
 replyQueue.on("active", async (job, jobPromise) => {
@@ -133,14 +139,16 @@ replyQueue.on("failed", async (job, err) => {
 		`Reply job [${job.id}][lead:${job.data.lead_id}] failed with error: ${err.message}`
 	);
 
-	await prisma.lead.update({
-		where: {
-			id: jobData.lead_id,
-		},
-		data: {
-			reply_status: "failed",
-		},
-	});
+	if (job.attemptsMade === job.opts.attempts) {
+		await prisma.lead.update({
+			where: {
+				id: jobData.lead_id,
+			},
+			data: {
+				reply_status: replyStatus.FAILED,
+			},
+		});
+	}
 });
 
 replyQueue.on("removed", (job) => {

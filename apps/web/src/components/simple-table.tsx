@@ -12,9 +12,10 @@ export type SimpleTableColumns<T = any> = SimpleTableColumn<T>[];
 export type SimpleTableProps = {
 	columns: SimpleTableColumn[];
 	data: any[];
+	getId?: (row: any) => string;
 };
 
-export const SimpleTable = ({ columns, data }: SimpleTableProps) => {
+export const SimpleTable = ({ columns, data, getId }: SimpleTableProps) => {
 	return (
 		<Table.ScrollContainer minWidth={500}>
 			<Table>
@@ -29,7 +30,7 @@ export const SimpleTable = ({ columns, data }: SimpleTableProps) => {
 				</Table.Thead>
 				<Table.Tbody>
 					{data.map((row) => (
-						<Table.Tr key={row.id}>
+						<Table.Tr key={getId ? getId(row) : row["id"]}>
 							{columns.map(({ id, Cell }) => (
 								<Table.Td key={id}>
 									<Cell {...row} />

@@ -154,10 +154,10 @@ model Project {
     reddit_included_subreddits String[]
     reddit_excluded_subreddits String[]
 
-    tokens      Int       @default(0)
-    webhook_url String?
-    created_at  DateTime  @default(now()) @db.Timestamptz()
-    updated_at  DateTime? @updatedAt @db.Timestamptz()
+    reply_credits Int       @default(0)
+    webhook_url   String?
+    created_at    DateTime  @default(now()) @db.Timestamptz()
+    updated_at    DateTime? @updatedAt @db.Timestamptz()
 
     user  User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
     leads Lead[]

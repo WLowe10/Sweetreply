@@ -2,7 +2,7 @@ import { emailService } from "@/email/service";
 import { prisma } from "@/lib/db";
 import type { Project } from "@sweetreply/prisma";
 
-const tokenAlertLevel = 10;
+const replyCreditAlertLevel = 10;
 
 export class ProjectsService {
 	public getProject(projectId: string) {
@@ -36,19 +36,19 @@ export class ProjectsService {
 		return project;
 	}
 
-	public async deductToken(projectId: string) {
+	public async deductReplyCredit(projectId: string) {
 		const updatedProject = await prisma.project.update({
 			where: {
 				id: projectId,
 			},
 			data: {
-				tokens: {
+				reply_credits: {
 					decrement: 1,
 				},
 			},
 		});
 
-		if (updatedProject.tokens === tokenAlertLevel) {
+		if (updatedProject.reply_credits === replyCreditAlertLevel) {
 			const owner = await prisma.user.findUnique({
 				where: {
 					id: updatedProject.user_id,
@@ -56,6 +56,7 @@ export class ProjectsService {
 			});
 
 			if (owner) {
+				// todo update email to replies
 				emailService.sendLowOnTokens({
 					to: owner.email,
 					data: {

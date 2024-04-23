@@ -54,9 +54,9 @@ export default function DashboardPage() {
 							icon={IconMessage}
 						/>
 						<StatCard
-							title="Tokens"
-							value={getStatsQuery.data?.tokens.count || 0}
-							icon={IconCoin}
+							title="Replies remaining"
+							value={getStatsQuery.data?.reply_credits.count || 0}
+							icon={IconMessage}
 						/>
 						<StatCard
 							title="Project Created"

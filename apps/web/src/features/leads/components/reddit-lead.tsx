@@ -17,12 +17,19 @@ import {
 	ButtonGroup,
 	Divider,
 } from "@mantine/core";
-import { IconDots } from "@tabler/icons-react";
+import {
+	IconArrowBackUp,
+	IconDots,
+	IconPencil,
+	IconPlayerStop,
+	IconSend,
+} from "@tabler/icons-react";
 import { RelativeDate } from "@/components/relative-date";
 import { useLeadContext } from "../hooks/use-lead-context";
 import { useReplyForm } from "../hooks/use-reply-form";
 import { replyStatus } from "@sweetreply/shared/features/leads/constants";
 import { getReplyStatusColor } from "@sweetreply/shared/features/leads/utils";
+import { PlatformIcon } from "@/components/platform-icon";
 
 export const RedditLead = () => {
 	const lead = useLeadContext();
@@ -68,6 +75,13 @@ export const RedditLead = () => {
 									component="a"
 									target="_blank"
 									href={lead.data.remote_url!}
+									leftSection={
+										<PlatformIcon
+											height={18}
+											width={18}
+											platform={lead.data.platform as any}
+										/>
+									}
 								>
 									View on Reddit
 								</Menu.Item>
@@ -112,16 +126,36 @@ export const RedditLead = () => {
 							<Menu.Dropdown>
 								<Menu.Label>Reply actions</Menu.Label>
 								{lead.canSendReply && (
-									<Menu.Item onClick={lead.sendReply}>Send reply</Menu.Item>
+									<Menu.Item
+										onClick={lead.sendReply}
+										leftSection={<IconSend size={18} />}
+									>
+										Send reply
+									</Menu.Item>
 								)}
 								{lead.canUpdateReply && (
-									<Menu.Item onClick={onEdit}>Edit reply</Menu.Item>
+									<Menu.Item
+										onClick={onEdit}
+										leftSection={<IconPencil size={18} />}
+									>
+										Edit reply
+									</Menu.Item>
 								)}
 								{lead.canUndoReply && (
-									<Menu.Item onClick={lead.undoReply}>Undo reply</Menu.Item>
+									<Menu.Item
+										onClick={lead.undoReply}
+										leftSection={<IconArrowBackUp size={18} />}
+									>
+										Undo reply
+									</Menu.Item>
 								)}
 								{lead.canCancelReply && (
-									<Menu.Item onClick={lead.cancelReply}>Cancel reply</Menu.Item>
+									<Menu.Item
+										onClick={lead.cancelReply}
+										leftSection={<IconPlayerStop />}
+									>
+										Cancel reply
+									</Menu.Item>
 								)}
 							</Menu.Dropdown>
 						</Menu>
