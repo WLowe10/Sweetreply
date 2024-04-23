@@ -10,26 +10,27 @@ import {
 	Text,
 	ThemeIcon,
 } from "@mantine/core";
-import { BuyTokensModal } from "./buy-tokens-modal";
+// import { BuyTokensModal } from "./buy-tokens-modal";
 import { useDisclosure } from "@mantine/hooks";
-import { useCurrentProjectQuery } from "../hooks/use-current-project";
+import { useCurrentProjectQuery } from "../../projects/hooks/use-current-project";
 import { IconMessage } from "@tabler/icons-react";
+import { useMe } from "@/features/auth/hooks/use-me";
 
 export const ReplyCreditsDisplay = () => {
-	const { data } = useCurrentProjectQuery();
 	const [opened, { open, close }] = useDisclosure(false);
+	const { me } = useMe();
 
 	return (
 		<Card withBorder={true}>
-			<BuyTokensModal modalProps={{ centered: true, opened, onClose: close }} />
-			{data ? (
+			{/* <BuyTokensModal modalProps={{ centered: true, opened, onClose: close }} /> */}
+			{me ? (
 				<Stack>
 					<Flex direction="row" align="center">
 						<ThemeIcon variant="subtle" mr={2}>
 							<IconMessage size={18} />
 						</ThemeIcon>
-						<Text size="xs">{`${data.reply_credits} ${
-							data.reply_credits === 1 ? "reply" : "replies"
+						<Text size="xs">{`${me.reply_credits} ${
+							me.reply_credits === 1 ? "reply" : "replies"
 						} remaining`}</Text>
 					</Flex>
 					<Progress value={60} />

@@ -109,11 +109,11 @@ export class AuthService {
 			throw emailAlreadyRegistered();
 		}
 
-		// not used yet
 		// create the stripe customer for subscriptions
-		// const stripeCustomer = await stripe.customers.create({
-		// 	email: normalizedEmail,
-		// });
+		const stripeCustomer = await stripe.customers.create({
+			email: normalizedEmail,
+			name: `${data.first_name} ${data.last_name}`,
+		});
 
 		const hashedPassword = await argon2.hash(data.password);
 
@@ -123,7 +123,7 @@ export class AuthService {
 				password_hash: hashedPassword,
 				first_name: data.first_name,
 				last_name: data.last_name,
-				// stripe_customer_id: stripeCustomer.id,
+				stripe_customer_id: stripeCustomer.id,
 			},
 		});
 

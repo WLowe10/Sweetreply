@@ -84,9 +84,6 @@ export const getStatsHandler = authenticatedProcedure
 			project: {
 				created_at: project.created_at,
 			},
-			reply_credits: {
-				count: project.reply_credits,
-			},
 			leads: {
 				count: leadCount,
 				last24HoursCount: leadsLast24Hours,

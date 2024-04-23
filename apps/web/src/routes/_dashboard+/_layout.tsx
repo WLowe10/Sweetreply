@@ -8,7 +8,7 @@ import {
 	IconMessageReply,
 	IconSettings,
 } from "@tabler/icons-react";
-import { ReplyCreditsDisplay } from "@/features/projects/components/reply-credits-display";
+import { ReplyCreditsDisplay } from "@/features/billing/components/reply-credits-display";
 
 export default function DashboardLayout() {
 	const location = useLocation();

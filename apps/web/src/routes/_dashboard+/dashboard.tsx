@@ -4,7 +4,7 @@ import { ResourceContainer } from "@/components/resource-container";
 import { trpc } from "@/lib/trpc";
 import { buildPageTitle } from "@/lib/utils";
 import { SimpleGrid, Skeleton } from "@mantine/core";
-import { IconCalendar, IconCoin, IconMessage, IconRadar } from "@tabler/icons-react";
+import { IconCalendar, IconMessage, IconRadar } from "@tabler/icons-react";
 import { StatCard } from "@/components/stat-card";
 import type { MetaFunction } from "@remix-run/react";
 
@@ -51,11 +51,6 @@ export default function DashboardPage() {
 						<StatCard
 							title="Replies last 24 hours"
 							value={getStatsQuery.data?.replies.last24HoursCount || 0}
-							icon={IconMessage}
-						/>
-						<StatCard
-							title="Replies remaining"
-							value={getStatsQuery.data?.reply_credits.count || 0}
 							icon={IconMessage}
 						/>
 						<StatCard

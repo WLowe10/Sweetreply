@@ -10,6 +10,9 @@ const serializedUserSchema = userModel.pick({
 	last_name: true,
 	avatar_url: true,
 	role: true,
+	plan: true,
+	subscription_ends_at: true,
+	reply_credits: true,
 });
 
 export const serializeUser = (user: User) => serializedUserSchema.parse(user);

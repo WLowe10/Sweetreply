@@ -16,8 +16,8 @@ import { logger } from "./lib/logger";
 import { isDev } from "./lib/utils";
 
 // REST controllers
-import { StripeController } from "./controllers/stripe";
 import { CommonController } from "./controllers/common";
+import { BillingController } from "./features/billing/billing.controller";
 
 async function bootstrap() {
 	const app = express();
@@ -42,7 +42,7 @@ async function bootstrap() {
 	);
 
 	useExpressServer(app, {
-		controllers: [CommonController, StripeController],
+		controllers: [CommonController, BillingController],
 	});
 
 	app.use("/api", createOpenApiExpressMiddleware({ router: appRouter, createContext }));

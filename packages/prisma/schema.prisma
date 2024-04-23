@@ -37,9 +37,11 @@ model User {
     password_reset_requested_at    DateTime? @db.Timestamptz()
     password_reset_code            String?   @unique
     password_reset_code_expires_at DateTime? @db.Timestamptz()
-
-    // not needed at this time, just using email for one time token payments
-    // stripe_customer_id             String
+    plan                           String?
+    stripe_customer_id             String?   @unique
+    stripe_subscription_id         String?   @unique
+    subscription_ends_at           DateTime? @db.Timestamptz()
+    reply_credits                  Int       @default(0)
 
     sessions Session[]
     projects Project[]
@@ -154,10 +156,11 @@ model Project {
     reddit_included_subreddits String[]
     reddit_excluded_subreddits String[]
 
-    reply_credits Int       @default(0)
-    webhook_url   String?
-    created_at    DateTime  @default(now()) @db.Timestamptz()
-    updated_at    DateTime? @updatedAt @db.Timestamptz()
+    // notifications
+    webhook_url String?
+
+    created_at DateTime  @default(now()) @db.Timestamptz()
+    updated_at DateTime? @updatedAt @db.Timestamptz()
 
     user  User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
     leads Lead[]

@@ -27,6 +27,10 @@ export const envSchema = z.object({
 	STRIPE_SECRET_KEY: z.string(),
 	STRIPE_WEBHOOK_SECRET: z.string(),
 	OPEN_AI_KEY: z.string(),
+
+	STRIPE_PRICE_ID_HOBBY: z.string(),
+	STRIPE_PRICE_ID_STANDARD: z.string(),
+	STRIPE_PRICE_ID_ENTERPRISE: z.string(),
 });
 
 export const env = envSchema.parse(process.env);
