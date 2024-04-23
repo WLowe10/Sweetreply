@@ -5,6 +5,7 @@ import { DataTableSearch } from "./data-table-search";
 import { DataTableLimit } from "./data-table-limit";
 import { DataTablePagination } from "./data-table-pagination";
 import { DataTableRange } from "./data-table-range";
+import { DataTableLoader } from "./data-table-loader";
 
 export type DataTableProps = DataTableProviderProps & Pick<SimpleTableProps, "columns" | "getId">;
 
@@ -14,7 +15,10 @@ export const DataTable = (props: DataTableProps) => {
 	return (
 		<DataTableProvider {...props}>
 			<Flex justify="space-between" align="center" mb="md">
-				<DataTableSearch />
+				<Group align="center">
+					<DataTableSearch />
+					<DataTableLoader />
+				</Group>
 				<DataTableLimit />
 			</Flex>
 			{props.isLoading ? (

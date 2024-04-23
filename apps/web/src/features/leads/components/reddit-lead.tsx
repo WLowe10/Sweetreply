@@ -37,7 +37,7 @@ export const RedditLead = () => {
 
 	return (
 		<Stack>
-			<Card>
+			<Card withBorder>
 				<Stack>
 					<Flex justify="space-between">
 						<Group align="center">
@@ -96,7 +96,10 @@ export const RedditLead = () => {
 					</Stack>
 				</Stack>
 			</Card>
-			<Card ml="6rem">
+
+			{/* <Divider /> */}
+
+			<Card ml="4rem" withBorder>
 				<Stack>
 					<Flex justify="space-between">
 						<Group align="center">

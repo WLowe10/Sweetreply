@@ -2,7 +2,7 @@ import { RedditLead } from "@/features/leads/components/reddit-lead";
 import { LeadContext } from "@/features/leads/context";
 import { useLead } from "@/features/leads/hooks/use-lead";
 import { buildPageTitle } from "@/lib/utils";
-import { Box, Flex, Skeleton } from "@mantine/core";
+import { Box, Container, Flex, Skeleton } from "@mantine/core";
 import { useParams, type MetaFunction } from "@remix-run/react";
 
 export const meta: MetaFunction = () => [{ title: buildPageTitle("View Lead") }];
@@ -13,7 +13,7 @@ export default function LeadPage() {
 
 	return (
 		<Flex mih="100vh" justify="center" align="center">
-			<Box miw="30rem" maw="42rem">
+			<Container size="xs" w="100%">
 				{lead.data ? (
 					<LeadContext.Provider value={lead as any}>
 						{lead.data.platform === "reddit" ? <RedditLead /> : null}
@@ -21,7 +21,7 @@ export default function LeadPage() {
 				) : (
 					<Skeleton height={200} width={400} />
 				)}
-			</Box>
+			</Container>
 		</Flex>
 	);
 }
