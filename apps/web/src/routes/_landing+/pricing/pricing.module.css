@@ -1,0 +1,11 @@
+.title {
+	&::after {
+		content: "";
+		margin-inline: auto;
+		display: block;
+		background-color: var(--mantine-color-blue-filled);
+		width: rem(128px);
+		height: rem(2px);
+		margin-top: var(--mantine-spacing-md);
+	}
+}
