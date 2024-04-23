@@ -13,6 +13,7 @@
 	},
 	"dependencies": {
 		"@sweetreply/prisma": "workspace:*",
+		"liqe": "^3.8.0",
 		"zod": "^3.22.4"
 	}
 }
