@@ -1,14 +1,15 @@
 import Queue from "bull";
+import axios from "axios";
 import { env } from "@/env";
 import { prisma } from "@/lib/db";
-import { generateReplyCompletion } from "../utils/generate-reply-completion";
 import { replyQueue } from "./reply";
-import axios from "axios";
 import { isDiscordWebhookURL } from "@/lib/regex";
 import { buildFrontendUrl } from "@/lib/utils";
 import { addMinutes, differenceInMilliseconds, isFuture, subDays } from "date-fns";
 import { logger } from "@/lib/logger";
 import { replyStatus } from "@sweetreply/shared/features/leads/constants";
+import { shouldReplyCompletion } from "../utils/completions/should-reply-completion";
+import { replyCompletion } from "../utils/completions/reply-completion";
 
 export type ProcessLeadQueueJobData = {
 	lead_id: string;
@@ -129,49 +130,51 @@ processLeadQueue.process(async (job) => {
 		return;
 	}
 
-	console.log("generating reply");
+	const shouldReply = await shouldReplyCompletion({ lead, project });
 
-	const result = await generateReplyCompletion({ lead, project });
-
-	console.log(result.shouldReply);
-
-	// add reply text
-
-	if (result.shouldReply && typeof result.reply !== "undefined") {
-		let scheduledAt = new Date();
-		let delay = 0;
-
-		if (project.reply_delay > 0) {
-			const replyDate = addMinutes(lead.date, project.reply_delay);
-
-			if (isFuture(replyDate)) {
-				scheduledAt = replyDate;
-				delay = differenceInMilliseconds(replyDate, new Date());
-			}
-		}
-
-		await prisma.lead.update({
-			where: {
-				id: lead.id,
-			},
-			data: {
-				reply_status: replyStatus.SCHEDULED,
-				reply_text: result.reply,
-				reply_scheduled_at: scheduledAt,
-				replies_generated: {
-					increment: 1,
-				},
-			},
-		});
-
-		replyQueue.add(
-			{ lead_id: lead.id },
-			{
-				jobId: lead.id,
-				delay,
-			}
-		);
+	if (!shouldReply) {
+		return;
 	}
+
+	const generatedReply = await replyCompletion({ lead, project });
+
+	if (generatedReply.length === 0) {
+		return;
+	}
+
+	let scheduledAt = new Date();
+	let delay = 0;
+
+	if (project.reply_delay > 0) {
+		const replyDate = addMinutes(lead.date, project.reply_delay);
+
+		if (isFuture(replyDate)) {
+			scheduledAt = replyDate;
+			delay = differenceInMilliseconds(replyDate, new Date());
+		}
+	}
+
+	await prisma.lead.update({
+		where: {
+			id: lead.id,
+		},
+		data: {
+			reply_status: replyStatus.SCHEDULED,
+			reply_text: generatedReply,
+			reply_scheduled_at: scheduledAt,
+			replies_generated: {
+				increment: 1,
+			},
+		},
+	});
+
+	replyQueue.add(
+		{ lead_id: lead.id },
+		{
+			jobId: lead.id,
+			delay,
+		}
+	);
 });
 
 export { processLeadQueue };
