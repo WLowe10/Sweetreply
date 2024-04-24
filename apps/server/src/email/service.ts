@@ -44,12 +44,12 @@ export type RenderedTemplateType = {
 export class EmailService {
 	public sendEmail(email: SendEmailData) {
 		const source = email.source || `"Sweetreply" <notifications@${env.AWS_SES_SENDER}>`;
-		const replyTo = email.replyTo || [`"Sweetreply Support" <wes@${env.AWS_SES_SENDER}>`];
 		const to = Array.isArray(email.to) ? email.to : [email.to];
+		// const replyTo = email.replyTo || [`"Sweetreply Support" <wes@${env.AWS_SES_SENDER}>`];
 
 		return ses.sendEmail({
 			Source: source,
-			ReplyToAddresses: replyTo,
+			// ReplyToAddresses: replyTo,
 			Destination: {
 				ToAddresses: to,
 			},

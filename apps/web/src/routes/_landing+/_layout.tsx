@@ -73,7 +73,7 @@ export default function LandingLayout() {
 					style={{ transition: "opacity .2s ease-in-out" }}
 				/>
 			</Box>
-			<Box component="main" px="lg">
+			<Box component="main">
 				<Outlet />
 			</Box>
 			<Box component="footer" maw="64rem" mx="auto" w="100%">

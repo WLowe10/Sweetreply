@@ -2,7 +2,6 @@ import { authenticatedProcedure } from "@/trpc";
 import { z } from "zod";
 import { leadNotFound } from "../errors";
 import { replyCompletion } from "@/features/lead-engine/utils/completions/reply-completion";
-import { P } from "pino";
 import { replyStatus } from "@sweetreply/shared/features/leads/constants";
 import { TRPCError } from "@trpc/server";
 

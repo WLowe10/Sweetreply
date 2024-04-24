@@ -7,7 +7,7 @@ export type WelcomeEmailProps = {
 	verificationToken: string;
 };
 
-export const subject = (props: WelcomeEmailProps) => `Welcome to the team, ${props.firstName}`;
+export const subject = (props: WelcomeEmailProps) => `Welcome to the team, ${props.firstName}!`;
 
 export const WelcomeEmail = ({ firstName }: WelcomeEmailProps) => {
 	const verifyLink = ""; // should be handled by a controller, and will redirect to the frontend

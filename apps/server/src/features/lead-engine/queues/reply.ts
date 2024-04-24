@@ -31,8 +31,6 @@ const replyQueue = new Queue<ReplyQueueJobData>("reply", {
 });
 
 replyQueue.process(async (job) => {
-	console.log("Processing reply job");
-
 	const jobData = job.data;
 
 	const lead = await prisma.lead.findUnique({
@@ -71,9 +69,12 @@ replyQueue.process(async (job) => {
 	}
 
 	try {
+		// generate random delay between 2500 and 5000 ms after logging in
+		const loginDelay = Math.floor(Math.random() * (5000 - 2500 + 1)) + 2500;
+
 		await handler.login();
 
-		await sleep(2500);
+		await sleep(loginDelay);
 
 		const result = await handler.reply();
 
@@ -89,14 +90,14 @@ replyQueue.process(async (job) => {
 				reply_bot_id: botAccount.id,
 			},
 		});
+
+		// the reply was successful, now deduct the token
+		await projectsService.deductReplyCredit(project.id);
 	} catch (err: any) {
 		await botsService.appendError(botAccount.id, err.message);
 
 		throw err;
 	}
-
-	// the reply was successful, now deduct the token
-	await projectsService.deductReplyCredit(project.id);
 });
 
 replyQueue.on("active", async (job, jobPromise) => {
