@@ -29,7 +29,7 @@ export const sendReplyHandler = authenticatedProcedure
 		});
 
 		if (!userOwnsProject) {
-			throw projectNotFound();
+			throw leadNotFound();
 		}
 
 		const leadCanSendReply = canSendReply(lead);

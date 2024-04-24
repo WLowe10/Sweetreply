@@ -44,7 +44,7 @@ const columns: SimpleTableColumns<RouterOutput["leads"]["getMany"]["data"][0]> =
 	},
 	{
 		id: "reply_status",
-		Header: () => "Reply Status",
+		Header: () => "Reply status",
 		Cell: (data) => (
 			<Badge bg={getReplyStatusColor(data.reply_status)}>{data.reply_status || "none"}</Badge>
 		),

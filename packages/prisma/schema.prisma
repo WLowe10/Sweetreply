@@ -196,7 +196,7 @@ model Lead {
     reply_bot_id       String?
     replied_at         DateTime? @db.Timestamptz()
     reply_scheduled_at DateTime? @db.Timestamptz()
-    replies_generated  Int?      @default(0)
+    replies_generated  Int       @default(0)
 
     project   Project @relation(fields: [project_id], references: [id], onDelete: Cascade)
     reply_bot Bot?    @relation(fields: [reply_bot_id], references: [id])

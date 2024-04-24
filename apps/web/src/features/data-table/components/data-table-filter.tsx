@@ -1,7 +1,8 @@
-import { ActionIcon, Popover, Stack, TextInput } from "@mantine/core";
+import { ActionIcon, Popover, Select, Stack, TextInput } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
 import { IconFilter } from "@tabler/icons-react";
 import { useDataTableContext } from "../hooks/use-data-table-context";
+import { replyStatus } from "@sweetreply/shared/features/leads/constants";
 
 export const DataTableFilter = () => {
 	const { params } = useDataTableContext();
@@ -16,16 +17,22 @@ export const DataTableFilter = () => {
 			</Popover.Target>
 			<Popover.Dropdown miw={300}>
 				<Stack>
-					{/* <DatePickerInput
+					<Select
+						label="Platform"
+						data={["reddit"]}
+						comboboxProps={{ withinPortal: false }}
+					/>
+					<Select
+						label="Reply status"
+						data={[replyStatus.REPLIED]}
+						comboboxProps={{ withinPortal: false }}
+					/>
+					<DatePickerInput
 						label="Date"
 						type="range"
 						placeholder="Filter by date"
 						allowSingleDateInRange={true}
 						popoverProps={{ withinPortal: false }}
-					/> */}
-					<TextInput
-						value={filter.test || ""}
-						onChange={(e) => setFilter({ test: e.target.value })}
 					/>
 				</Stack>
 			</Popover.Dropdown>

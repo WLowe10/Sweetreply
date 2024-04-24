@@ -6,6 +6,7 @@ import {
 	canCancelReply,
 	canUndoReply,
 	canSendReply,
+	canGenerateReply,
 } from "@sweetreply/shared/features/leads/utils";
 import { useState } from "react";
 
@@ -21,6 +22,7 @@ export const useLead = (leadId: string) => {
 
 	const sendReplyMutation = trpc.leads.sendReply.useMutation();
 	const editReplyMutation = trpc.leads.editReply.useMutation();
+	const generateReplyMutation = trpc.leads.generateReply.useMutation();
 	const undoReplyMutation = trpc.leads.undoReply.useMutation();
 	const cancelReplyMutation = trpc.leads.cancelReply.useMutation();
 
@@ -28,6 +30,7 @@ export const useLead = (leadId: string) => {
 
 	const lead = getLeadQuery.data;
 	const leadCanEditReply = (lead && canEditReply(lead)) || false;
+	const leadCanGenerateReply = (lead && canGenerateReply(lead)) || false;
 	const leadCanSendReply = (lead && canSendReply(lead)) || false;
 	const leadCanUndoReply = (lead && canUndoReply(lead)) || false;
 	const leadCanCancelReply = (lead && canCancelReply(lead)) || false;
@@ -70,6 +73,26 @@ export const useLead = (leadId: string) => {
 				onError: (err) => {
 					notifications.show({
 						title: "Failed to edit reply",
+						message: err.message,
+						color: "red",
+					});
+				},
+			}
+		);
+	};
+
+	const generateReply = () => {
+		generateReplyMutation.mutate(
+			{
+				lead_id: leadId,
+			},
+			{
+				onSuccess: (updatedReply) => {
+					trpcUtils.leads.get.setData({ id: updatedReply.id }, updatedReply);
+				},
+				onError: (err) => {
+					notifications.show({
+						title: "Failed to generate reply",
 						message: err.message,
 						color: "red",
 					});
@@ -122,15 +145,18 @@ export const useLead = (leadId: string) => {
 		data: lead,
 		replyDate,
 		canSendReply: leadCanSendReply,
-		canUpdateReply: leadCanEditReply,
+		canEditReply: leadCanEditReply,
+		canGenerateReply: leadCanGenerateReply,
 		canUndoReply: leadCanUndoReply,
 		canCancelReply: leadCanCancelReply,
 		sendReply,
 		editReply,
+		generateReply,
 		undoReply,
 		cancelReply,
 		sendReplyMutation,
 		editReplyMutation,
+		generateReplyMutation,
 		cancelReplyMutation,
 		undoReplyMutation,
 	};

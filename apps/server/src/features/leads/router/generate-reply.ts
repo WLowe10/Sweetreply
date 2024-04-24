@@ -1,13 +1,19 @@
 import { authenticatedProcedure } from "@/trpc";
-import { editReplyInputSchema } from "@sweetreply/shared/features/leads/schemas";
+import { z } from "zod";
 import { leadNotFound } from "../errors";
-import { projectNotFound } from "@/features/projects/errors";
-import { TRPCError } from "@trpc/server";
+import { replyCompletion } from "@/features/lead-engine/utils/completions/reply-completion";
+import { P } from "pino";
 import { replyStatus } from "@sweetreply/shared/features/leads/constants";
+import { TRPCError } from "@trpc/server";
 
-export const editReplyHandler = authenticatedProcedure
-	.input(editReplyInputSchema)
+const generateReplyInputSchema = z.object({
+	lead_id: z.string(),
+});
+
+export const generateReplyHandler = authenticatedProcedure
+	.input(generateReplyInputSchema)
 	.mutation(async ({ input, ctx }) => {
+		// todo also validate that the user has subscription in order to use AI features (generating a reply)
 		const lead = await ctx.prisma.lead.findUnique({
 			where: {
 				id: input.lead_id,
@@ -18,21 +24,26 @@ export const editReplyHandler = authenticatedProcedure
 			throw leadNotFound();
 		}
 
-		const userOwnsProject = await ctx.projectsService.userOwnsProject({
+		const project = await ctx.projectsService.userOwnsProject({
 			userId: ctx.user.id,
 			projectId: lead.project_id,
 		});
 
-		if (!userOwnsProject) {
+		if (!project) {
 			throw leadNotFound();
 		}
 
-		if (lead.reply_status === replyStatus.REPLIED) {
+		if (lead.replies_generated >= 2) {
 			throw new TRPCError({
-				code: "BAD_REQUEST",
-				message: "You can't update a reply that has already been sent",
+				code: "FORBIDDEN",
+				message: "This lead has already had 2 replies generated.",
 			});
 		}
+
+		const generatedReply = await replyCompletion({
+			lead,
+			project,
+		});
 
 		return await ctx.prisma.lead.update({
 			where: {
@@ -40,7 +51,10 @@ export const editReplyHandler = authenticatedProcedure
 			},
 			data: {
 				reply_status: lead.reply_status === null ? replyStatus.DRAFT : undefined,
-				reply_text: input.data.reply_text,
+				reply_text: generatedReply,
+				replies_generated: {
+					increment: 1,
+				},
 			},
 			select: {
 				id: true,

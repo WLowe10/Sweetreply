@@ -26,7 +26,7 @@ const plans: PricingItem[] = [
 		interval: "mo",
 		price: 19,
 		featuresTitle: "Everything in Free, plus:",
-		features: ["40 replies/mo", "Auto replies", "Scheduled replies"],
+		features: ["40 replies/mo", "Auto replies", "Scheduled replies", "AI generated replies"],
 		cta: {
 			text: "Get started",
 			to: "/sign-up",

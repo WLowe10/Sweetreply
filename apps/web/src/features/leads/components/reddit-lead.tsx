@@ -23,6 +23,7 @@ import {
 	IconPencil,
 	IconPlayerStop,
 	IconSend,
+	IconWand,
 } from "@tabler/icons-react";
 import { RelativeDate } from "@/components/relative-date";
 import { useLeadContext } from "../hooks/use-lead-context";
@@ -136,13 +137,20 @@ export const RedditLead = () => {
 										Send reply
 									</Menu.Item>
 								)}
-								{lead.canUpdateReply && (
+								{lead.canEditReply && (
 									<Menu.Item
 										onClick={onEdit}
 										leftSection={<IconPencil size={18} />}
 									>
 										Edit reply
 									</Menu.Item>
+								)}
+								{lead.canEditReply && (
+									<Menu.Item
+										onClick={lead.generateReply}
+										leftSection={<IconWand size={18} />}
+										disabled={!lead.canGenerateReply}
+									>{`Generate reply (${lead.data.replies_generated}/2)`}</Menu.Item>
 								)}
 								{lead.canUndoReply && (
 									<Menu.Item
