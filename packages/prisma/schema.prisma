@@ -144,9 +144,9 @@ model Project {
     website_url String?
     query       String?
 
-    reply_mention_mode        String? @default("name")
+    reply_mention_mode        String  @default("name")
     reply_delay               Int     @default(10)
-    reply_daily_limit         Int?    @default(25)
+    reply_daily_limit         Int     @default(25)
     reply_custom_instructions String?
 
     // reddit settings
