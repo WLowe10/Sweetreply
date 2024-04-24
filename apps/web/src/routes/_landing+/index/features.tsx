@@ -8,6 +8,8 @@ import {
 	Container,
 	rem,
 	useMantineTheme,
+	Box,
+	type BoxProps,
 } from "@mantine/core";
 import { IconGauge, IconUser, IconCookie, IconBolt } from "@tabler/icons-react";
 import classes from "./features.module.css";
@@ -33,11 +35,11 @@ const featuresData = [
 	},
 ];
 
-export const Features = () => {
+export const Features = (boxProps: BoxProps) => {
 	const theme = useMantineTheme();
 
 	return (
-		<Container component="section" id="features" size="lg" py="xl">
+		<Box component="section" id="features" {...boxProps}>
 			<Group justify="center">
 				<Badge variant="filled" size="lg">
 					Features
@@ -73,6 +75,6 @@ export const Features = () => {
 					</Card>
 				))}
 			</SimpleGrid>
-		</Container>
+		</Box>
 	);
 };
