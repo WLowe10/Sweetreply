@@ -2,7 +2,12 @@ import { Link, Outlet, useLocation, useNavigate } from "@remix-run/react";
 import { UserMenu } from "@/features/auth/components/user-menu";
 import { ProjectSelector } from "@/features/projects/components/project-selector";
 import { Box, Center, Container, Divider, Flex, NavLink, Stack } from "@mantine/core";
-import { IconLayoutDashboard, IconMessageReply, IconSettings } from "@tabler/icons-react";
+import {
+	IconCreditCard,
+	IconLayoutDashboard,
+	IconMessageReply,
+	IconSettings,
+} from "@tabler/icons-react";
 import { ReplyCreditsDisplay } from "@/features/billing/components/reply-credits-display";
 import { useMe } from "@/features/auth/hooks/use-me";
 import { useEffect } from "react";
@@ -73,6 +78,17 @@ export default function DashboardLayout() {
 							to="/settings"
 							leftSection={
 								<IconSettings size={18} color="var(--mantine-color-gray-6)" />
+							}
+						/>
+						<Divider />
+						<NavLink
+							active={location.pathname.includes("billing")}
+							component={Link}
+							label="Billing"
+							color="gray"
+							to="/billing"
+							leftSection={
+								<IconCreditCard size={18} color="var(--mantine-color-gray-6)" />
 							}
 						/>
 					</Box>

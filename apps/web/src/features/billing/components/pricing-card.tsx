@@ -1,8 +1,10 @@
 import { Box, Button, Card, Flex, List, Stack, Text, Title } from "@mantine/core";
 import { IconCheck } from "@tabler/icons-react";
 import { Link } from "@remix-run/react";
+import type { ReactNode } from "react";
 
 export type PricingItem = {
+	id: string;
 	title: string;
 	description: string;
 	price: number;
@@ -10,10 +12,7 @@ export type PricingItem = {
 	featuresTitle?: string;
 	features: string[];
 	highlighed?: boolean;
-	cta?: {
-		text: string;
-		to: string;
-	};
+	cta?: ReactNode;
 };
 
 export type PricingCardProps = PricingItem;
@@ -65,16 +64,7 @@ export const PricingCard = ({
 						</List>
 					</Box>
 				</div>
-				{cta && (
-					<Button
-						component={Link}
-						to={cta.to}
-						mt="xl"
-						style={{ justifySelf: "flex-end" }}
-					>
-						{cta.text}
-					</Button>
-				)}
+				{cta}
 			</Flex>
 		</Card>
 	);

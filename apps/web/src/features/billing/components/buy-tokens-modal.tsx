@@ -17,48 +17,14 @@ import {
 import { buyTokensInputSchema } from "@sweetreply/shared/features/projects/schemas";
 import { IconCircleCheck } from "@tabler/icons-react";
 import { Controller, useForm } from "react-hook-form";
-import { useLocalProject } from "../hooks/use-local-project";
 import { getTokensPrice, getTokensTier } from "@sweetreply/shared/features/projects/utils";
-import type { z } from "zod";
 import { Link } from "@remix-run/react";
 
 export type BuyTokensModalProps = {
 	modalProps: ModalProps;
 };
 
-const buyTokensFormSchema = buyTokensInputSchema.pick({
-	amount: true,
-});
-
 export const BuyTokensModal = ({ modalProps }: BuyTokensModalProps) => {
-	const [projectId] = useLocalProject();
-	const buyTokensMutation = trpc.projects.buyTokens.useMutation();
-
-	const form = useForm<z.infer<typeof buyTokensFormSchema>>({
-		resolver: zodResolver(buyTokensFormSchema),
-		defaultValues: {
-			amount: 50,
-		},
-	});
-
-	const handleSubmit = form.handleSubmit((data) => {
-		buyTokensMutation.mutate(
-			{
-				project_id: projectId,
-				amount: data.amount,
-			},
-			{
-				onSuccess: (result) => {
-					window.location.href = result.checkoutUrl as string;
-				},
-			}
-		);
-	});
-
-	const amount = form.watch("amount");
-	const tier = getTokensTier(amount);
-	const price = getTokensPrice(amount);
-
 	return (
 		<Modal
 			title={
@@ -68,7 +34,7 @@ export const BuyTokensModal = ({ modalProps }: BuyTokensModalProps) => {
 						{" "}
 						a lot more fun{" "}
 					</Text>
-					with tokens
+					with replies
 				</Text>
 			}
 			{...modalProps}

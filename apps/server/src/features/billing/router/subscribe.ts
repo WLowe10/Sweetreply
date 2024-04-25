@@ -1,7 +1,7 @@
 import { authenticatedProcedure } from "@/trpc";
 import { buildFrontendUrl } from "@/lib/utils";
 import { TRPCError } from "@trpc/server";
-import { billingPlanSchema } from "../schemas";
+import { billingPlanSchema } from "@sweetreply/shared/features/billing/schemas";
 import { BillingPlanPrice } from "../constants";
 import { z } from "zod";
 
@@ -45,11 +45,7 @@ export const subscribeHandler = authenticatedProcedure
 				},
 			}),
 			cancel_url: buildFrontendUrl({
-				path: "/dashboard",
-				query: {
-					plan: plan,
-					status: "cancel",
-				},
+				path: "/billing",
 			}),
 			line_items: [
 				{
@@ -67,6 +63,6 @@ export const subscribeHandler = authenticatedProcedure
 		}
 
 		return {
-			checkoutUrl: checkout.url,
+			checkoutURL: checkout.url,
 		};
 	});

@@ -8,7 +8,6 @@ const serializedUserSchema = userModel.pick({
 	verification_requested_at: true,
 	first_name: true,
 	last_name: true,
-	avatar_url: true,
 	role: true,
 	plan: true,
 	subscription_ends_at: true,
