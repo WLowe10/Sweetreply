@@ -45,6 +45,16 @@ processLeadQueue.process(async (job) => {
 		return;
 	}
 
+	const user = await prisma.user.findUnique({
+		where: {
+			id: project.user_id,
+		},
+	});
+
+	if (!user) {
+		return;
+	}
+
 	// --- Send webhook ---
 	// At this time, we don't care if a webhook fails
 
@@ -100,6 +110,11 @@ processLeadQueue.process(async (job) => {
 		} catch {
 			// noop
 		}
+	}
+
+	// the account does not have an active subscription, or does not have any reply credits. Do not proceed in auto replies
+	if (user.reply_credits <= 0) {
+		return;
 	}
 
 	// --- Generate Reply ---

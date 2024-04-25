@@ -1,4 +1,4 @@
-import { useCurrentProjectQuery } from "@/features/projects/hooks/use-current-project";
+import { useCurrentProjectQuery } from "@/features/projects/hooks/use-current-project-query";
 import { trpc } from "@/lib/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Box, Button, Stack, Tabs, TextInput, Textarea } from "@mantine/core";

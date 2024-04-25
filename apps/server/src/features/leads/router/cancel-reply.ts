@@ -5,6 +5,7 @@ import { TRPCError } from "@trpc/server";
 import { failedToCancelReply, leadNotFound } from "../errors";
 import { projectNotFound } from "@/features/projects/errors";
 import { replyStatus } from "@sweetreply/shared/features/leads/constants";
+import { canCancelReply } from "@sweetreply/shared/features/leads/utils";
 
 const cancelReplyInputSchema = z.object({
 	lead_id: z.string(),
@@ -14,6 +15,7 @@ export const cancelReplyHandler = authenticatedProcedure
 	.input(cancelReplyInputSchema)
 	.mutation(async ({ input, ctx }) => {
 		// consider checking if the time is past replied_at
+
 		const lead = await ctx.prisma.lead.findUnique({
 			where: {
 				id: input.lead_id,
@@ -33,11 +35,8 @@ export const cancelReplyHandler = authenticatedProcedure
 			throw leadNotFound();
 		}
 
-		if (lead.reply_status !== replyStatus.SCHEDULED) {
-			throw new TRPCError({
-				code: "FORBIDDEN",
-				message: "This reply is not scheduled",
-			});
+		if (!canCancelReply(lead)) {
+			throw failedToCancelReply();
 		}
 
 		const job = await replyQueue.getJob(input.lead_id);
@@ -85,6 +84,7 @@ export const cancelReplyHandler = authenticatedProcedure
 					reply_text: true,
 					reply_remote_id: true,
 					reply_scheduled_at: true,
+					replies_generated: true,
 					reply_bot: {
 						select: {
 							username: true,

@@ -32,9 +32,7 @@ export const sendReplyHandler = authenticatedProcedure
 			throw leadNotFound();
 		}
 
-		const leadCanSendReply = canSendReply(lead);
-
-		if (!leadCanSendReply) {
+		if (!canSendReply(lead)) {
 			throw leadAlreadyReplied();
 		}
 
@@ -69,6 +67,7 @@ export const sendReplyHandler = authenticatedProcedure
 				reply_text: true,
 				reply_remote_id: true,
 				reply_scheduled_at: true,
+				replies_generated: true,
 				reply_bot: {
 					select: {
 						username: true,

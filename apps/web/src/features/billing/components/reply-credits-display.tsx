@@ -12,7 +12,7 @@ import {
 } from "@mantine/core";
 // import { BuyTokensModal } from "./buy-tokens-modal";
 import { useDisclosure } from "@mantine/hooks";
-import { useCurrentProjectQuery } from "../../projects/hooks/use-current-project";
+import { useCurrentProjectQuery } from "../../projects/hooks/use-current-project-query";
 import { IconMessage } from "@tabler/icons-react";
 import { useMe } from "@/features/auth/hooks/use-me";
 

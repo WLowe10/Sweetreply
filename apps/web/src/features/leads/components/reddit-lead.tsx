@@ -16,6 +16,7 @@ import {
 	Button,
 	ButtonGroup,
 	Divider,
+	Loader,
 } from "@mantine/core";
 import {
 	IconArrowBackUp,
@@ -23,6 +24,7 @@ import {
 	IconPencil,
 	IconPlayerStop,
 	IconSend,
+	IconTrash,
 	IconWand,
 } from "@tabler/icons-react";
 import { RelativeDate } from "@/components/relative-date";
@@ -86,6 +88,14 @@ export const RedditLead = () => {
 								>
 									View on Reddit
 								</Menu.Item>
+								{lead.canDeleteLead && (
+									<Menu.Item
+										onClick={lead.deleteLead}
+										leftSection={<IconTrash size={18} />}
+									>
+										Delete
+									</Menu.Item>
+								)}
 							</Menu.Dropdown>
 						</Menu>
 					</Flex>
@@ -194,6 +204,8 @@ export const RedditLead = () => {
 								</ButtonGroup>
 							</Stack>
 						</form>
+					) : lead.generateReplyMutation.isLoading ? (
+						<Loader size="sm" />
 					) : lead.data.reply_text ? (
 						<Spoiler maxHeight={120} showLabel="Show more" hideLabel="hide">
 							{lead.data.reply_text}

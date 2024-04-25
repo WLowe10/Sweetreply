@@ -1,25 +1,21 @@
-import { useEffect } from "react";
-import { useNavigate } from "@remix-run/react";
 import { trpc } from "@/lib/trpc";
 import type { RouterInput } from "@server/router";
 
-type UseMeProps = {
-	redirect: {
-		to: string;
-		when: {
-			isAuthenticated: boolean;
-		};
-	};
-};
-
-export const useMe = (props?: UseMeProps) => {
-	const navigate = useNavigate();
+export const useMe = () => {
 	const trpcUtils = trpc.useUtils();
-	const getMeQuery = trpc.auth.getMe.useQuery();
+	const getMeQuery = trpc.auth.getMe.useQuery(undefined, {
+		retry(failureCount, error) {
+			if (error?.data?.code === "UNAUTHORIZED") {
+				return false;
+			}
+
+			return true;
+		},
+	});
 	const updateMeMutation = trpc.auth.updateMe.useMutation();
 	const isInitialized: boolean =
 		getMeQuery.isSuccess || getMeQuery.error?.data?.code === "UNAUTHORIZED";
-	const isAuthenticated: boolean = getMeQuery.isSuccess && isInitialized;
+	const isAuthenticated: boolean = getMeQuery.isSuccess;
 
 	const updateMe = (data: RouterInput["auth"]["updateMe"]) => {
 		return updateMeMutation.mutate(data, {
@@ -28,19 +24,6 @@ export const useMe = (props?: UseMeProps) => {
 			},
 		});
 	};
-
-	useEffect(() => {
-		if (props && props.redirect) {
-			const { to, when } = props.redirect;
-
-			if (
-				typeof when.isAuthenticated === "boolean" &&
-				when.isAuthenticated === isAuthenticated
-			) {
-				// navigate(to);
-			}
-		}
-	}, [getMeQuery, isAuthenticated, isInitialized, props]);
 
 	return {
 		me: getMeQuery.data,

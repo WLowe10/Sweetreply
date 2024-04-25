@@ -1,4 +1,4 @@
-import { Link, type MetaFunction } from "@remix-run/react";
+import { Link, useNavigate, type MetaFunction } from "@remix-run/react";
 import { useForm } from "react-hook-form";
 import {
 	TextInput,
@@ -10,7 +10,6 @@ import {
 	Text,
 	Stack,
 	Alert,
-	Flex,
 } from "@mantine/core";
 import { IconInfoCircle } from "@tabler/icons-react";
 import { signInInputSchema, type SignInInputType } from "@sweetreply/shared/features/auth/schemas";
@@ -18,16 +17,26 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useSignIn } from "@/features/auth/hooks/use-sign-in";
 import { AuthFormContainer } from "@/features/auth/components/auth-form-container";
 import { buildPageTitle } from "@/lib/utils";
+import { useMe } from "@/features/auth/hooks/use-me";
+import { useEffect } from "react";
 
 export const meta: MetaFunction = () => [{ title: buildPageTitle("Sign-in") }];
 
 // this route should not be accessed if the user is already signed in
 export default function SignInPage() {
+	const navigate = useNavigate();
+	const { isAuthenticated } = useMe();
 	const { signIn, isLoading, isError, error } = useSignIn();
 
 	const form = useForm<SignInInputType>({
 		resolver: zodResolver(signInInputSchema),
 	});
+
+	useEffect(() => {
+		if (isAuthenticated) {
+			navigate("/dashboard");
+		}
+	}, [isAuthenticated]);
 
 	return (
 		<AuthFormContainer

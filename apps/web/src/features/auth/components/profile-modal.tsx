@@ -28,7 +28,6 @@ export const ProfileModal = ({ modalProps }: ProfileModalProps) => {
 	const { me, updateMe, mutation: updateMeMutation } = useMe();
 	const { signOut } = useSignOut();
 
-	const requestVerificationMutation = trpc.auth.requestVerification.useMutation();
 	const requestPasswordResetMutation = trpc.auth.requestPasswordReset.useMutation();
 
 	const form = useForm<z.infer<typeof updateMeInputSchema>>({
@@ -38,24 +37,6 @@ export const ProfileModal = ({ modalProps }: ProfileModalProps) => {
 			last_name: me?.last_name,
 		},
 	});
-
-	const requestVerification = () => {
-		requestVerificationMutation.mutate(undefined, {
-			onSuccess: () => {
-				notifications.show({
-					title: "Verification email sent",
-					message: "Make sure to check your spam",
-				});
-			},
-			onError: (err) => {
-				notifications.show({
-					color: "red",
-					title: "Failed to request send verification",
-					message: err.message,
-				});
-			},
-		});
-	};
 
 	const requestPasswordReset = () => {
 		requestPasswordResetMutation.mutate(undefined, {
@@ -75,8 +56,6 @@ export const ProfileModal = ({ modalProps }: ProfileModalProps) => {
 		});
 	};
 
-	const isVerified = me?.verified_at !== null;
-
 	return (
 		<Modal title="Profile" centered={true} {...modalProps}>
 			<form onSubmit={form.handleSubmit(updateMe)}>
@@ -93,38 +72,7 @@ export const ProfileModal = ({ modalProps }: ProfileModalProps) => {
 							{...form.register("last_name")}
 						/>
 					</SimpleGrid>
-					<TextInput
-						label="Email"
-						readOnly={true}
-						rightSection={
-							isVerified && (
-								<Tooltip label="Verified">
-									<IconCheck color="var(--mantine-color-green-4)" size={16} />
-								</Tooltip>
-							)
-						}
-						value={me?.email}
-					/>
-					{!isVerified && (
-						<Alert
-							variant="outline"
-							title="Action required"
-							icon={<IconAlertTriangle />}
-						>
-							<Stack>
-								<Text>
-									Your account is not verified. Please click the button below.
-								</Text>
-								<Button
-									size="xs"
-									loading={requestVerificationMutation.isLoading}
-									onClick={requestVerification}
-								>
-									Request verification
-								</Button>
-							</Stack>
-						</Alert>
-					)}
+					<TextInput label="Email" readOnly={true} value={me?.email} />
 					<Divider />
 					<Stack gap="xs">
 						<Button

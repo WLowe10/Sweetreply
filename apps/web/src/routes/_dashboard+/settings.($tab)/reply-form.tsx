@@ -1,4 +1,4 @@
-import { useCurrentProjectQuery } from "@/features/projects/hooks/use-current-project";
+import { useCurrentProjectQuery } from "@/features/projects/hooks/use-current-project-query";
 import { trpc } from "@/lib/trpc";
 import {
 	Box,

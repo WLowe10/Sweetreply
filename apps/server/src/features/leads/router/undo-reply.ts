@@ -4,6 +4,7 @@ import { failedToDeleteReply, failedToUndoReply, leadHasNoReply, leadNotFound } 
 import { sleep } from "@sweetreply/shared/lib/utils";
 import { createBotHandler } from "@/features/bots/utils/create-bot-handler";
 import { replyStatus } from "@sweetreply/shared/features/leads/constants";
+import { canUndoReply } from "@sweetreply/shared/features/leads/utils";
 
 const undoReplyInputSchema = z.object({
 	lead_id: z.string(),
@@ -35,7 +36,7 @@ export const undoReplyHandler = authenticatedProcedure
 			throw leadHasNoReply();
 		}
 
-		if (lead.reply_status !== replyStatus.REPLIED) {
+		if (!canUndoReply(lead)) {
 			throw leadHasNoReply();
 		}
 
@@ -97,6 +98,7 @@ export const undoReplyHandler = authenticatedProcedure
 				reply_text: true,
 				reply_remote_id: true,
 				reply_scheduled_at: true,
+				replies_generated: true,
 				reply_bot: {
 					select: {
 						username: true,

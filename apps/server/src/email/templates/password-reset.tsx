@@ -26,7 +26,9 @@ export const PasswordResetEmail = ({ resetCode }: PasswordResetEmailProps) => {
 			<MjmlSpacer />
 			<Button href={resetPasswordLink}> Reset Password</Button>
 			<MjmlSpacer />
-			<Footer>If you did not request a password change, please ignore this email.</Footer>
+			<Footer>
+				If you did not request a password change, you can safely ignore this email.
+			</Footer>
 		</Container>
 	);
 };
