@@ -30,7 +30,7 @@ export const Container = ({ children }: PropsWithChildren) => {
 				</MjmlAttributes>
 				<MjmlStyle>{`.card{border: 1px solid #e0e0e0 !important;border-radius: 6px !important;}`}</MjmlStyle>
 			</MjmlHead>
-			<MjmlBody backgroundColor="white">
+			<MjmlBody>
 				<MjmlWrapper padding="20px">
 					<MjmlSection padding="20px" className="card">
 						<MjmlColumn>{children}</MjmlColumn>
