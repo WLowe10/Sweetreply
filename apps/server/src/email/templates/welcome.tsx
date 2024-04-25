@@ -1,16 +1,22 @@
 import { MjmlSpacer, MjmlText } from "@faire/mjml-react";
 import { Container, Header, Footer, Button } from "../components";
 import { appConfig } from "@sweetreply/shared/config";
+import { buildFrontendUrl } from "@/lib/utils";
 
 export type WelcomeEmailProps = {
 	firstName: string;
 	verificationToken: string;
 };
 
-export const subject = (props: WelcomeEmailProps) => `Welcome to the team, ${props.firstName}`;
+export const subject = `Welcome to the team!`;
 
-export const WelcomeEmail = ({ firstName }: WelcomeEmailProps) => {
-	const verifyLink = ""; // should be handled by a controller, and will redirect to the frontend
+export const WelcomeEmail = ({ firstName, verificationToken }: WelcomeEmailProps) => {
+	const verifyLink = buildFrontendUrl({
+		path: "/verify",
+		query: {
+			token: verificationToken,
+		},
+	});
 
 	return (
 		<Container>
@@ -20,9 +26,11 @@ export const WelcomeEmail = ({ firstName }: WelcomeEmailProps) => {
 				team!
 			</MjmlText>
 			<MjmlSpacer />
-			<Button href={verifyLink}>Verify Email</Button>
+			<Button href={verifyLink}>Verify Account</Button>
 			<MjmlSpacer />
-			<Footer>If you were not expecting this invitation, you can ignore this email.</Footer>
+			<Footer>
+				If you did not sign up for an account, you can safely ignore this email.
+			</Footer>
 		</Container>
 	);
 };

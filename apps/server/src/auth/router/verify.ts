@@ -27,13 +27,6 @@ export const verifyAccountHandler = authenticatedUnverifiedProcedure
 			});
 		}
 
-		if (updatedUser) {
-			ctx.logger.info({
-				id: updatedUser.id,
-				email: updatedUser.email,
-			});
-		}
-
 		return {
 			verified_at: updatedUser.verified_at,
 		};

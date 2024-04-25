@@ -8,18 +8,27 @@ import {
 	forgotPasswordInputSchema,
 } from "@sweetreply/shared/features/auth/schemas";
 import { buildPageTitle } from "@/lib/utils";
-import type { MetaFunction } from "@remix-run/react";
+import { useNavigate, type MetaFunction } from "@remix-run/react";
+import { useForgotPassword } from "@/features/auth/hooks/use-forgot-password";
+import { useEffect } from "react";
+import { useMe } from "@/features/auth/hooks/use-me";
 
 export const meta: MetaFunction = () => [{ title: buildPageTitle("Forgot password") }];
 
 export default function ForgotPasswordPage() {
-	const isError = false;
-	const error = "";
-	const isLoading = false;
+	const navigate = useNavigate();
+	const { isAuthenticated } = useMe();
+	const { forgotPassword, isLoading } = useForgotPassword();
 
 	const form = useForm<ForgotPasswordInputType>({
 		resolver: zodResolver(forgotPasswordInputSchema),
 	});
+
+	useEffect(() => {
+		if (isAuthenticated) {
+			navigate("/dashboard");
+		}
+	}, [isAuthenticated]);
 
 	return (
 		<AuthFormContainer
@@ -27,7 +36,7 @@ export default function ForgotPasswordPage() {
 			subtitle={"Enter your email and we'll send you a link to reset your password"}
 		>
 			<Card shadow="md" radius="md" p={30} withBorder>
-				<form onSubmit={form.handleSubmit(() => {})}>
+				<form onSubmit={form.handleSubmit(forgotPassword)}>
 					<Stack>
 						<TextInput
 							label="Email"
@@ -40,11 +49,6 @@ export default function ForgotPasswordPage() {
 						</Button>
 					</Stack>
 				</form>
-				{isError && !isLoading && (
-					<Alert mt="sm" color="red" icon={<IconInfoCircle />}>
-						{error}
-					</Alert>
-				)}
 			</Card>
 		</AuthFormContainer>
 	);

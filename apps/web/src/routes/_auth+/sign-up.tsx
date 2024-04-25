@@ -1,4 +1,4 @@
-import { type MetaFunction, Link } from "@remix-run/react";
+import { type MetaFunction, Link, useNavigate } from "@remix-run/react";
 import {
 	Card,
 	TextInput,
@@ -19,6 +19,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { AuthFormContainer } from "@/features/auth/components/auth-form-container";
 import { signUpInputSchema } from "@sweetreply/shared/features/auth/schemas";
 import { buildPageTitle } from "@/lib/utils";
+import { useEffect } from "react";
+import { useMe } from "@/features/auth/hooks/use-me";
 
 export const meta: MetaFunction = () => [{ title: buildPageTitle("Sign-up") }];
 
@@ -33,12 +35,20 @@ const signUpFormSchema = signUpInputSchema
 
 // this route should not be accessed if the user is already signed in
 export default function SignUpPage() {
+	const navigate = useNavigate();
+	const { isAuthenticated } = useMe();
 	const { signUp, isLoading, isError, error } = useSignUp();
 	const [visible, { toggle }] = useDisclosure(false);
 
 	const form = useForm<z.infer<typeof signUpFormSchema>>({
 		resolver: zodResolver(signUpFormSchema),
 	});
+
+	useEffect(() => {
+		if (isAuthenticated) {
+			navigate("/dashboard");
+		}
+	}, [isAuthenticated]);
 
 	return (
 		<AuthFormContainer

@@ -12,7 +12,7 @@ export const useSignUp = () => {
 			onSuccess: (userData) => {
 				// set the data of the user in the query cache
 				trpcUtils.auth.getMe.setData(undefined, userData);
-				navigate("/dashboard");
+				navigate("/verify");
 			},
 		});
 	};

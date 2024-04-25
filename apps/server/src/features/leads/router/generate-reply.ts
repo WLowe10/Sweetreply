@@ -2,9 +2,9 @@ import { authenticatedProcedure } from "@/trpc";
 import { z } from "zod";
 import { leadNotFound } from "../errors";
 import { replyCompletion } from "@/features/lead-engine/utils/completions/reply-completion";
-import { P } from "pino";
 import { replyStatus } from "@sweetreply/shared/features/leads/constants";
 import { TRPCError } from "@trpc/server";
+import { canGenerateReply } from "@sweetreply/shared/features/leads/utils";
 
 const generateReplyInputSchema = z.object({
 	lead_id: z.string(),
@@ -33,10 +33,10 @@ export const generateReplyHandler = authenticatedProcedure
 			throw leadNotFound();
 		}
 
-		if (lead.replies_generated >= 2) {
+		if (!canGenerateReply(lead)) {
 			throw new TRPCError({
 				code: "FORBIDDEN",
-				message: "This lead has already had 2 replies generated.",
+				message: "Cannot generate reply",
 			});
 		}
 
@@ -77,6 +77,7 @@ export const generateReplyHandler = authenticatedProcedure
 				reply_text: true,
 				reply_remote_id: true,
 				reply_scheduled_at: true,
+				replies_generated: true,
 				reply_bot: {
 					select: {
 						username: true,

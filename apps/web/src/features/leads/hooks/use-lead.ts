@@ -1,5 +1,6 @@
 import { trpc } from "@/lib/trpc";
 import { notifications } from "@mantine/notifications";
+import { useNavigate } from "@remix-run/react";
 import { Lead } from "@sweetreply/prisma";
 import {
 	canEditReply,
@@ -7,12 +8,15 @@ import {
 	canUndoReply,
 	canSendReply,
 	canGenerateReply,
+	canDeleteLead,
 } from "@sweetreply/shared/features/leads/utils";
 import { useState } from "react";
 
 export type UseLeadType = ReturnType<typeof useLead>;
 
 export const useLead = (leadId: string) => {
+	const navigate = useNavigate();
+
 	const getLeadQuery = trpc.leads.get.useQuery(
 		{ id: leadId },
 		{
@@ -20,6 +24,7 @@ export const useLead = (leadId: string) => {
 		}
 	);
 
+	const deleteLeadMutation = trpc.leads.delete.useMutation();
 	const sendReplyMutation = trpc.leads.sendReply.useMutation();
 	const editReplyMutation = trpc.leads.editReply.useMutation();
 	const generateReplyMutation = trpc.leads.generateReply.useMutation();
@@ -29,6 +34,7 @@ export const useLead = (leadId: string) => {
 	const trpcUtils = trpc.useUtils();
 
 	const lead = getLeadQuery.data;
+	const leadCanDelete = (lead && canDeleteLead(lead)) || false;
 	const leadCanEditReply = (lead && canEditReply(lead)) || false;
 	const leadCanGenerateReply = (lead && canGenerateReply(lead)) || false;
 	const leadCanSendReply = (lead && canSendReply(lead)) || false;
@@ -41,6 +47,26 @@ export const useLead = (leadId: string) => {
 			: lead?.reply_status === "replied"
 				? lead?.replied_at!
 				: null;
+
+	const deleteLead = () => {
+		deleteLeadMutation.mutate(
+			{
+				lead_id: leadId,
+			},
+			{
+				onSuccess: () => {
+					navigate("/leads");
+				},
+				onError: (err) => {
+					notifications.show({
+						title: "Failed to delete lead",
+						message: err.message,
+						color: "red",
+					});
+				},
+			}
+		);
+	};
 
 	const sendReply = () => {
 		sendReplyMutation.mutate(
@@ -144,16 +170,19 @@ export const useLead = (leadId: string) => {
 	return {
 		data: lead,
 		replyDate,
+		canDeleteLead: leadCanDelete,
 		canSendReply: leadCanSendReply,
 		canEditReply: leadCanEditReply,
 		canGenerateReply: leadCanGenerateReply,
 		canUndoReply: leadCanUndoReply,
 		canCancelReply: leadCanCancelReply,
+		deleteLead,
 		sendReply,
 		editReply,
 		generateReply,
 		undoReply,
 		cancelReply,
+		deleteLeadMutation,
 		sendReplyMutation,
 		editReplyMutation,
 		generateReplyMutation,

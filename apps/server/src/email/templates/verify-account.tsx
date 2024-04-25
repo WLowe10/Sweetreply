@@ -1,6 +1,7 @@
 import { MjmlSpacer, MjmlText } from "@faire/mjml-react";
 import { Container, Button, Footer, Header } from "../components";
 import { appConfig } from "@sweetreply/shared/config";
+import { buildFrontendUrl } from "@/lib/utils";
 
 export type VerifyAccountEmailProps = {
 	verificationToken: string;
@@ -9,7 +10,12 @@ export type VerifyAccountEmailProps = {
 export const subject = "Verify Your Email";
 
 export const VerifyAccountEmail = ({ verificationToken }: VerifyAccountEmailProps) => {
-	const verifyLink = ""; // should link to api, which redirects to frontend
+	const verifyLink = buildFrontendUrl({
+		path: "/verify",
+		query: {
+			token: verificationToken,
+		},
+	}); // should link to api, which redirects to frontend
 
 	return (
 		<Container>
@@ -19,7 +25,7 @@ export const VerifyAccountEmail = ({ verificationToken }: VerifyAccountEmailProp
 				below.
 			</MjmlText>
 			<MjmlSpacer />
-			<Button href={verifyLink}>Verify Email Address</Button>
+			<Button href={verifyLink}>Verify Account</Button>
 			<MjmlSpacer />
 			<Footer>
 				If you did not request to verify your {appConfig.name} account, you can safely

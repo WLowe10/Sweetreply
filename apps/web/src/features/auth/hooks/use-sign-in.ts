@@ -11,8 +11,8 @@ export const useSignIn = () => {
 		return signInMutation.mutate(data, {
 			onSuccess: (userData) => {
 				// set the data of the user in the query cache
-				trpcUtils.auth.getMe.setData(undefined, userData);
 				navigate("/dashboard");
+				trpcUtils.auth.getMe.setData(undefined, userData);
 			},
 		});
 	};

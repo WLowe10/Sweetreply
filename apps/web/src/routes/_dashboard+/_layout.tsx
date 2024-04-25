@@ -1,17 +1,32 @@
-import { Link, Outlet, useLocation } from "@remix-run/react";
+import { Link, Outlet, useLocation, useNavigate } from "@remix-run/react";
 import { UserMenu } from "@/features/auth/components/user-menu";
 import { ProjectSelector } from "@/features/projects/components/project-selector";
-import { Box, Divider, Flex, NavLink, Stack } from "@mantine/core";
-import {
-	IconGridGoldenratio,
-	IconLayoutDashboard,
-	IconMessageReply,
-	IconSettings,
-} from "@tabler/icons-react";
+import { Box, Center, Container, Divider, Flex, NavLink, Stack } from "@mantine/core";
+import { IconLayoutDashboard, IconMessageReply, IconSettings } from "@tabler/icons-react";
 import { ReplyCreditsDisplay } from "@/features/billing/components/reply-credits-display";
+import { useMe } from "@/features/auth/hooks/use-me";
+import { useEffect } from "react";
+import { useProjectsQuery } from "@/features/projects/hooks/use-projects-query";
+import { CreateProjectForm } from "@/features/projects/components/create-project-form";
+import { ResourceContainer } from "@/components/resource-container";
 
 export default function DashboardLayout() {
+	const { me, isAuthenticated, isInitialized } = useMe();
+	const { data: projects } = useProjectsQuery();
+	const navigate = useNavigate();
 	const location = useLocation();
+
+	const hasNoProjects = projects && projects.length === 0;
+
+	useEffect(() => {
+		if (isInitialized && !isAuthenticated) {
+			return navigate("/");
+		}
+
+		if (me && !me.verified_at) {
+			navigate("/verify");
+		}
+	}, [me, isInitialized, isAuthenticated]);
 
 	return (
 		<Flex mih="100vh">
@@ -69,7 +84,16 @@ export default function DashboardLayout() {
 				</Stack>
 			</Flex>
 			<Box ml="280" flex={1} mih="100vh">
-				<Outlet />
+				{hasNoProjects ? (
+					<ResourceContainer
+						title="Create your first project"
+						subtitle="Setup your first project!"
+					>
+						<CreateProjectForm />
+					</ResourceContainer>
+				) : (
+					<Outlet />
+				)}
 			</Box>
 		</Flex>
 	);
