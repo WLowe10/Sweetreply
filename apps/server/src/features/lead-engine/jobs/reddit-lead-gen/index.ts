@@ -1,10 +1,10 @@
+import pLimit from "p-limit";
 import { CronJob } from "cron";
 import { prisma } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { RedditPostSlurper } from "./post-slurper";
 import { Project } from "@sweetreply/prisma";
 import { parse, test } from "liqe";
-import pLimit from "p-limit";
 import { processLeadQueue } from "../../queues/process-lead";
 
 const postSlurper = new RedditPostSlurper();

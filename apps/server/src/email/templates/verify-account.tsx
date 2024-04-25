@@ -7,7 +7,7 @@ export type VerifyAccountEmailProps = {
 	verificationToken: string;
 };
 
-export const subject = "Verify Your Email";
+export const subject = "Verify your account";
 
 export const VerifyAccountEmail = ({ verificationToken }: VerifyAccountEmailProps) => {
 	const verifyLink = buildFrontendUrl({

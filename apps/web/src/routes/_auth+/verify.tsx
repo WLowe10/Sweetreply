@@ -4,8 +4,9 @@ import { useNavigate, useSearchParams, type MetaFunction } from "@remix-run/reac
 import { useMe } from "@/features/auth/hooks/use-me";
 import { trpc } from "@/lib/trpc";
 import { notifications } from "@mantine/notifications";
-import { useEffect } from "react";
-import { Button } from "@mantine/core";
+import { useEffect, useState } from "react";
+import { Button, Card, Center, Stack, Text } from "@mantine/core";
+import { IconCircleCheck } from "@tabler/icons-react";
 
 export const meta: MetaFunction = () => [{ title: buildPageTitle("Verify your account") }];
 
@@ -13,6 +14,7 @@ export default function VerifyPage() {
 	const navigate = useNavigate();
 	const { me, isAuthenticated, isInitialized } = useMe();
 	const [searchParams] = useSearchParams();
+	const [submitted, setSubmitted] = useState(false);
 
 	const verifyAccountMutation = trpc.auth.verifyAccount.useMutation();
 	const requestVerificationMutation = trpc.auth.requestVerification.useMutation();
@@ -20,10 +22,7 @@ export default function VerifyPage() {
 	const requestVerification = () => {
 		requestVerificationMutation.mutate(undefined, {
 			onSuccess: () => {
-				notifications.show({
-					title: "Verification email sent",
-					message: "Make sure to check your spam",
-				});
+				setSubmitted(true);
 			},
 			onError: (err) => {
 				notifications.show({
@@ -81,13 +80,30 @@ export default function VerifyPage() {
 			title="Verify your account"
 			subtitle={me ? `A verification email has been sent to ${me.email}` : ""}
 		>
-			<Button
-				fullWidth
-				loading={requestVerificationMutation.isLoading}
-				onClick={requestVerification}
-			>
-				Resend verification email
-			</Button>
+			{submitted ? (
+				<Card shadow="md" radius="md" p={30} withBorder>
+					<Center>
+						<Stack gap="sm" align="center" ta="center">
+							<IconCircleCheck color="var(--mantine-color-blue-5)" />
+							<Text>We've sent a verification email to</Text>
+							<Text c="dimmed" fw="bold">
+								{me?.email}
+							</Text>
+							<Text>
+								You should receive an email with a link to verify your account.
+							</Text>
+						</Stack>
+					</Center>
+				</Card>
+			) : (
+				<Button
+					fullWidth
+					loading={requestVerificationMutation.isLoading}
+					onClick={requestVerification}
+				>
+					Resend verification email
+				</Button>
+			)}
 		</AuthFormContainer>
 	);
 }

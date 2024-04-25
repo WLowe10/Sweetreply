@@ -20,7 +20,7 @@ export default function DashboardLayout() {
 
 	useEffect(() => {
 		if (isInitialized && !isAuthenticated) {
-			return navigate("/");
+			return navigate("/sign-in");
 		}
 
 		if (me && !me.verified_at) {

@@ -385,7 +385,7 @@ export class AuthService {
 		if (isPast(user.password_reset_code_expires_at)) {
 			throw new TRPCError({
 				code: "BAD_REQUEST",
-				message: "Password expiration expired, please request a new one",
+				message: "Password reset expired, please request a new one",
 			});
 		}
 
