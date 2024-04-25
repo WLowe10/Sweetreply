@@ -1,33 +1,12 @@
-import { Controller, Ctx, HttpError, Post, Req, Res } from "routing-controllers";
+import { Controller, Post, Req, Res } from "routing-controllers";
 import { stripe } from "@/lib/client/stripe";
 import { env } from "@/env";
 import { prisma } from "@/lib/db";
-import { subscriptionMetadataSchema } from "./schemas";
+import { PriceBillingPlan } from "./constants";
+import { BillingPlanReplyCredits } from "@sweetreply/shared/features/billing/constants";
+import { logger } from "@/lib/logger";
 import type { Request, Response } from "express";
 import type Stripe from "stripe";
-import { BillingPlanReplyCredits, PriceBillingPlan } from "./constants";
-
-async function handleCheckoutSessionCompleted(event: Stripe.Event) {
-	const checkout = event.data.object as Stripe.Checkout.Session;
-	const subscriptionId = checkout.subscription;
-	const customerId = checkout.customer;
-
-	if (!customerId) {
-		return;
-	}
-
-	if (!subscriptionId) {
-		return;
-	}
-
-	// await prisma.user.update({
-	// 	where: {
-	// 		stripe_customer_id: customerId,
-	// 	},
-	// });
-
-	// console.log("checkout completed", checkout);
-}
 
 async function handleInvoicePaid(event: Stripe.Event) {
 	const invoice = event.data.object as Stripe.Invoice;
@@ -38,31 +17,21 @@ async function handleInvoicePaid(event: Stripe.Event) {
 		return;
 	}
 
-	const user = await prisma.user.findFirst({
-		where: {
-			stripe_subscription_id: subscriptionId,
-			stripe_customer_id: customerId,
-		},
-	});
+	const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+	const priceId = subscription.items.data[0].price.id;
 
-	if (!user) {
-		throw new Error("User not found");
-	}
+	const billingPlan = PriceBillingPlan[priceId];
 
-	if (!user.plan) {
-		return;
-	}
-
-	//@ts-ignore
-	const newCredits = BillingPlanReplyCredits[user.plan];
-
-	if (!newCredits) {
+	if (!billingPlan) {
 		throw new Error("Invalid plan");
 	}
 
+	const newCredits = BillingPlanReplyCredits[billingPlan];
+
 	await prisma.user.update({
 		where: {
-			id: user.id,
+			stripe_subscription_id: subscriptionId,
+			stripe_customer_id: customerId,
 		},
 		data: {
 			reply_credits: newCredits,
@@ -94,6 +63,18 @@ async function handleSubscriptionCreated(event: Stripe.Event) {
 
 async function handleSubscriptionUpdate(event: Stripe.Event) {
 	const subscription = event.data.object as Stripe.Subscription;
+	const customerId = subscription.customer as string;
+
+	await prisma.user.update({
+		where: {
+			stripe_subscription_id: subscription.id,
+			stripe_customer_id: customerId,
+		},
+		data: {
+			stripe_subscription_status: subscription.status,
+			subscription_ends_at: new Date(subscription.current_period_end * 1000),
+		},
+	});
 }
 
 async function handleSubscriptionDeleted(event: Stripe.Event) {
@@ -106,7 +87,9 @@ async function handleSubscriptionDeleted(event: Stripe.Event) {
 		},
 		data: {
 			reply_credits: 0,
+			plan: null,
 			stripe_subscription_id: null,
+			stripe_subscription_status: null,
 			subscription_ends_at: null,
 		},
 	});
@@ -133,10 +116,6 @@ export class BillingController {
 
 		try {
 			switch (event.type) {
-				case "checkout.session.completed":
-					await handleCheckoutSessionCompleted(event);
-					break;
-
 				case "customer.subscription.created":
 					await handleSubscriptionCreated(event);
 					break;
@@ -153,7 +132,9 @@ export class BillingController {
 					await handleInvoicePaid(event);
 					break;
 			}
-		} catch {
+		} catch (err) {
+			logger.error(err, "Error handling stripe webhook");
+
 			return res.sendStatus(400);
 		}
 

@@ -1,6 +1,7 @@
 import { ResourceContainer } from "@/components/resource-container";
 import { useMe } from "@/features/auth/hooks/use-me";
 import { PricingCard } from "@/features/billing/components/pricing-card";
+import { ThankYouModal } from "@/features/billing/components/thank-you-modal";
 import { plans } from "@/features/billing/constants";
 import { trpc } from "@/lib/trpc";
 import { Button, SimpleGrid } from "@mantine/core";
@@ -54,6 +55,7 @@ export default function BillingPage() {
 				</Button>
 			}
 		>
+			<ThankYouModal />
 			<SimpleGrid cols={{ base: 1, md: 2 }}>
 				{plans.map((plan) => (
 					<PricingCard

@@ -38,7 +38,7 @@ export const subscribeHandler = authenticatedProcedure
 				terms_of_service: "required",
 			},
 			success_url: buildFrontendUrl({
-				path: "/dashboard",
+				path: "/billing",
 				query: {
 					plan: plan,
 					status: "success",

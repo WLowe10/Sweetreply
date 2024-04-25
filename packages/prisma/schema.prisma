@@ -36,11 +36,12 @@ model User {
     password_reset_code            String?   @unique
     password_reset_code_expires_at DateTime? @db.Timestamptz()
 
-    plan                   String?
-    stripe_customer_id     String?   @unique
-    stripe_subscription_id String?   @unique
-    subscription_ends_at   DateTime? @db.Timestamptz()
-    reply_credits          Int       @default(0)
+    plan                       String?
+    stripe_customer_id         String?   @unique
+    stripe_subscription_id     String?   @unique
+    subscription_ends_at       DateTime? @db.Timestamptz()
+    stripe_subscription_status String?
+    reply_credits              Int       @default(0)
 
     created_at DateTime  @default(now()) @db.Timestamptz()
     updated_at DateTime? @updatedAt @db.Timestamptz()
