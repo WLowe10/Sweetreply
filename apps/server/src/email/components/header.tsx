@@ -6,12 +6,12 @@ import type { PropsWithChildren } from "react";
 export const Header = ({ children }: PropsWithChildren) => {
 	return (
 		<>
-			<MjmlImage
+			{/* <MjmlImage
 				target="_blank"
 				width="64px"
 				href={env.FRONTEND_URL}
 				src={appConfig.iconUrl}
-			/>
+			/> */}
 			<MjmlText fontWeight="bold" fontSize="20px" align="center">
 				{children}
 			</MjmlText>

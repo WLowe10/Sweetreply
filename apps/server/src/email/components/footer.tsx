@@ -1,5 +1,5 @@
-import { MjmlButton, MjmlDivider, MjmlText, type IMjmlTextProps } from "@faire/mjml-react"
-import { PropsWithChildren } from "react"
+import { MjmlDivider, MjmlText, type IMjmlTextProps } from "@faire/mjml-react";
+import { PropsWithChildren } from "react";
 
 export const Footer = ({ children, ...textProps }: PropsWithChildren<IMjmlTextProps>) => {
 	return (
@@ -9,5 +9,5 @@ export const Footer = ({ children, ...textProps }: PropsWithChildren<IMjmlTextPr
 				{children}
 			</MjmlText>
 		</>
-	)
-}
+	);
+};
