@@ -1,7 +1,8 @@
 import { useCurrentProjectQuery } from "@/features/projects/hooks/use-current-project-query";
 import { trpc } from "@/lib/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Box, Button, Stack, Tabs, Text, TextInput, Textarea } from "@mantine/core";
+import { Anchor, Box, Button, Stack, Tabs, Text, TextInput, Textarea } from "@mantine/core";
+import { Link } from "@remix-run/react";
 import {
 	UpdateProjectInputType,
 	updateProjectInputSchema,
@@ -84,13 +85,20 @@ export const GeneralForm = () => {
 					/>
 					<Textarea
 						label="Query"
-						description="Use a query to filter the leads you want to find"
 						autoCorrect="off"
 						autoComplete="off"
 						autoCapitalize="off"
 						spellCheck="false"
 						resize="vertical"
 						error={form.formState.errors.query?.message}
+						description={
+							<Text component="span" size="xs">
+								Use a query to filter the leads you want to find.{" "}
+								<Anchor component={Link} to="/help/query">
+									Guide
+								</Anchor>
+							</Text>
+						}
 						{...form.register("query")}
 					/>
 					<Button
