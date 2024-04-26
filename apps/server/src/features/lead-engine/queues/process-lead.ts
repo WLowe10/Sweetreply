@@ -10,6 +10,8 @@ import { logger } from "@/lib/logger";
 import { replyStatus } from "@sweetreply/shared/features/leads/constants";
 import { shouldReplyCompletion } from "../utils/completions/should-reply-completion";
 import { replyCompletion } from "../utils/completions/reply-completion";
+import { addReplyJob } from "../utils/add-reply-job";
+import e from "express";
 
 export type ProcessLeadQueueJobData = {
 	lead_id: string;
@@ -158,15 +160,19 @@ processLeadQueue.process(async (job) => {
 	}
 
 	let scheduledAt = new Date();
-	let delay = 0;
 
 	if (project.reply_delay > 0) {
 		const replyDate = addMinutes(lead.date, project.reply_delay);
 
 		if (isFuture(replyDate)) {
 			scheduledAt = replyDate;
-			delay = differenceInMilliseconds(replyDate, new Date());
+
+			addReplyJob(lead.id, {
+				date: scheduledAt,
+			});
 		}
+	} else {
+		addReplyJob(lead.id);
 	}
 
 	await prisma.lead.update({
@@ -182,14 +188,6 @@ processLeadQueue.process(async (job) => {
 			},
 		},
 	});
-
-	replyQueue.add(
-		{ lead_id: lead.id },
-		{
-			jobId: lead.id,
-			delay,
-		}
-	);
 });
 
 export { processLeadQueue };

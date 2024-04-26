@@ -369,6 +369,9 @@ importers:
       '@sweetreply/prisma':
         specifier: workspace:*
         version: link:../prisma
+      date-fns:
+        specifier: ^3.6.0
+        version: 3.6.0
       liqe:
         specifier: ^3.8.0
         version: 3.8.0

@@ -6,6 +6,7 @@ import { replyStatus } from "@sweetreply/shared/features/leads/constants";
 import { canSendReply } from "@sweetreply/shared/features/leads/utils";
 import { TRPCError } from "@trpc/server";
 import { differenceInMilliseconds, isFuture } from "date-fns";
+import { addReplyJob } from "@/features/lead-engine/utils/add-reply-job";
 
 export const sendReplyHandler = authenticatedProcedure
 	.input(sendReplyInputSchema)
@@ -40,13 +41,9 @@ export const sendReplyHandler = authenticatedProcedure
 			throw leadAlreadyReplied();
 		}
 
-		let delay;
-
-		if (input.data?.date && isFuture(input.data.date)) {
-			delay = differenceInMilliseconds(input.data.date, new Date());
-		}
-
-		replyQueue.add({ lead_id: lead.id }, { jobId: lead.id, delay });
+		addReplyJob(lead.id, {
+			date: input.data?.date ?? undefined,
+		});
 
 		// set to pending (waiting for reply in the queue)
 		return await ctx.prisma.lead.update({

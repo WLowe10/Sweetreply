@@ -47,50 +47,50 @@ export const cancelReplyHandler = authenticatedProcedure
 			}
 		}
 
-		try {
-			if (job) {
+		if (job) {
+			try {
 				await job.remove();
+			} catch {
+				throw failedToCancelReply();
 			}
+		}
 
-			return ctx.prisma.lead.update({
-				where: {
-					id: input.lead_id,
-				},
-				data: {
-					replied_at: null,
-					reply_scheduled_at: null,
-					reply_status: replyStatus.DRAFT,
-				},
-				select: {
-					id: true,
-					platform: true,
-					type: true,
-					remote_channel_id: true,
-					username: true,
-					content: true,
-					title: true,
-					created_at: true,
-					date: true,
-					name: true,
-					project_id: true,
-					remote_user_id: true,
-					remote_id: true,
-					remote_url: true,
-					channel: true,
-					reply_status: true,
-					replied_at: true,
-					reply_text: true,
-					reply_remote_id: true,
-					reply_scheduled_at: true,
-					replies_generated: true,
-					reply_bot: {
-						select: {
-							username: true,
-						},
+		return ctx.prisma.lead.update({
+			where: {
+				id: input.lead_id,
+			},
+			data: {
+				replied_at: null,
+				reply_scheduled_at: null,
+				reply_status: replyStatus.DRAFT,
+			},
+			select: {
+				id: true,
+				platform: true,
+				type: true,
+				remote_channel_id: true,
+				username: true,
+				content: true,
+				title: true,
+				created_at: true,
+				date: true,
+				name: true,
+				project_id: true,
+				remote_user_id: true,
+				remote_id: true,
+				remote_url: true,
+				channel: true,
+				reply_status: true,
+				replied_at: true,
+				reply_text: true,
+				reply_remote_id: true,
+				reply_scheduled_at: true,
+				replies_generated: true,
+				reply_bot: {
+					select: {
+						username: true,
 					},
 				},
-			});
-		} catch {
-			throw failedToCancelReply();
-		}
+			},
+		});
 	});
