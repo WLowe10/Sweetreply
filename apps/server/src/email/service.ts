@@ -16,11 +16,11 @@ import {
 	subject as passwordResetEmailSubject,
 	type PasswordResetEmailProps,
 } from "./templates/password-reset";
-import {
-	LowOnTokensEmail,
-	subject as lowOnTokensEmailSubject,
-	type LowOnTokensEmailProps,
-} from "./templates/low-on-tokens";
+// import {
+// 	LowOnTokensEmail,
+// 	subject as lowOnTokensEmailSubject,
+// 	type LowOnTokensEmailProps,
+// } from "./templates/low-on-replies";
 import { env } from "@/env";
 
 export type SendEmailData = {

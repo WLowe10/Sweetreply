@@ -1,28 +1,14 @@
-import {
-	Box,
-	Button,
-	Card,
-	Flex,
-	Group,
-	Progress,
-	Skeleton,
-	Stack,
-	Text,
-	ThemeIcon,
-} from "@mantine/core";
-// import { BuyTokensModal } from "./buy-tokens-modal";
-import { useDisclosure } from "@mantine/hooks";
-import { useCurrentProjectQuery } from "../../projects/hooks/use-current-project-query";
+import { Box, Button, Card, Flex, Progress, Skeleton, Stack, Text, ThemeIcon } from "@mantine/core";
 import { IconMessage } from "@tabler/icons-react";
 import { useMe } from "@/features/auth/hooks/use-me";
+import { useReplyCreditsUsage } from "../hooks/use-reply-credits-usage";
 
 export const ReplyCreditsDisplay = () => {
-	const [opened, { open, close }] = useDisclosure(false);
 	const { me } = useMe();
+	const usage = useReplyCreditsUsage();
 
 	return (
 		<Card withBorder={true}>
-			{/* <BuyTokensModal modalProps={{ centered: true, opened, onClose: close }} /> */}
 			{me ? (
 				<Stack>
 					<Flex direction="row" align="center">
@@ -33,10 +19,8 @@ export const ReplyCreditsDisplay = () => {
 							me.reply_credits === 1 ? "reply" : "replies"
 						} remaining`}</Text>
 					</Flex>
-					<Progress value={60} />
-					<Button size="xs" onClick={open}>
-						Get more
-					</Button>
+					<Progress value={usage} />
+					<Button size="xs">Get more</Button>
 				</Stack>
 			) : (
 				<Skeleton height={60} />
