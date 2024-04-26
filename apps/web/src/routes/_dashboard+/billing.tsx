@@ -9,6 +9,10 @@ import { Button, SimpleGrid, Skeleton, Stack, Table } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { useState } from "react";
 import { getMonthlyReplies } from "@sweetreply/shared/features/billing/utils";
+import { buildPageTitle } from "@/lib/utils";
+import type { MetaFunction } from "@remix-run/react";
+
+export const meta: MetaFunction = () => [{ title: buildPageTitle("Billing") }];
 
 export default function BillingPage() {
 	const { me } = useMe();

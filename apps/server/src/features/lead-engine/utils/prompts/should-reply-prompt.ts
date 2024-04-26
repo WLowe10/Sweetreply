@@ -6,16 +6,9 @@ export type ShouldReplyPromptData = {
 };
 
 export const shouldReplyPrompt = ({ lead, project }: ShouldReplyPromptData) => {
-	return `You are an online marketer. You are looking for posts to shoutout your product.
+	return `Given a social media post and information about a product, output only a boolean representing if the social media post could be effectively replied to with a mention of the product. 
 
-Given a social media post and the information of a product, determine whether the post should be replied to with a mention of the product.
-
-Output a boolean representing if the post should be replied to.
-
-When making this determination take into account:
-- The tone and sentiment of the social media post.
-- If a helpful response could be made, then it should
-- If the post is relevant to the product
+Note: The post and the product do not have to strictly match, if they are within the same topic, that is worthy of a reply.
 
 Social media post: 
 \`\`\`

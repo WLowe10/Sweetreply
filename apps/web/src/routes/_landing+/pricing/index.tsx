@@ -32,7 +32,14 @@ export default function PricingPage() {
 					</Text>
 				</Box>
 				<SimpleGrid cols={{ base: 1, md: 2, lg: 4 }}>
-					<PricingCard {...freePlan} />
+					<PricingCard
+						{...freePlan}
+						cta={
+							<Button component={Link} to="/sign-up" mt="md">
+								Get started
+							</Button>
+						}
+					/>
 					{plans.map((plan) => (
 						<PricingCard
 							key={plan.title}

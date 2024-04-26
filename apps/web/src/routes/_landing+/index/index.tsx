@@ -39,14 +39,14 @@ export default function HomePage() {
 						Get started
 					</Button>
 				</Flex>
-				<Box mb="12rem">
+				<Box mb="20rem">
 					<Paper shadow="lg" withBorder={true} radius="lg" style={{ overflow: "hidden" }}>
 						<Image src="hero.png" alt="Sweetreply demo" />
 					</Paper>
 				</Box>
 			</section>
-			<Playground mb="12rem" />
-			<Features mb="12rem" />
+			<Playground mb="20rem" />
+			<Features mb="20rem" />
 			<FAQ />
 		</Container>
 	);

@@ -16,6 +16,7 @@ import {
 	Title,
 	Text,
 	Skeleton,
+	Alert,
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { useForm } from "react-hook-form";
@@ -23,6 +24,7 @@ import {
 	generatePlaygroundReplyInputSchema,
 	type GeneratePlaygroundReplyInputType,
 } from "@sweetreply/shared/features/playground/schemas";
+import { IconCheck, IconInfoCircle } from "@tabler/icons-react";
 
 export const Playground = (boxProps: BoxProps) => {
 	const generateReplyMutation = trpc.playground.generateReply.useMutation();
@@ -51,7 +53,7 @@ export const Playground = (boxProps: BoxProps) => {
 
 	return (
 		<Box component="section" id="playground" {...boxProps}>
-			<Title ta="center" mb="xl">
+			<Title ta="center" mb="xl" fw={900}>
 				Try it out
 			</Title>
 			<form onSubmit={onSubmit}>
@@ -83,7 +85,7 @@ export const Playground = (boxProps: BoxProps) => {
 									minRows={3}
 									{...form.register("social_media_post")}
 								/>
-								<Card shadow="md" withBorder ml="sm" flex={1}>
+								<Card shadow="md" withBorder flex={1}>
 									<Group mb="md">
 										<Avatar>🍬</Avatar>
 										Sweetreply
@@ -91,7 +93,31 @@ export const Playground = (boxProps: BoxProps) => {
 									{generateReplyMutation.isLoading ? (
 										<Skeleton height={50} />
 									) : (
-										<Text size="sm">{generateReplyMutation.data?.reply}</Text>
+										<Box>
+											{generateReplyMutation.data && (
+												<>
+													<Text size="sm" mb="md">
+														{generateReplyMutation.data.reply}
+													</Text>
+													<Alert
+														variant="transparent"
+														icon={
+															generateReplyMutation.data
+																.shouldReply ? (
+																<IconCheck />
+															) : (
+																<IconInfoCircle />
+															)
+														}
+													>
+														{generateReplyMutation.data.shouldReply ===
+														true
+															? "Sweetreply would automatically reply to this post"
+															: "Sweetreply would not automatically reply to this post as it is not a great match"}
+													</Alert>
+												</>
+											)}
+										</Box>
 									)}
 								</Card>
 							</Stack>
