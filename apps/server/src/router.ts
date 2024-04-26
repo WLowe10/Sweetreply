@@ -4,6 +4,7 @@ import { adminRouter } from "./admin/router";
 import { billingRouter } from "./features/billing/router";
 import { projectsRouter } from "./features/projects/router";
 import { leadsRouter } from "./features/leads/router";
+import { playgroundRouter } from "./features/playground/router";
 import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
 
 export const appRouter = router({
@@ -12,6 +13,7 @@ export const appRouter = router({
 	billing: billingRouter,
 	projects: projectsRouter,
 	leads: leadsRouter,
+	playground: playgroundRouter,
 });
 
 export type AppRouter = typeof appRouter;
