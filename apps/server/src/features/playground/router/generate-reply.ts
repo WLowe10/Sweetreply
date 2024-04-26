@@ -1,11 +1,11 @@
 import { replyCompletion } from "@/features/lead-engine/utils/completions/reply-completion";
 import { shouldReplyCompletion } from "@/features/lead-engine/utils/completions/should-reply-completion";
-import { publicProcedure } from "@/trpc";
+import { ratelimitedPublicProcedure } from "@/trpc";
 import { generatePlaygroundReplyInputSchema } from "@sweetreply/shared/features/playground/schemas";
 
-export const generatePlaygroundReplyHandler = publicProcedure
+export const generatePlaygroundReplyHandler = ratelimitedPublicProcedure
 	.input(generatePlaygroundReplyInputSchema)
-	.mutation(async ({ input, ctx }) => {
+	.mutation(async ({ input }) => {
 		const shouldReply = await shouldReplyCompletion({
 			lead: {
 				title: null,

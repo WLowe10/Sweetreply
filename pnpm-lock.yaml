@@ -98,6 +98,9 @@ importers:
       pino:
         specifier: ^8.19.0
         version: 8.20.0
+      rate-limiter-flexible:
+        specifier: ^5.0.2
+        version: 5.0.2
       react:
         specifier: ^18
         version: 18.2.0
@@ -4035,7 +4038,7 @@ packages:
       '@babel/plugin-syntax-typescript': 7.24.1(@babel/core@7.24.4)
       '@vanilla-extract/babel-plugin-debug-ids': 1.0.5
       '@vanilla-extract/css': 1.14.2
-      esbuild: 0.17.6
+      esbuild: 0.19.12
       eval: 0.1.8
       find-up: 5.0.0
       javascript-stringify: 2.1.0
@@ -10582,6 +10585,10 @@ packages:
   /range-parser@1.2.1:
     resolution: {integrity: sha512-Hrgsx+orqoygnmhFbKaHE6c296J+HTAQXoxEF6gNupROmmGJRoyzfG3ccAveqCBrwr/2yxQ5BVd/GTl5agOwSg==}
     engines: {node: '>= 0.6'}
+
+  /rate-limiter-flexible@5.0.2:
+    resolution: {integrity: sha512-laz0qLCapYHQscS1ZI8nfxpD/LPsxVC3aeJTYxlUa52dMCoKwZ1O1KwL9fKpBCqRSuLJ9Z595qjJrpilxRjLvw==}
+    dev: false
 
   /raw-body@2.5.2:
     resolution: {integrity: sha512-8zGqypfENjCIqGhgXToC8aB2r7YrBX+AQAfIPs/Mlk+BtPTztOvTS01NRW/3Eh60J+a48lt8qsCzirQ6loCVfA==}
