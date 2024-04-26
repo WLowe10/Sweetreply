@@ -15,8 +15,15 @@ export const publicProcedure = trpc.procedure;
 export const ratelimitedPublicProcedure = publicProcedure.use(async ({ ctx, next }) => {
 	const ip = ctx.req.ip;
 
+	if (!ip) {
+		throw new TRPCError({
+			code: "TOO_MANY_REQUESTS",
+			message: "Rate limit exceeded. Please try again later.",
+		});
+	}
+
 	try {
-		const result = await rateLimiter.consume(ip as string);
+		await rateLimiter.consume(ip as string);
 
 		return next();
 	} catch {

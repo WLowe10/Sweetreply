@@ -19,8 +19,7 @@ const replyQueue = new Queue<ReplyQueueJobData>("reply", {
 		duration: 1000,
 	},
 	defaultJobOptions: {
-		// attempts: 5,
-		attempts: 3,
+		attempts: 5,
 		removeOnComplete: true,
 		removeOnFail: true,
 		backoff: {
@@ -33,8 +32,6 @@ const replyQueue = new Queue<ReplyQueueJobData>("reply", {
 replyQueue.process(async (job) => {
 	const jobData = job.data;
 
-	console.log("replying");
-
 	const lead = await prisma.lead.findUnique({
 		where: {
 			id: jobData.lead_id,
@@ -42,17 +39,51 @@ replyQueue.process(async (job) => {
 	});
 
 	if (!lead) {
-		await job.discard();
 		return;
 	}
 
 	if (lead.reply_status === replyStatus.REPLIED) {
-		await job.discard();
 		return;
 	}
 
 	if (!lead.reply_text || lead.reply_text.trim().length === 0) {
-		job.moveToFailed({ message: "Reply text is empty" });
+		job.opts.attempts = job.attemptsMade + 1;
+
+		throw new Error("test error");
+	}
+
+	const project = await prisma.project.findUnique({
+		where: {
+			id: lead.project_id,
+		},
+	});
+
+	if (!project) {
+		return;
+	}
+
+	const user = await prisma.user.findUnique({
+		where: {
+			id: project.user_id,
+		},
+	});
+
+	if (!user) {
+		return;
+	}
+
+	if (user.reply_credits <= 0) {
+		await prisma.lead.update({
+			where: {
+				id: lead.id,
+			},
+			data: {
+				reply_status: replyStatus.DRAFT,
+				reply_scheduled_at: null,
+				replied_at: null,
+			},
+		});
+
 		return;
 	}
 
@@ -71,6 +102,8 @@ replyQueue.process(async (job) => {
 		return;
 	}
 
+	let replyResult;
+
 	try {
 		// generate random delay between 2500 and 5000 ms after logging in
 		const loginDelay = Math.floor(Math.random() * (5000 - 2500 + 1)) + 2500;
@@ -79,8 +112,14 @@ replyQueue.process(async (job) => {
 
 		await sleep(loginDelay);
 
-		const result = await handler.reply();
+		replyResult = await handler.reply();
+	} catch (err: any) {
+		await botsService.appendError(botAccount.id, err.message);
 
+		throw err;
+	}
+
+	try {
 		await prisma.lead.update({
 			where: {
 				id: lead.id,
@@ -88,16 +127,23 @@ replyQueue.process(async (job) => {
 			data: {
 				reply_status: replyStatus.REPLIED,
 				replied_at: new Date(),
-				reply_remote_id: result.reply_remote_id,
+				reply_remote_id: replyResult.reply_remote_id,
 				reply_scheduled_at: null,
 				reply_bot_id: botAccount.id,
 			},
 		});
-	} catch (err: any) {
-		await botsService.appendError(botAccount.id, err.message);
 
-		throw err;
-	}
+		await prisma.user.update({
+			where: {
+				id: user.id,
+			},
+			data: {
+				reply_credits: {
+					decrement: 1,
+				},
+			},
+		});
+	} catch {}
 });
 
 replyQueue.on("active", async (job) => {
@@ -105,61 +151,12 @@ replyQueue.on("active", async (job) => {
 
 	logger.info(`Processing reply job for lead ${jobData.lead_id}`);
 
-	// todo check the project can reply, otherwise cancel and set status to draft
-
 	await prisma.lead.update({
 		where: {
 			id: jobData.lead_id,
 		},
 		data: {
 			reply_status: replyStatus.PENDING,
-		},
-	});
-});
-
-replyQueue.on("completed", async (job) => {
-	const jobData = job.data;
-
-	logger.info(`Completed reply job for lead ${jobData.lead_id}`);
-
-	const lead = await prisma.lead.findUnique({
-		where: {
-			id: jobData.lead_id,
-		},
-	});
-
-	if (!lead) {
-		return;
-	}
-
-	const project = await prisma.project.findUnique({
-		where: {
-			id: lead.project_id,
-		},
-	});
-
-	if (!project) {
-		return;
-	}
-
-	const user = await prisma.user.findUnique({
-		where: {
-			id: project?.user_id,
-		},
-	});
-
-	if (!user) {
-		return;
-	}
-
-	await prisma.user.update({
-		where: {
-			id: user.id,
-		},
-		data: {
-			reply_credits: {
-				decrement: 1,
-			},
 		},
 	});
 });
@@ -172,19 +169,17 @@ replyQueue.on("failed", async (job, err) => {
 	);
 
 	if (job.attemptsMade === job.opts.attempts) {
-		await prisma.lead.update({
-			where: {
-				id: jobData.lead_id,
-			},
-			data: {
-				reply_status: replyStatus.FAILED,
-			},
-		});
+		try {
+			await prisma.lead.update({
+				where: {
+					id: jobData.lead_id,
+				},
+				data: {
+					reply_status: replyStatus.FAILED,
+				},
+			});
+		} catch {}
 	}
-});
-
-replyQueue.on("removed", (job) => {
-	console.log(`Removed job ${job.id}`);
 });
 
 export { replyQueue };

@@ -4,7 +4,21 @@ import { ResourceContainer } from "@/components/resource-container";
 import { useDataTableParams } from "@/features/data-table/hooks/use-data-table-params";
 import { trpc } from "@/lib/trpc";
 import { buildPageTitle } from "@/lib/utils";
-import { ActionIcon, Badge, Flex, Menu, Skeleton, Table, Text } from "@mantine/core";
+import {
+	ActionIcon,
+	Badge,
+	Button,
+	Flex,
+	Menu,
+	Popover,
+	PopoverDropdown,
+	Select,
+	Skeleton,
+	Table,
+	Text,
+	Tooltip,
+	UnstyledButton,
+} from "@mantine/core";
 import { IconArrowRight, IconClock, IconDots } from "@tabler/icons-react";
 import { useLocalProject } from "@/features/projects/hooks/use-local-project";
 import { RelativeDate } from "@/components/relative-date";
@@ -39,12 +53,27 @@ const columns: SimpleTableColumns<RouterOutput["leads"]["getMany"]["data"][0]> =
 	},
 	{
 		id: "date",
-		Header: () => <IconClock size={18} />,
+		Header: () => (
+			<Tooltip label="Date">
+				<IconClock size={18} />
+			</Tooltip>
+		),
 		Cell: (data) => <RelativeDate size="sm" date={data.date} />,
 	},
 	{
 		id: "reply_status",
-		Header: () => "Reply status",
+		Header: () => (
+			<Popover withArrow>
+				<Popover.Target>
+					<Button size="compact-sm" variant="subtle" color="gray" ta="start" fullWidth>
+						Reply status
+					</Button>
+				</Popover.Target>
+				<Popover.Dropdown>
+					<Select data={["one", "two"]} />
+				</Popover.Dropdown>
+			</Popover>
+		),
 		Cell: (data) => (
 			<Badge bg={getReplyStatusColor(data.reply_status)}>{data.reply_status || "none"}</Badge>
 		),

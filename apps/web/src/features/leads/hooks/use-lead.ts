@@ -2,6 +2,7 @@ import { trpc } from "@/lib/trpc";
 import { notifications } from "@mantine/notifications";
 import { useNavigate } from "@remix-run/react";
 import { Lead } from "@sweetreply/prisma";
+import { SendReplyInputDataType } from "@sweetreply/shared/features/leads/schemas";
 import {
 	canEditReply,
 	canCancelReply,
@@ -68,10 +69,11 @@ export const useLead = (leadId: string) => {
 		);
 	};
 
-	const sendReply = () => {
+	const sendReply = (data?: SendReplyInputDataType) => {
 		sendReplyMutation.mutate(
 			{
 				lead_id: leadId,
+				data,
 			},
 			{
 				onSuccess: (updatedReply) => {

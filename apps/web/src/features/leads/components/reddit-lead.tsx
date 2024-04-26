@@ -34,14 +34,21 @@ import { replyStatus } from "@sweetreply/shared/features/leads/constants";
 import { getReplyStatusColor } from "@sweetreply/shared/features/leads/utils";
 import { PlatformIcon } from "@/components/platform-icon";
 import { useMe } from "@/features/auth/hooks/use-me";
+import { SendReplyModal } from "./send-reply-modal";
+import { useDisclosure } from "@mantine/hooks";
 
 export const RedditLead = () => {
 	const lead = useLeadContext();
 	const { me } = useMe();
 	const { form, isEditing, onEdit, onCancel, onSubmit } = useReplyForm();
+	const [isOpen, { open, close }] = useDisclosure();
 
 	return (
 		<Stack>
+			<SendReplyModal
+				leadId={lead.data.id}
+				modalProps={{ centered: true, opened: isOpen, onClose: close }}
+			/>
 			<Card withBorder>
 				<Stack>
 					<Flex justify="space-between">
@@ -116,7 +123,7 @@ export const RedditLead = () => {
 				<Stack>
 					<Flex justify="space-between">
 						<Group align="center">
-							<Avatar size="md">🍭</Avatar>
+							<Avatar size="md">🍬</Avatar>
 							<Text component="span" size="sm">
 								Sweetreply
 								{lead.replyDate && (
@@ -135,7 +142,11 @@ export const RedditLead = () => {
 						</Group>
 						<Menu>
 							<Menu.Target>
-								<ActionIcon variant="subtle" color="gray">
+								<ActionIcon
+									variant="subtle"
+									color="gray"
+									disabled={lead.data.reply_status === replyStatus.PENDING}
+								>
 									<IconDots size={18} />
 								</ActionIcon>
 							</Menu.Target>
@@ -143,7 +154,7 @@ export const RedditLead = () => {
 								<Menu.Label>Reply actions</Menu.Label>
 								{lead.canSendReply && (
 									<Menu.Item
-										onClick={lead.sendReply}
+										onClick={open}
 										leftSection={<IconSend size={18} />}
 										disabled={me?.reply_credits === 0}
 									>

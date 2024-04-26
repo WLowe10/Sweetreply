@@ -1,15 +1,11 @@
 import { authenticatedProcedure } from "@/trpc";
+import { sendReplyInputSchema } from "@sweetreply/shared/features/leads/schemas";
 import { leadAlreadyReplied, leadNotFound } from "../errors";
-import { projectNotFound } from "@/features/projects/errors";
 import { replyQueue } from "@/features/lead-engine/queues/reply";
 import { replyStatus } from "@sweetreply/shared/features/leads/constants";
 import { canSendReply } from "@sweetreply/shared/features/leads/utils";
-import { z } from "zod";
 import { TRPCError } from "@trpc/server";
-
-export const sendReplyInputSchema = z.object({
-	lead_id: z.string(),
-});
+import { differenceInMilliseconds, isFuture } from "date-fns";
 
 export const sendReplyHandler = authenticatedProcedure
 	.input(sendReplyInputSchema)
@@ -44,7 +40,13 @@ export const sendReplyHandler = authenticatedProcedure
 			throw leadAlreadyReplied();
 		}
 
-		replyQueue.add({ lead_id: lead.id }, { jobId: lead.id });
+		let delay;
+
+		if (input.data?.date && isFuture(input.data.date)) {
+			delay = differenceInMilliseconds(input.data.date, new Date());
+		}
+
+		replyQueue.add({ lead_id: lead.id }, { jobId: lead.id, delay });
 
 		// set to pending (waiting for reply in the queue)
 		return await ctx.prisma.lead.update({
@@ -53,7 +55,7 @@ export const sendReplyHandler = authenticatedProcedure
 			},
 			data: {
 				reply_status: replyStatus.SCHEDULED,
-				reply_scheduled_at: new Date(),
+				reply_scheduled_at: input.data?.date || new Date(),
 			},
 			select: {
 				id: true,
