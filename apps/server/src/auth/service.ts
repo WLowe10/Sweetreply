@@ -124,6 +124,7 @@ export class AuthService {
 				first_name: data.first_name,
 				last_name: data.last_name,
 				stripe_customer_id: stripeCustomer.id,
+				verification_requested_at: new Date(),
 			},
 		});
 
