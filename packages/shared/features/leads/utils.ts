@@ -1,5 +1,8 @@
+import { addDays, endOfDay } from "date-fns";
 import { replyStatus, replyStatusColors } from "./constants";
 import type { Lead } from "@sweetreply/prisma";
+
+export const getMaxFutureReplyDate = () => endOfDay(addDays(new Date(), 30));
 
 export const canDeleteLead = (lead: Pick<Lead, "reply_status">) =>
 	lead.reply_status === replyStatus.REPLIED ||

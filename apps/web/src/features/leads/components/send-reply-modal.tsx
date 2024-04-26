@@ -9,6 +9,7 @@ import { IconClock, IconSend2 } from "@tabler/icons-react";
 import { Controller, useForm } from "react-hook-form";
 import { trpc } from "@/lib/trpc";
 import { addDays, formatRelative } from "date-fns";
+import { getMaxFutureReplyDate } from "@sweetreply/shared/features/leads/utils";
 
 export type SendReplyModalProps = {
 	leadId: string;
@@ -53,7 +54,7 @@ export const SendReplyModal = ({ leadId, modalProps }: SendReplyModalProps) => {
 								description="Choose a date and time to send the reply"
 								placeholder="now"
 								minDate={new Date()}
-								maxDate={addDays(new Date(), 30)}
+								maxDate={getMaxFutureReplyDate()}
 								value={field.value}
 								onChange={field.onChange}
 								error={fieldState.error?.message}

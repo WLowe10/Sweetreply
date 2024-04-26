@@ -1,6 +1,7 @@
 import { leadModel } from "@sweetreply/prisma/zod";
-import { addDays, isBefore, isFuture } from "date-fns";
+import { addDays, endOfDay, isBefore, isFuture } from "date-fns";
 import { z } from "zod";
+import { getMaxFutureReplyDate } from "./utils";
 
 export const baseLeadSchema = leadModel.extend({
 	reply_text: z.string().min(3).max(4096),
@@ -10,7 +11,7 @@ export const sendReplyInputDataSchema = z.object({
 	date: z
 		.date()
 		.refine((date) => isFuture(date), { message: "Date must be in the future" })
-		.refine((date) => isBefore(date, addDays(new Date(), 30)), {
+		.refine((date) => isBefore(date, getMaxFutureReplyDate()), {
 			message: "Date can not be more than 30 days in the future",
 		})
 		.nullish(),
