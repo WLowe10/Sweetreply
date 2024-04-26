@@ -5,6 +5,7 @@ import { replyQueue } from "@/features/lead-engine/queues/reply";
 import { replyStatus } from "@sweetreply/shared/features/leads/constants";
 import { canSendReply } from "@sweetreply/shared/features/leads/utils";
 import { z } from "zod";
+import { TRPCError } from "@trpc/server";
 
 export const sendReplyInputSchema = z.object({
 	lead_id: z.string(),
@@ -32,6 +33,13 @@ export const sendReplyHandler = authenticatedProcedure
 			throw leadNotFound();
 		}
 
+		if (ctx.user.reply_credits === 0) {
+			throw new TRPCError({
+				code: "FORBIDDEN",
+				message: "You are out of reply credits. Please upgrade your plan.",
+			});
+		}
+
 		if (!canSendReply(lead)) {
 			throw leadAlreadyReplied();
 		}
@@ -45,6 +53,7 @@ export const sendReplyHandler = authenticatedProcedure
 			},
 			data: {
 				reply_status: replyStatus.SCHEDULED,
+				reply_scheduled_at: new Date(),
 			},
 			select: {
 				id: true,

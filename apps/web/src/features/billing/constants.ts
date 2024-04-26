@@ -3,20 +3,6 @@ import type { PricingItem } from "./components/pricing-card";
 
 export const plans: PricingItem[] = [
 	{
-		id: "free",
-		title: "Free",
-		description: "Try out Sweetreply",
-		interval: "forever",
-		price: 0,
-		features: [
-			"Ultra-fast monitoring",
-			"Advanced querying",
-			"Enhanced Reddit filtering",
-			"Webhook notifications",
-			"Results within one minute",
-		],
-	},
-	{
 		id: BillingPlan.HOBBY,
 		title: "Hobby",
 		description: "For small projects and experiments",

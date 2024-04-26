@@ -33,9 +33,11 @@ import { useReplyForm } from "../hooks/use-reply-form";
 import { replyStatus } from "@sweetreply/shared/features/leads/constants";
 import { getReplyStatusColor } from "@sweetreply/shared/features/leads/utils";
 import { PlatformIcon } from "@/components/platform-icon";
+import { useMe } from "@/features/auth/hooks/use-me";
 
 export const RedditLead = () => {
 	const lead = useLeadContext();
+	const { me } = useMe();
 	const { form, isEditing, onEdit, onCancel, onSubmit } = useReplyForm();
 
 	return (
@@ -143,9 +145,17 @@ export const RedditLead = () => {
 									<Menu.Item
 										onClick={lead.sendReply}
 										leftSection={<IconSend size={18} />}
+										disabled={me?.reply_credits === 0}
 									>
 										Send reply
 									</Menu.Item>
+								)}
+								{lead.canEditReply && (
+									<Menu.Item
+										onClick={lead.generateReply}
+										leftSection={<IconWand size={18} />}
+										disabled={!lead.canGenerateReply || !me?.plan}
+									>{`Generate reply (${lead.data.replies_generated}/2)`}</Menu.Item>
 								)}
 								{lead.canEditReply && (
 									<Menu.Item
@@ -154,13 +164,6 @@ export const RedditLead = () => {
 									>
 										Edit reply
 									</Menu.Item>
-								)}
-								{lead.canEditReply && (
-									<Menu.Item
-										onClick={lead.generateReply}
-										leftSection={<IconWand size={18} />}
-										disabled={!lead.canGenerateReply}
-									>{`Generate reply (${lead.data.replies_generated}/2)`}</Menu.Item>
 								)}
 								{lead.canUndoReply && (
 									<Menu.Item

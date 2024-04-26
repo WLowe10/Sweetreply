@@ -13,6 +13,13 @@ const generateReplyInputSchema = z.object({
 export const generateReplyHandler = authenticatedProcedure
 	.input(generateReplyInputSchema)
 	.mutation(async ({ input, ctx }) => {
+		if (!ctx.user.plan) {
+			throw new TRPCError({
+				code: "FORBIDDEN",
+				message: "You must have an active subscription to generate replies.",
+			});
+		}
+
 		// todo also validate that the user has subscription in order to use AI features (generating a reply)
 		const lead = await ctx.prisma.lead.findUnique({
 			where: {

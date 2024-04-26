@@ -4,6 +4,21 @@ import { Link } from "@remix-run/react";
 import classes from "./pricing.module.css";
 import { plans } from "@/features/billing/constants";
 
+const freePlan: PricingItem = {
+	id: "free",
+	title: "Free",
+	description: "Try out Sweetreply",
+	interval: "forever",
+	price: 0,
+	features: [
+		"Ultra-fast monitoring",
+		"Advanced querying",
+		"Enhanced Reddit filtering",
+		"Webhook notifications",
+		"Results within one minute",
+	],
+};
+
 export default function PricingPage() {
 	return (
 		<Box component="main" mb="4rem" mih="100vh">
@@ -17,6 +32,7 @@ export default function PricingPage() {
 					</Text>
 				</Box>
 				<SimpleGrid cols={{ base: 1, md: 2, lg: 4 }}>
+					<PricingCard {...freePlan} />
 					{plans.map((plan) => (
 						<PricingCard
 							key={plan.title}

@@ -1,7 +1,5 @@
-import { emailService } from "@/email/service";
 import { prisma } from "@/lib/db";
 import type { Project } from "@sweetreply/prisma";
-import { P } from "pino";
 
 const replyCreditAlertLevel = 10;
 
@@ -35,35 +33,6 @@ export class ProjectsService {
 		});
 
 		return project;
-	}
-
-	public async deductReplyCredit(projectId: string): Promise<void> {
-		const project = await this.getProject(projectId);
-
-		if (!project) {
-			return;
-		}
-
-		const updatedUser = await prisma.user.update({
-			where: {
-				id: project.user_id,
-			},
-			data: {
-				reply_credits: {
-					decrement: 1,
-				},
-			},
-		});
-
-		if (updatedUser.reply_credits === replyCreditAlertLevel) {
-			// todo update email to replies
-			// emailService.sendLowOnTokens({
-			// 	to: updatedUser.email,
-			// 	data: {
-			// 		firstName: updatedUser.first_name,
-			// 	},
-			// });
-		}
 	}
 }
 

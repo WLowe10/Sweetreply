@@ -4,7 +4,6 @@ import { prisma } from "@/lib/db";
 import { env } from "@/env";
 import { sleep } from "@sweetreply/shared/lib/utils";
 import { botsService } from "@/features/bots/service";
-import { projectsService } from "@/features/projects/service";
 import { createBotHandler } from "@/features/bots/utils/create-bot-handler";
 import { replyStatus } from "@sweetreply/shared/features/leads/constants";
 
@@ -20,7 +19,8 @@ const replyQueue = new Queue<ReplyQueueJobData>("reply", {
 		duration: 1000,
 	},
 	defaultJobOptions: {
-		attempts: 5,
+		// attempts: 5,
+		attempts: 3,
 		removeOnComplete: true,
 		removeOnFail: true,
 		backoff: {
@@ -33,23 +33,26 @@ const replyQueue = new Queue<ReplyQueueJobData>("reply", {
 replyQueue.process(async (job) => {
 	const jobData = job.data;
 
+	console.log("replying");
+
 	const lead = await prisma.lead.findUnique({
 		where: {
 			id: jobData.lead_id,
 		},
 	});
 
-	if (!lead || lead.replied_at || !lead.reply_text) {
+	if (!lead) {
+		await job.discard();
 		return;
 	}
 
-	const project = await prisma.project.findUnique({
-		where: {
-			id: lead.project_id,
-		},
-	});
+	if (lead.reply_status === replyStatus.REPLIED) {
+		await job.discard();
+		return;
+	}
 
-	if (!project) {
+	if (!lead.reply_text || lead.reply_text.trim().length === 0) {
+		job.moveToFailed({ message: "Reply text is empty" });
 		return;
 	}
 
@@ -83,16 +86,13 @@ replyQueue.process(async (job) => {
 				id: lead.id,
 			},
 			data: {
-				reply_status: "replied",
+				reply_status: replyStatus.REPLIED,
 				replied_at: new Date(),
 				reply_remote_id: result.reply_remote_id,
 				reply_scheduled_at: null,
 				reply_bot_id: botAccount.id,
 			},
 		});
-
-		// the reply was successful, now deduct the token
-		await projectsService.deductReplyCredit(project.id);
 	} catch (err: any) {
 		await botsService.appendError(botAccount.id, err.message);
 
@@ -100,7 +100,7 @@ replyQueue.process(async (job) => {
 	}
 });
 
-replyQueue.on("active", async (job, jobPromise) => {
+replyQueue.on("active", async (job) => {
 	const jobData = job.data;
 
 	logger.info(`Processing reply job for lead ${jobData.lead_id}`);
@@ -122,15 +122,46 @@ replyQueue.on("completed", async (job) => {
 
 	logger.info(`Completed reply job for lead ${jobData.lead_id}`);
 
-	// const lead = await prisma.lead.findUnique({
-	// 	where: {
-	// 		id: jobData.lead_id,
-	// 	},
-	// });
-	// if (!lead) {
-	// 	return;
-	// }
-	// await projectsService.deductToken(lead.project_id);
+	const lead = await prisma.lead.findUnique({
+		where: {
+			id: jobData.lead_id,
+		},
+	});
+
+	if (!lead) {
+		return;
+	}
+
+	const project = await prisma.project.findUnique({
+		where: {
+			id: lead.project_id,
+		},
+	});
+
+	if (!project) {
+		return;
+	}
+
+	const user = await prisma.user.findUnique({
+		where: {
+			id: project?.user_id,
+		},
+	});
+
+	if (!user) {
+		return;
+	}
+
+	await prisma.user.update({
+		where: {
+			id: user.id,
+		},
+		data: {
+			reply_credits: {
+				decrement: 1,
+			},
+		},
+	});
 });
 
 replyQueue.on("failed", async (job, err) => {

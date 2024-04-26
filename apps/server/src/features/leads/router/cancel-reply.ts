@@ -1,9 +1,7 @@
 import { authenticatedProcedure } from "@/trpc";
 import { replyQueue } from "@/features/lead-engine/queues/reply";
 import { z } from "zod";
-import { TRPCError } from "@trpc/server";
 import { failedToCancelReply, leadNotFound } from "../errors";
-import { projectNotFound } from "@/features/projects/errors";
 import { replyStatus } from "@sweetreply/shared/features/leads/constants";
 import { canCancelReply } from "@sweetreply/shared/features/leads/utils";
 
@@ -41,18 +39,18 @@ export const cancelReplyHandler = authenticatedProcedure
 
 		const job = await replyQueue.getJob(input.lead_id);
 
-		if (!job) {
-			throw failedToCancelReply();
-		}
+		if (job) {
+			const isActive = await job.isActive();
 
-		const isActive = await job.isActive();
-
-		if (isActive) {
-			throw failedToCancelReply();
+			if (isActive) {
+				throw failedToCancelReply();
+			}
 		}
 
 		try {
-			await job.remove();
+			if (job) {
+				await job.remove();
+			}
 
 			return ctx.prisma.lead.update({
 				where: {

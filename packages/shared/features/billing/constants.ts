@@ -9,3 +9,5 @@ export const BillingPlanReplyCredits = {
 	[BillingPlan.STANDARD]: 200,
 	[BillingPlan.ENTERPRISE]: 1000,
 };
+
+export type BillingPlanType = (typeof BillingPlan)[keyof typeof BillingPlan];

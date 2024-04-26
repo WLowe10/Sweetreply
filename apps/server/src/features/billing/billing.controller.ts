@@ -18,6 +18,11 @@ async function handleInvoicePaid(event: Stripe.Event) {
 	}
 
 	const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+
+	if (!subscription) {
+		throw new Error("Subscription not found");
+	}
+
 	const priceId = subscription.items.data[0].price.id;
 
 	const billingPlan = PriceBillingPlan[priceId];
@@ -30,7 +35,7 @@ async function handleInvoicePaid(event: Stripe.Event) {
 
 	await prisma.user.update({
 		where: {
-			stripe_subscription_id: subscriptionId,
+			stripe_subscription_id: subscription.id,
 			stripe_customer_id: customerId,
 		},
 		data: {

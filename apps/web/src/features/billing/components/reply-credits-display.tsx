@@ -2,6 +2,7 @@ import { Box, Button, Card, Flex, Progress, Skeleton, Stack, Text, ThemeIcon } f
 import { IconMessage } from "@tabler/icons-react";
 import { useMe } from "@/features/auth/hooks/use-me";
 import { useReplyCreditsUsage } from "../hooks/use-reply-credits-usage";
+import { Link } from "@remix-run/react";
 
 export const ReplyCreditsDisplay = () => {
 	const { me } = useMe();
@@ -12,7 +13,7 @@ export const ReplyCreditsDisplay = () => {
 			{me ? (
 				<Stack>
 					<Flex direction="row" align="center">
-						<ThemeIcon variant="subtle" mr={2}>
+						<ThemeIcon variant="subtle" color="blue.5" mr={2}>
 							<IconMessage size={18} />
 						</ThemeIcon>
 						<Text size="xs">{`${me.reply_credits} ${
@@ -20,7 +21,9 @@ export const ReplyCreditsDisplay = () => {
 						} remaining`}</Text>
 					</Flex>
 					<Progress value={usage} />
-					<Button size="xs">Get more</Button>
+					<Button component={Link} to="/billing" size="xs">
+						Get more
+					</Button>
 				</Stack>
 			) : (
 				<Skeleton height={60} />
