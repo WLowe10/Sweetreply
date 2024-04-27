@@ -195,6 +195,7 @@ model Lead {
     // reply
     reply_status       String?
     reply_remote_id    String?
+    reply_remote_url   String?
     reply_text         String?
     reply_bot_id       String?
     replied_at         DateTime? @db.Timestamptz()

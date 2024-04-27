@@ -100,7 +100,7 @@ export const getManyLeadsHandler = authenticatedProcedure
 			take: pagination.limit,
 			skip: skip(pagination.page, pagination.limit),
 			orderBy: {
-				created_at: "desc",
+				date: "desc",
 			},
 			select: {
 				id: true,

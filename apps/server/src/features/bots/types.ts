@@ -7,6 +7,7 @@ export type BotHandlerConstructor = {
 
 export type ReplyResultData = {
 	reply_remote_id: string;
+	reply_remote_url: string | null;
 };
 
 export interface IBotHandler {

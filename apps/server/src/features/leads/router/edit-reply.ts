@@ -63,6 +63,7 @@ export const editReplyHandler = authenticatedProcedure
 				replied_at: true,
 				reply_text: true,
 				reply_remote_id: true,
+				reply_remote_url: true,
 				reply_scheduled_at: true,
 				replies_generated: true,
 				reply_bot: {

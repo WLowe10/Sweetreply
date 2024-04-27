@@ -1,4 +1,4 @@
-export const redditThing = {
+export const RedditThing = {
 	comment: "t1",
 	account: "t2",
 	link: "t3",
@@ -7,8 +7,9 @@ export const redditThing = {
 	award: "t6",
 } as const;
 
-export const redditComment = {
-	maxLength: 4096,
+export const redditConstants = {
+	commentMaxLength: 4096,
 } as const;
 
-export type RedditThing = keyof typeof redditThing;
+export type RedditThingType = keyof typeof RedditThing;
+export type RedditThingKeyType = (typeof RedditThing)[RedditThingType];

@@ -3,13 +3,13 @@ import { wrapper } from "axios-cookiejar-support";
 import { CookieJar } from "tough-cookie";
 import { userAgents } from "../constants";
 import { createThing, extractIdFromThing } from "@sweetreply/shared/features/reddit/utils";
-import { redditThing, type RedditThing } from "@sweetreply/shared/features/reddit/constants";
+import { RedditThing, type RedditThingType } from "@sweetreply/shared/features/reddit/constants";
 import type { IBot } from "../types";
 
 const redditBase = new URL("https://www.reddit.com/api");
 const oldRedditBase = new URL("https://old.reddit.com/api");
 
-export type TargetType = Extract<RedditThing, "comment" | "link">;
+export type TargetType = Extract<RedditThingType, "comment" | "link">;
 
 export type RedditCommentData = {
 	id: string;

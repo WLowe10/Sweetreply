@@ -1,8 +1,8 @@
 import axios, { type Axios } from "axios";
 import { userAgents } from "@/lib/constants";
-import { generateDescendingRedditIds, generateBatchedRedditInfoUrls } from "./utils";
-import { logger } from "@/lib/logger";
-import type { Project } from "@sweetreply/prisma";
+import { generateDescendingRedditIds, generateBatchedRedditInfoUrls } from "../../utils/reddit";
+import { RedditThing } from "@sweetreply/shared/features/reddit/constants";
+import { extractIdFromThing } from "@sweetreply/shared/features/reddit/utils";
 
 export class RedditPostSlurper {
 	private client: Axios;
@@ -17,7 +17,7 @@ export class RedditPostSlurper {
 	}
 
 	public async slurp() {
-		const newLatestPostId = await this.getLatestPostId();
+		const newLatestPostId = await this.getLatestItemId();
 
 		// should set max
 		const slurpAmount = this.prevSuccessfulBatchStartId
@@ -27,46 +27,46 @@ export class RedditPostSlurper {
 				)
 			: 2000;
 
-		const ids = generateDescendingRedditIds(newLatestPostId, slurpAmount, "t3");
+		const ids = generateDescendingRedditIds(newLatestPostId, slurpAmount, RedditThing.link);
 		const urls = generateBatchedRedditInfoUrls(ids);
 
 		const newPostsResults = await Promise.all(
 			urls.map(async (url) => {
-				const response = await this.client.get(url);
+				const response = await this.client.get(url, { timeout: 10000 });
 
 				return response.data;
 			})
 		);
 
-		let posts = [];
+		let leads = [];
 
 		for (const newPostGroup of newPostsResults) {
 			const newPosts = newPostGroup["data"]["children"];
 
 			for (const post of newPosts) {
 				const postData = post.data;
-				const lead = this.getLead(postData);
 
 				// users can be deleted after they send a post, make sure that we dont try to turn it into a lead
 				if (
-					!lead.remote_user_id ||
-					lead.title === "[removed]" ||
-					lead.content === "[removed]"
+					!postData.subreddit_id ||
+					!postData.author_fullname ||
+					postData.title === "[removed]" ||
+					postData.content === "[removed]"
 				) {
 					continue;
 				}
 
-				posts.push(postData);
+				leads.push(this.getLead(postData));
 			}
 		}
 
 		this.prevSuccessfulBatchStartId = newLatestPostId;
 
-		return posts;
+		return leads;
 	}
 
-	public async getLatestPostId(): Promise<string> {
-		const response = await this.client.get("https://www.reddit.com/r/all/new/.json?limit=5");
+	public async getLatestItemId(): Promise<string> {
+		const response = await this.client.get("https://www.reddit.com/r/all/new/.json");
 
 		return response.data["data"]["children"][0]["data"]["id"];
 	}
@@ -75,22 +75,23 @@ export class RedditPostSlurper {
 		return {
 			platform: "reddit",
 			type: "post",
+			is_nsfw: redditPost.over_18,
 			remote_id: redditPost.id,
 			channel: redditPost.subreddit,
-			remote_channel_id: redditPost.subreddit_id,
+			remote_channel_id: extractIdFromThing(redditPost.subreddit_id),
 			username: redditPost.author,
-			remote_user_id: redditPost.author_fullname,
+			remote_user_id: extractIdFromThing(redditPost.author_fullname),
 			title: redditPost.title,
 			content: redditPost.selftext,
-			remote_url: redditPost.url,
-			date: new Date(redditPost.created * 1000),
+			remote_url: `https://www.reddit.com/r/${redditPost.subreddit}/comments/${redditPost.id}`,
+			date: new Date(redditPost.created_utc * 1000),
 		};
 	}
 
-	public getSearchDocument(redditPost: any) {
+	public getSearchDocument(lead: any) {
 		return {
-			title: redditPost.title,
-			content: redditPost.selftext,
+			title: lead.title,
+			content: lead.content,
 		};
 	}
 }

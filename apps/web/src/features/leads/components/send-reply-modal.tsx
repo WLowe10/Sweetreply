@@ -8,7 +8,7 @@ import {
 import { IconClock, IconSend2 } from "@tabler/icons-react";
 import { Controller, useForm } from "react-hook-form";
 import { trpc } from "@/lib/trpc";
-import { addDays, formatRelative } from "date-fns";
+import { formatRelative } from "date-fns";
 import { getMaxFutureReplyDate } from "@sweetreply/shared/features/leads/utils";
 
 export type SendReplyModalProps = {

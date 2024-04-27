@@ -10,7 +10,6 @@ import {
 	Flex,
 	Menu,
 	ActionIcon,
-	MenuLabel,
 	Badge,
 	Textarea,
 	Button,
@@ -83,20 +82,22 @@ export const RedditLead = () => {
 							</Menu.Target>
 							<Menu.Dropdown>
 								<Menu.Label>Lead actions</Menu.Label>
-								<Menu.Item
-									component="a"
-									target="_blank"
-									href={lead.data.remote_url!}
-									leftSection={
-										<PlatformIcon
-											height={18}
-											width={18}
-											platform={lead.data.platform as any}
-										/>
-									}
-								>
-									View on Reddit
-								</Menu.Item>
+								{lead.data.remote_url && (
+									<Menu.Item
+										component="a"
+										target="_blank"
+										href={lead.data.remote_url}
+										leftSection={
+											<PlatformIcon
+												height={18}
+												width={18}
+												platform={lead.data.platform as any}
+											/>
+										}
+									>
+										View on Reddit
+									</Menu.Item>
+								)}
 								{lead.canDeleteLead && (
 									<Menu.Item
 										onClick={lead.deleteLead}
@@ -152,6 +153,22 @@ export const RedditLead = () => {
 							</Menu.Target>
 							<Menu.Dropdown>
 								<Menu.Label>Reply actions</Menu.Label>
+								{lead.data.reply_remote_url && (
+									<Menu.Item
+										component="a"
+										target="_blank"
+										href={lead.data.reply_remote_url}
+										leftSection={
+											<PlatformIcon
+												height={18}
+												width={18}
+												platform={lead.data.platform as any}
+											/>
+										}
+									>
+										View on Reddit
+									</Menu.Item>
+								)}
 								{lead.canSendReply && (
 									<Menu.Item
 										onClick={open}

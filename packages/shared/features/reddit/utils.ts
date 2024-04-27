@@ -1,5 +1,5 @@
-import { redditThing, type RedditThing } from "./constants";
+import { RedditThing, type RedditThingType } from "./constants";
 
-export const createThing = (type: RedditThing, id: string) => `${redditThing[type]}_${id}`;
+export const createThing = (type: RedditThingType, id: string) => `${RedditThing[type]}_${id}`;
 
 export const extractIdFromThing = (thing: string) => thing.slice(3);

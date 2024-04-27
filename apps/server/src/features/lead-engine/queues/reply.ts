@@ -6,6 +6,7 @@ import { sleep } from "@sweetreply/shared/lib/utils";
 import { botsService } from "@/features/bots/service";
 import { createBotHandler } from "@/features/bots/utils/create-bot-handler";
 import { replyStatus } from "@sweetreply/shared/features/leads/constants";
+import { ReplyResultData } from "@/features/bots/types";
 
 export type ReplyQueueJobData = {
 	lead_id: string;
@@ -49,7 +50,7 @@ replyQueue.process(async (job) => {
 	if (!lead.reply_text || lead.reply_text.trim().length === 0) {
 		job.opts.attempts = job.attemptsMade + 1;
 
-		throw new Error("test error");
+		throw new Error(`Lead ${jobData.lead_id} has insufficient reply text`);
 	}
 
 	const project = await prisma.project.findUnique({
@@ -102,7 +103,7 @@ replyQueue.process(async (job) => {
 		return;
 	}
 
-	let replyResult;
+	let replyResult: ReplyResultData;
 
 	try {
 		// generate random delay between 2500 and 5000 ms after logging in
@@ -127,9 +128,10 @@ replyQueue.process(async (job) => {
 			data: {
 				reply_status: replyStatus.REPLIED,
 				replied_at: new Date(),
-				reply_remote_id: replyResult.reply_remote_id,
-				reply_scheduled_at: null,
 				reply_bot_id: botAccount.id,
+				reply_remote_id: replyResult.reply_remote_id,
+				reply_remote_url: replyResult.reply_remote_url,
+				reply_scheduled_at: null,
 			},
 		});
 
