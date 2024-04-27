@@ -87,7 +87,7 @@ export const Playground = (boxProps: BoxProps) => {
 								/>
 								<Card shadow="md" withBorder flex={1}>
 									<Group mb="md">
-										<Avatar>🍬</Avatar>
+										<Avatar src="icon.svg" variant="filled" size="sm" />
 										Sweetreply
 									</Group>
 									{generateReplyMutation.isLoading ? (

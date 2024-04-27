@@ -93,7 +93,6 @@ const executeSlurper = async (
 
 let isRunning = false;
 
-// todo, job should not start if already running
 export const redditLeadGenJob = CronJob.from({
 	cronTime: "* * * * *",
 	onTick: async function () {

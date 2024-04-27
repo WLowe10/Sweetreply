@@ -1,9 +1,9 @@
 import { Link, useNavigate, type MetaFunction } from "@remix-run/react";
 import { Container, Title, Group, Button, Text } from "@mantine/core";
-import { buildPageTitle } from "@/lib/utils";
+import { buildPageTitle, mergeMeta } from "@/lib/utils";
 import classes from "./not-found.module.css";
 
-export const meta: MetaFunction = () => [{ title: buildPageTitle("Not Found") }];
+// export const meta = mergeMeta(() => [{ title: buildPageTitle("Not Found") }]);
 
 export default function NotFoundPage() {
 	const navigate = useNavigate();
@@ -17,10 +17,10 @@ export default function NotFoundPage() {
 				page has been moved to another URL.
 			</Text>
 			<Group justify="center">
-				<Button size="md" variant="subtle" onClick={() => navigate(-1)}>
+				<Button size="md" variant="subtle" color="gray" onClick={() => navigate(-1)}>
 					Go back
 				</Button>
-				<Button size="md" component={Link} to="/">
+				<Button size="md" component={Link} to="/" variant="default">
 					Home
 				</Button>
 			</Group>

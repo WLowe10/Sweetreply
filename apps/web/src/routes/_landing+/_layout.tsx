@@ -1,20 +1,7 @@
 import { Link, Outlet } from "@remix-run/react";
-import {
-	Anchor,
-	Box,
-	Button,
-	Container,
-	Divider,
-	Flex,
-	Group,
-	Stack,
-	Text,
-	Title,
-} from "@mantine/core";
+import { Anchor, Box, Button, Divider, Flex, Group, Image, Stack, Text } from "@mantine/core";
 import { useMe } from "@/features/auth/hooks/use-me";
-import { appConfig } from "@sweetreply/shared/config";
 import { IconBrandDiscordFilled, IconBrandXFilled } from "@tabler/icons-react";
-import type { PropsWithChildren } from "react";
 import { useWindowScroll } from "@mantine/hooks";
 
 export default function LandingLayout() {
@@ -43,7 +30,7 @@ export default function LandingLayout() {
 					w={"100%"}
 				>
 					<Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
-						<Title order={2}>{appConfig.name}</Title>
+						<Image src="logo-dark.png" alt="Sweetreply" height={40} />
 					</Link>
 					<Group>
 						<Button
@@ -56,15 +43,13 @@ export default function LandingLayout() {
 							Pricing
 						</Button>
 						<Group>
-							{isAuthenticated ? (
-								<Button component={Link} to="/dashboard">
-									Dashboard
-								</Button>
-							) : (
-								<Button component={Link} to="/sign-in">
-									Sign in
-								</Button>
-							)}
+							<Button
+								component={Link}
+								to={isAuthenticated ? "/dashboard" : "/sign-in"}
+								variant="default"
+							>
+								{isAuthenticated ? "Dashboard" : "Sign in"}
+							</Button>
 						</Group>
 					</Group>
 				</Flex>
@@ -87,9 +72,9 @@ export default function LandingLayout() {
 					mx="auto"
 				>
 					<Stack>
-						<Text fw="bold" size="lg">
-							Sweetreply
-						</Text>
+						<Box>
+							<Image src="logo-dark.png" alt="Sweetreply" h="32" w="100" />
+						</Box>
 						<Box>
 							<Text size="sm" fw="bold">
 								Worldwide
@@ -98,14 +83,14 @@ export default function LandingLayout() {
 								© {new Date().getFullYear()}
 							</Text>
 						</Box>
-						<Group>
+						{/* <Group>
 							<Anchor component={Link} c="dimmed" to="">
 								<IconBrandXFilled />
 							</Anchor>
 							<Anchor component={Link} c="dimmed" to="">
 								<IconBrandDiscordFilled />
 							</Anchor>
-						</Group>
+						</Group> */}
 					</Stack>
 					<Stack gap="xs">
 						<Text fw="bold">Product</Text>

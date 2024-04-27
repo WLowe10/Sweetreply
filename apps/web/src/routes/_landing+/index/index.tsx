@@ -1,21 +1,10 @@
-import { Box, Button, Center, Flex, Text, Image, Paper, Title, Container } from "@mantine/core";
+import { Link } from "@remix-run/react";
+import { Box, Button, Flex, Text, Image, Paper, Title, Container } from "@mantine/core";
 import { IconArrowNarrowRight } from "@tabler/icons-react";
-import { appConfig } from "@sweetreply/shared/config";
 import { Features } from "./features";
-import { Link, type MetaFunction } from "@remix-run/react";
 import { FAQ } from "./faq";
-import classes from "./index.module.css";
 import { Playground } from "./playground";
-
-export const meta: MetaFunction = () => {
-	return [
-		{ title: appConfig.name },
-		{
-			name: "description",
-			content: "Sweetreply finds and engages with leads across social media.",
-		},
-	];
-};
+import classes from "./index.module.css";
 
 export default function HomePage() {
 	return (
@@ -34,6 +23,8 @@ export default function HomePage() {
 					<Button
 						component={Link}
 						to="/sign-up"
+						// variant="gradient"
+						// gradient={{ from: "red", to: "red.5", deg: 90 }}
 						rightSection={<IconArrowNarrowRight size={18} />}
 					>
 						Get started

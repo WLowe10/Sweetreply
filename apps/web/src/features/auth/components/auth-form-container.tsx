@@ -18,7 +18,7 @@ export const AuthFormContainer = ({
 			<Container size={"xs"} w="100%">
 				<Center mb="md">
 					<Link to="/">
-						<Image h="64px" w="64px" radius="md" src={"icon.jpg"} />
+						<Image h="64px" w="64px" radius="md" src={"icon.svg"} />
 					</Link>
 				</Center>
 				<Box mb={30} ta="center">

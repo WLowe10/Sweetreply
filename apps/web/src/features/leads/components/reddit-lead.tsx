@@ -124,7 +124,7 @@ export const RedditLead = () => {
 				<Stack>
 					<Flex justify="space-between">
 						<Group align="center">
-							<Avatar size="md">🍬</Avatar>
+							<Avatar size="sm" src="/icon.svg" />
 							<Text component="span" size="sm">
 								Sweetreply
 								{lead.replyDate && (
