@@ -30,11 +30,15 @@ export const ReplyForm = () => {
 		resolver: zodResolver(updateProjectInputSchema.shape.data),
 		values: {
 			reply_mention_mode: (project?.reply_mention_mode as any) ?? "name",
+			reply_url_mode: (project?.reply_url_mode as any) ?? "domain",
 			reply_delay: project?.reply_delay ?? 10,
 			reply_daily_limit: project?.reply_daily_limit ?? 0,
 			reply_custom_instructions: project?.reply_custom_instructions ?? "",
 		},
 	});
+
+	const mentionMode = form.watch("reply_mention_mode");
+	const URLModeEnabled = mentionMode === "name_or_url" || mentionMode === "url";
 
 	const handleSubmit = form.handleSubmit((data) => {
 		if (!project?.id) {
@@ -82,6 +86,31 @@ export const ReplyForm = () => {
 									<Radio value="name" label="Name only (Default)" />
 									<Radio value="name_or_url" label="Name or URL" />
 									<Radio value="url" label="URL only" />
+								</Group>
+							</Radio.Group>
+						)}
+					/>
+					<Controller
+						name="reply_url_mode"
+						control={form.control}
+						render={({ field }) => (
+							<Radio.Group
+								label="URL mode"
+								description="Select the way you'd like your url to be mentioned"
+								value={field.value}
+								onChange={field.onChange}
+							>
+								<Group mt="xs">
+									<Radio
+										value="domain"
+										label="Domain only (Default)"
+										disabled={!URLModeEnabled}
+									/>
+									<Radio
+										value="full"
+										label="Full URL"
+										disabled={!URLModeEnabled}
+									/>
 								</Group>
 							</Radio.Group>
 						)}

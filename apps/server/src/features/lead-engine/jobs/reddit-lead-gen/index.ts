@@ -5,8 +5,9 @@ import { logger } from "@/lib/logger";
 import { RedditPostSlurper } from "./post-slurper";
 import { Project } from "@sweetreply/prisma";
 import { parse, test } from "liqe";
-import { processLeadQueue } from "../../queues/process-lead";
 import { RedditCommentSlurper } from "./comment-slurper";
+import { addProcessLeadJob } from "../../utils/add-process-lead-job";
+import { addSendLeadWebhookJob } from "../../utils/add-send-lead-webhook-job";
 
 const postSlurper = new RedditPostSlurper();
 const commentSlurper = new RedditCommentSlurper();
@@ -79,9 +80,8 @@ const executeSlurper = async (
 							},
 						});
 
-						processLeadQueue.add({
-							lead_id: newLead.id,
-						});
+						addSendLeadWebhookJob(newLead.id);
+						addProcessLeadJob(newLead.id);
 					}
 				})
 			)

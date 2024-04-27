@@ -3,10 +3,25 @@ import { projectModel } from "@sweetreply/prisma/zod";
 import { subredditNameSchema } from "../reddit/schemas";
 import { isValidLiqeString } from "../../lib/utils";
 
+const isValidURLString = (str: string) => {
+	let url;
+
+	try {
+		url = new URL(str);
+	} catch {
+		return false;
+	}
+
+	return url.protocol === "http:" || url.protocol === "https:";
+};
+
 export const baseProjectSchema = projectModel.extend({
 	id: z.string().uuid(),
 	name: projectModel.shape.name.min(3).max(32),
-	website_url: z.string().url().max(128),
+	website_url: z
+		.string()
+		.max(128)
+		.refine((url) => isValidURLString(url), { message: "Invalid URL" }),
 	description: z.string().min(6).max(1024),
 	query: z
 		.string()
@@ -14,6 +29,7 @@ export const baseProjectSchema = projectModel.extend({
 		.refine((query) => isValidLiqeString(query), { message: "Invalid query" }),
 
 	reply_mention_mode: z.enum(["name", "name_or_url", "url"]),
+	reply_url_mode: z.enum(["domain", "full"]),
 	reply_delay: z
 		.number()
 		.int()
@@ -53,6 +69,7 @@ export const updateProjectInputSchema = z.object({
 			query: true,
 
 			reply_mention_mode: true,
+			reply_url_mode: true,
 			reply_delay: true,
 			reply_daily_limit: true,
 			reply_custom_instructions: true,

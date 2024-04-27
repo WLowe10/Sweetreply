@@ -1,17 +1,12 @@
 import Queue from "bull";
-import axios from "axios";
 import { env } from "@/env";
 import { prisma } from "@/lib/db";
-import { replyQueue } from "./reply";
-import { isDiscordWebhookURL } from "@/lib/regex";
-import { buildFrontendUrl } from "@/lib/utils";
-import { addMinutes, differenceInMilliseconds, isFuture, subDays } from "date-fns";
+import { addMinutes, isFuture, subDays } from "date-fns";
 import { logger } from "@/lib/logger";
 import { replyStatus } from "@sweetreply/shared/features/leads/constants";
 import { shouldReplyCompletion } from "../utils/completions/should-reply-completion";
 import { replyCompletion } from "../utils/completions/reply-completion";
 import { addReplyJob } from "../utils/add-reply-job";
-import e from "express";
 
 export type ProcessLeadQueueJobData = {
 	lead_id: string;
@@ -55,63 +50,6 @@ processLeadQueue.process(async (job) => {
 
 	if (!user) {
 		return;
-	}
-
-	// --- Send webhook ---
-	// At this time, we don't care if a webhook fails
-
-	if (project.webhook_url) {
-		try {
-			if (isDiscordWebhookURL(project.webhook_url)) {
-				await axios.post(project.webhook_url, {
-					username: "Sweetreply",
-					avatar_url: "https://media.tenor.com/ueHM2kR20QQAAAAM/high-cat.gif",
-					content: null,
-					embeds: [
-						{
-							title: "New lead detected!",
-							url: buildFrontendUrl(`/leads/${lead.id}`),
-							color: 3447003,
-							fields: [
-								{
-									name: "Project",
-									value: project.name,
-								},
-								{
-									name: "Platform",
-									value: lead.platform,
-									inline: true,
-								},
-								{
-									name: "Subreddit",
-									value: lead.channel,
-									inline: true,
-								},
-								{
-									name: "Username",
-									value: lead.username,
-								},
-								{
-									name: "Title",
-									value: lead.title?.substring(0, 100),
-								},
-								{
-									name: "Content",
-									value: lead.content.substring(0, 100),
-								},
-							],
-						},
-					],
-				});
-			} else {
-				await axios.post(project.webhook_url, {
-					project_id: project.id,
-					lead: lead,
-				});
-			}
-		} catch {
-			// noop
-		}
 	}
 
 	// the account does not have an active subscription, or does not have any reply credits. Do not proceed in auto replies
