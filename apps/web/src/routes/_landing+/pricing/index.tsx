@@ -14,7 +14,7 @@ export const meta: MetaFunction = mergeMeta(() => [
 	},
 	{
 		tagName: "meta",
-		name: "og:title",
+		property: "og:title",
 		content: TITLE,
 	},
 ]);
