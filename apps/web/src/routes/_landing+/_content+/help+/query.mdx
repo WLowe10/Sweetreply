@@ -1,13 +1,150 @@
 ---
 title: Query Guide
 description: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-published: 2023-08-31
+modified: April 27, 2024
 ---
 
 import { buildPageTitle } from "@/lib/utils";
+import { Stack, Box } from "@mantine/core";
+import { SocialMatch } from "@/features/content/components/social-match";
+import { SupportButton } from "@/features/content/components/support-button";
 
 export const meta = () => [{ title: buildPageTitle(frontmatter.title) }];
 
 # {frontmatter.title}
 
-here is a small guide on our query system
+**Last updated: {frontmatter.modified}**
+
+Sweetreply, unlike many other platforms, goes further than positive and negative keywords. We support a more advanced lucene-like that allows:
+
+-   Case sensitivity
+-   Wildcards
+-   Boolean operators
+-   Grouping
+
+Although our query system may sound intimidating, it's actually quite simple. Let's break multiple scenarios for a fictional lawn mowing service company called "Mow and Go".
+
+Mow and Go is a lawn mowing service company based in California. They want to search for all mentions that contain the word `lawn`, `mowing` and `california`. However, Mow and Go only mows lawns, they do not repair lawn mowers. They will want to exclude any post that includes the word `repair`
+
+---
+
+## Keywords
+
+**_Simplest type of query_**
+
+If you want to use Sweetreply with simple positive and negative keywords, we've got you covered.
+
+Here is how Mow and Go would configure their query to search for all mentions that contain the word `lawn`, `mowing`, and `california`, but not `repair`
+
+```
+lawn mowing california -repair
+```
+
+<Stack mb="sm">
+	<SocialMatch
+		content="I am looking for a lawn mowing service in California!"
+		pos={["lawn", "mowing", "California"]}
+		neg={["repair"]}
+		isMatch={true}
+	/>
+	<SocialMatch
+		content="I am looking for place to repair my lawn mower in California!"
+		pos={["lawn", "mowing", "California"]}
+		neg={["repair"]}
+		isMatch={false}
+	/>
+</Stack>
+
+**Note**
+This query is case insensitive, meaning `california` and `California` are treated the same
+
+If you wanted to make this case sensitive and only match a post with "California" capitalized surround it in quotations
+
+```
+lawn mowing "California" -repair
+```
+
+---
+
+## Intermediate examples
+
+You can also use Sweetreply's boolean operators `AND | OR` for more advanced queries.
+
+This query works the exact same as the previous case insensitive example using boolean operators
+
+```
+lawn AND mowing AND california NOT repair
+```
+
+This query will match any post that contains the words `service | company`, `lawn` and 'california', while still excluding any posts containing `repair`
+
+```
+lawn AND mowing AND (service OR company OR crew) AND california NOT repair
+```
+
+<Stack mb="sm">
+	<SocialMatch
+		content="I am looking for a lawn mowing service in California!"
+		pos={["lawn", "mowing", "service", "California"]}
+		neg={["repair"]}
+		isMatch={true}
+	/>
+	<SocialMatch
+		content="I am looking for a lawn mowing company in California!"
+		pos={["lawn", "mowing", "company", "California"]}
+		neg={["repair"]}
+		isMatch={true}
+	/>
+	<SocialMatch
+		content="I am looking for a lawn mowing crew in California!"
+		pos={["lawn", "mowing", "crew", "California"]}
+		neg={["repair"]}
+		isMatch={true}
+	/>
+	<SocialMatch
+		content="I am looking for a lawn mowing gang in California!"
+		pos={["lawn", "mowing", "California"]}
+		neg={["gang"]}
+		reason="The post is missing service, company, or crew"
+		isMatch={false}
+	/>
+</Stack>
+
+---
+
+## Advanced examples
+
+**_When you need complete control_**
+
+### Wildcards
+
+It is likely that Mow and Go will want to search for variations of the word "mow" such as "mowing" and "mower". To do this, they can use the wildcard operator `*`
+
+```
+lawn mow* california -repair
+```
+
+<Stack mb="sm">
+	<SocialMatch
+		content="I am looking for a lawn mowing service in California!"
+		pos={["lawn", "mowing", "California"]}
+		neg={[]}
+		isMatch={true}
+	/>
+	<SocialMatch
+		content="I am looking for a lawn mower service in California!"
+		pos={["lawn", "mower", "California"]}
+		neg={[]}
+		isMatch={true}
+	/>
+</Stack>
+
+---
+
+## Get started
+
+Thank you for reading our mini query guide. If you run into any issues or have any questions, please feel free to contact us for help.
+
+<Box mt="4rem">
+	<SupportButton />
+</Box>

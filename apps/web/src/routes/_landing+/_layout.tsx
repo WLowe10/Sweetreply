@@ -30,7 +30,7 @@ export default function LandingLayout() {
 					w={"100%"}
 				>
 					<Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
-						<Image src="logo-dark.png" alt="Sweetreply" h={38} w={120} />
+						<Image src="/logo-dark.png" alt="Sweetreply" h={38} w={120} />
 					</Link>
 					<Group>
 						<Button
@@ -73,7 +73,7 @@ export default function LandingLayout() {
 				>
 					<Stack>
 						<Box>
-							<Image src="logo-dark.png" alt="Sweetreply" h="32" w="100" />
+							<Image src="/logo-dark.png" alt="Sweetreply" h="32" w="100" />
 						</Box>
 						<Box>
 							<Text size="sm" fw="bold">
