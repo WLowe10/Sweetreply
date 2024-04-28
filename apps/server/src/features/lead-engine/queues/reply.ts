@@ -120,32 +120,19 @@ replyQueue.process(async (job) => {
 		throw err;
 	}
 
-	try {
-		await prisma.lead.update({
-			where: {
-				id: lead.id,
-			},
-			data: {
-				reply_status: replyStatus.REPLIED,
-				replied_at: new Date(),
-				reply_bot_id: botAccount.id,
-				reply_remote_id: replyResult.reply_remote_id,
-				reply_remote_url: replyResult.reply_remote_url,
-				reply_scheduled_at: null,
-			},
-		});
-
-		await prisma.user.update({
-			where: {
-				id: user.id,
-			},
-			data: {
-				reply_credits: {
-					decrement: 1,
-				},
-			},
-		});
-	} catch {}
+	await prisma.lead.update({
+		where: {
+			id: lead.id,
+		},
+		data: {
+			reply_status: replyStatus.REPLIED,
+			replied_at: new Date(),
+			reply_bot_id: botAccount.id,
+			reply_remote_id: replyResult.reply_remote_id,
+			reply_remote_url: replyResult.reply_remote_url,
+			reply_scheduled_at: null,
+		},
+	});
 });
 
 replyQueue.on("active", async (job) => {
@@ -161,6 +148,37 @@ replyQueue.on("active", async (job) => {
 			reply_status: replyStatus.PENDING,
 		},
 	});
+});
+
+replyQueue.on("completed", async (job) => {
+	const jobData = job.data;
+
+	try {
+		const lead = await prisma.lead.findUniqueOrThrow({
+			where: {
+				id: jobData.lead_id,
+			},
+		});
+
+		const project = await prisma.project.findUniqueOrThrow({
+			where: {
+				id: lead.project_id,
+			},
+		});
+
+		await prisma.user.update({
+			where: {
+				id: project.user_id,
+			},
+			data: {
+				reply_credits: {
+					decrement: 1,
+				},
+			},
+		});
+	} catch {
+		// noop
+	}
 });
 
 replyQueue.on("failed", async (job, err) => {

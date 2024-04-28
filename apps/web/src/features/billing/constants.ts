@@ -9,7 +9,7 @@ export const plans: PricingItem[] = [
 		interval: "mo",
 		price: 19,
 		featuresTitle: "Everything in Free, plus:",
-		features: ["40 replies/mo", "Auto replies", "Scheduled replies", "AI generated replies"],
+		features: ["40 replies/mo", "Auto replies", "AI generated replies", "Scheduled replies"],
 	},
 	{
 		id: BillingPlan.STANDARD,

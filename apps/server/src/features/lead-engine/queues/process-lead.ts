@@ -16,6 +16,12 @@ const processLeadQueue = new Queue<ProcessLeadQueueJobData>("process-lead", {
 	redis: env.REDIS_URL,
 	defaultJobOptions: {
 		attempts: 3,
+		removeOnComplete: true,
+		removeOnFail: true,
+		backoff: {
+			type: "exponential",
+			delay: 4000,
+		},
 	},
 });
 

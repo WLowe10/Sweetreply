@@ -303,17 +303,12 @@ export class AuthService {
 			password_reset_requested_at: new Date(),
 		});
 
-		// The email is sent without awaiting in the response.
-		// This prevents a malicious actor from potentially knowing if an email exists in the system due to a longer response time
-
-		emailService
-			.sendPasswordReset({
-				to: user.email,
-				data: {
-					resetCode,
-				},
-			})
-			.catch((err) => {});
+		await emailService.sendPasswordReset({
+			to: user.email,
+			data: {
+				resetCode,
+			},
+		});
 	}
 
 	/**

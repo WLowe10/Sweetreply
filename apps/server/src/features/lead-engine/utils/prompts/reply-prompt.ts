@@ -34,6 +34,6 @@ Social media post:
 ${lead.title ? `${lead.title}. ` : ""}${lead.content}
 \`\`\`
 
-${project.reply_mention_mode === "name" ? `Project Name: ${project.name}` : project.reply_mention_mode === "url" ? `Product URL: ${productURL}` : project.reply_mention_mode === "name_or_url" ? `Project Name: ${project.name}\nProduct URL: ${productURL}` : ""}
-Project Description: ${project.description}`;
+${project.reply_mention_mode === "name" ? `Product Name: ${project.name}` : project.reply_mention_mode === "url" ? `Product URL: ${productURL}` : project.reply_mention_mode === "name_or_url" ? `Product Name: ${project.name}\nProduct URL: ${productURL}` : ""}
+Product Description: ${project.description}`;
 };

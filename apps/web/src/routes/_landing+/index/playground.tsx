@@ -25,6 +25,7 @@ import {
 	type GeneratePlaygroundReplyInputType,
 } from "@sweetreply/shared/features/playground/schemas";
 import { IconCheck, IconInfoCircle } from "@tabler/icons-react";
+import { IconSweetReply } from "@components/icons/sweetreply";
 
 export const Playground = (boxProps: BoxProps) => {
 	const generateReplyMutation = trpc.playground.generateReply.useMutation();
@@ -87,7 +88,9 @@ export const Playground = (boxProps: BoxProps) => {
 								/>
 								<Card shadow="md" withBorder flex={1}>
 									<Group mb="md">
-										<Avatar src="icon.svg" variant="filled" size="sm" />
+										<Avatar size="md">
+											<IconSweetReply height={20} width={20} />
+										</Avatar>
 										Sweetreply
 									</Group>
 									{generateReplyMutation.isLoading ? (

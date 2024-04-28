@@ -35,6 +35,7 @@ import { PlatformIcon } from "@components/platform-icon";
 import { useMe } from "@features/auth/hooks/use-me";
 import { SendReplyModal } from "./send-reply-modal";
 import { useDisclosure } from "@mantine/hooks";
+import { IconSweetReply } from "@components/icons/sweetreply";
 
 export const RedditLead = () => {
 	const lead = useLeadContext();
@@ -124,7 +125,9 @@ export const RedditLead = () => {
 				<Stack>
 					<Flex justify="space-between">
 						<Group align="center">
-							<Avatar size="sm" src="/icon.svg" />
+							<Avatar size="md">
+								<IconSweetReply height={20} width={20} />
+							</Avatar>
 							<Text component="span" size="sm">
 								Sweetreply
 								{lead.replyDate && (
