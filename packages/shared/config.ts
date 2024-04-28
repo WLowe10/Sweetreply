@@ -1,4 +1,5 @@
 export const appConfig = {
 	name: "Sweetreply",
-	logoDarkURL: "https://sweetreply.io/logo-dark.svg",
+	iconURL: "https://sweetreply.io/icon.svg",
+	logoDarkURL: "https://sweetreply.io/logo-dark.png",
 } as const;
