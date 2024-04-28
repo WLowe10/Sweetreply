@@ -38,11 +38,11 @@
 }
 
 .animate_marquee {
-	animation: marquee 25s linear infinite;
+	animation: marquee 40s linear infinite;
 }
 
 .animate_marquee_fast {
-	animation: marquee 20s linear infinite;
+	animation: marquee 30s linear infinite;
 }
 
 .marquee_overlay_top {
