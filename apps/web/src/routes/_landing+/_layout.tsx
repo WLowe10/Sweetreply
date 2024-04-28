@@ -19,7 +19,7 @@ export default function LandingLayout() {
 					backdropFilter: "blur(4px)",
 					zIndex: 99,
 				}}
-				mb="10rem"
+				mb={{ base: "4rem", md: "6rem", lg: "10rem" }}
 			>
 				<Flex
 					maw="72rem"

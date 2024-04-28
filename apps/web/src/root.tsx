@@ -41,11 +41,6 @@ export const links: LinksFunction = () => [
 		href: "favicon.ico",
 	},
 	{
-		rel: "preload",
-		as: "image",
-		href: "hero.png",
-	},
-	{
 		rel: "preconnect",
 		href: "https://fonts.googleapis.com",
 	},

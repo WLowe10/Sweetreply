@@ -29,7 +29,6 @@ export const baseProjectSchema = projectModel.extend({
 		.refine((query) => isValidLiqeString(query), { message: "Invalid query" }),
 
 	reply_mention_mode: z.enum(["name", "name_or_url", "url"]),
-	reply_url_mode: z.enum(["domain", "full"]),
 	reply_delay: z
 		.number()
 		.int()
@@ -69,7 +68,7 @@ export const updateProjectInputSchema = z.object({
 			query: true,
 
 			reply_mention_mode: true,
-			reply_url_mode: true,
+			reply_with_domain: true,
 			reply_delay: true,
 			reply_daily_limit: true,
 			reply_custom_instructions: true,

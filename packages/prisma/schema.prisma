@@ -148,7 +148,7 @@ model Project {
     query       String?
 
     reply_mention_mode        String  @default("name")
-    reply_url_mode            String  @default("domain")
+    reply_with_domain         Boolean @default(true)
     reply_delay               Int     @default(10)
     reply_daily_limit         Int     @default(25)
     reply_custom_instructions String?

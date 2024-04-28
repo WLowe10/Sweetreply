@@ -27,7 +27,7 @@ export const getProjectHandler = authenticatedProcedure
 				description: true,
 				query: true,
 				reply_mention_mode: true,
-				reply_url_mode: true,
+				reply_with_domain: true,
 				reply_delay: true,
 				reply_daily_limit: true,
 				reply_custom_instructions: true,

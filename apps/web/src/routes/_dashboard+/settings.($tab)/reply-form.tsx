@@ -30,7 +30,7 @@ export const ReplyForm = () => {
 		resolver: zodResolver(updateProjectInputSchema.shape.data),
 		values: {
 			reply_mention_mode: (project?.reply_mention_mode as any) ?? "name",
-			reply_url_mode: (project?.reply_url_mode as any) ?? "domain",
+			reply_with_domain: project?.reply_with_domain ?? true,
 			reply_delay: project?.reply_delay ?? 10,
 			reply_daily_limit: project?.reply_daily_limit ?? 0,
 			reply_custom_instructions: project?.reply_custom_instructions ?? "",
@@ -91,28 +91,16 @@ export const ReplyForm = () => {
 						)}
 					/>
 					<Controller
-						name="reply_url_mode"
+						name="reply_with_domain"
 						control={form.control}
 						render={({ field }) => (
-							<Radio.Group
-								label="URL mode"
-								description="Select the way you'd like your url to be mentioned"
-								value={field.value}
+							<Checkbox
+								disabled={!URLModeEnabled}
+								label="Use domain"
+								description="Use your website domain in the mention instead of the full URL"
+								checked={field.value}
 								onChange={field.onChange}
-							>
-								<Group mt="xs">
-									<Radio
-										value="domain"
-										label="Domain only (Default)"
-										disabled={!URLModeEnabled}
-									/>
-									<Radio
-										value="full"
-										label="Full URL"
-										disabled={!URLModeEnabled}
-									/>
-								</Group>
-							</Radio.Group>
+							/>
 						)}
 					/>
 					<Controller
