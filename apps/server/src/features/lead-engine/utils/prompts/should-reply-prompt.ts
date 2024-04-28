@@ -15,6 +15,6 @@ Social media post:
 ${lead.title ? `${lead.title}. ` : ""}${lead.content}
 \`\`\`
 
-Product Name: ${project.name}
-Product Description: ${project.description}`;
+Product name: ${project.name}
+Product description: ${project.description}`;
 };

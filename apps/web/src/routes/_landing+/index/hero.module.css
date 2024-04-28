@@ -1,0 +1,79 @@
+/* https://ryanmulligan.dev/blog/css-marquee/ */
+
+.marquee_container {
+	position: relative;
+	overflow: hidden;
+	max-height: 650px;
+}
+
+.marquee_grid {
+	columns: 1;
+	column-gap: 1.5rem;
+
+	@media (min-width: $mantine-breakpoint-md) {
+		columns: 2;
+	}
+
+	@media (min-width: $mantine-breakpoint-lg) {
+		columns: 3;
+	}
+}
+
+.marquee {
+	--gap: 2rem;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	user-select: none;
+	gap: var(--gap);
+}
+
+.marquee_track {
+	display: flex;
+	flex-direction: column;
+	flex-shrink: 0;
+	justify-content: space-around;
+	min-height: 100%;
+	gap: var(--gap);
+}
+
+.animate_marquee {
+	animation: marquee 25s linear infinite;
+}
+
+.animate_marquee_fast {
+	animation: marquee 20s linear infinite;
+}
+
+.marquee_overlay_top {
+	position: absolute;
+	pointer-events: none;
+	z-index: 1;
+	width: 100%;
+	height: 25%;
+	top: 0;
+	left: 0;
+	right: 0;
+	background: linear-gradient(to top, transparent 0%, rgb(36, 36, 36) 100%);
+}
+
+.marquee_overlay_bottom {
+	position: absolute;
+	pointer-events: none;
+	z-index: 99;
+	width: 100%;
+	height: 25%;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background: linear-gradient(to bottom, transparent 0%, rgb(36, 36, 36) 100%);
+}
+
+@keyframes marquee {
+	from {
+		transform: translateY(0);
+	}
+	to {
+		transform: translateY(calc(-100% - var(--gap)));
+	}
+}
