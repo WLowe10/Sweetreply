@@ -1,4 +1,4 @@
-import { env } from "@/env";
+import { env } from "@env";
 import OpenAI from "openai";
 
 export const openAI = new OpenAI({

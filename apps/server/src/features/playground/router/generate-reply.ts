@@ -1,6 +1,6 @@
-import { replyCompletion } from "@/features/lead-engine/utils/completions/reply-completion";
-import { shouldReplyCompletion } from "@/features/lead-engine/utils/completions/should-reply-completion";
-import { ratelimitedPublicProcedure } from "@/trpc";
+import { replyCompletion } from "@features/lead-engine/utils/completions/reply-completion";
+import { shouldReplyCompletion } from "@features/lead-engine/utils/completions/should-reply-completion";
+import { ratelimitedPublicProcedure } from "@lib/trpc";
 import { generatePlaygroundReplyInputSchema } from "@sweetreply/shared/features/playground/schemas";
 
 export const generatePlaygroundReplyHandler = ratelimitedPublicProcedure

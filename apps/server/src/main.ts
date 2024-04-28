@@ -9,7 +9,7 @@ import { useExpressServer } from "routing-controllers";
 import { createOpenApiExpressMiddleware } from "trpc-openapi";
 import { renderTrpcPanel } from "trpc-panel";
 import { env } from "./env";
-import { createContext } from "./trpc";
+import { createContext } from "./lib/trpc";
 import { startJobs } from "./jobs";
 import { appRouter } from "./router";
 import { logger } from "./lib/logger";

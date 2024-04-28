@@ -1,4 +1,4 @@
-import { router } from "@/trpc";
+import { router } from "@lib/trpc";
 import { getManyUsersHandler } from "./get-many";
 import { deleteSessionsHandler } from "./delete-sessions";
 import { sendVerificationHandler } from "./send-verification";

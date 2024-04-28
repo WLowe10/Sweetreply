@@ -1,4 +1,4 @@
-import { router } from "@/trpc";
+import { router } from "@lib/trpc";
 import { usersRouter } from "./users";
 import { getStatsHandler } from "./get-stats";
 import { botsRouter } from "./bots";

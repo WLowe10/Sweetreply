@@ -1,5 +1,5 @@
 import axios, { type Axios } from "axios";
-import { userAgents } from "@/lib/constants";
+import { userAgents } from "@lib/constants";
 import { generateDescendingRedditIds, generateBatchedRedditInfoUrls } from "../../utils/reddit";
 import { RedditThing } from "@sweetreply/shared/features/reddit/constants";
 import { extractIdFromThing } from "@sweetreply/shared/features/reddit/utils";

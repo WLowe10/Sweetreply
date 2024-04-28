@@ -1,6 +1,6 @@
 import { Link, useNavigate, type MetaFunction } from "@remix-run/react";
 import { Container, Title, Group, Button, Text } from "@mantine/core";
-import { buildPageTitle, mergeMeta } from "@/lib/utils";
+import { buildPageTitle, mergeMeta } from "@lib/utils";
 import classes from "./not-found.module.css";
 
 // export const meta = mergeMeta(() => [{ title: buildPageTitle("Not Found") }]);

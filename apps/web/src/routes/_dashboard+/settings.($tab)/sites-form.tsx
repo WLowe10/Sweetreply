@@ -1,6 +1,6 @@
-import { IconReddit } from "@/components/icons/reddit";
-import { useCurrentProjectQuery } from "@/features/projects/hooks/use-current-project-query";
-import { trpc } from "@/lib/trpc";
+import { IconReddit } from "@components/icons/reddit";
+import { useCurrentProjectQuery } from "@features/projects/hooks/use-current-project-query";
+import { trpc } from "@lib/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
 	Accordion,

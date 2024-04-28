@@ -1,4 +1,4 @@
-import { trpc } from "@/lib/trpc";
+import { trpc } from "@lib/trpc";
 import type { RouterInput } from "@server/router";
 
 export const useMe = () => {

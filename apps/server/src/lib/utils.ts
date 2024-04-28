@@ -1,4 +1,4 @@
-import { env } from "@/env";
+import { env } from "@env";
 
 export function isDev(): boolean {
 	return env.NODE_ENV !== "production";

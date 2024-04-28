@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "@remix-run/react";
-import { trpc } from "@/lib/trpc";
+import { trpc } from "@lib/trpc";
 import { notifications } from "@mantine/notifications";
 
 export const useResetPassword = () => {

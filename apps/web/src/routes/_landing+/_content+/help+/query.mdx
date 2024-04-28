@@ -4,10 +4,10 @@ description: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiu
 modified: April 27, 2024
 ---
 
-import { buildPageTitle } from "@/lib/utils";
+import { buildPageTitle } from "@lib/utils";
 import { Stack, Box } from "@mantine/core";
-import { SocialMatch } from "@/features/content/components/social-match";
-import { SupportButton } from "@/features/content/components/support-button";
+import { SocialMatch } from "@features/content/components/social-match";
+import { SupportButton } from "@features/content/components/support-button";
 
 export const meta = () => [{ title: buildPageTitle(frontmatter.title) }];
 

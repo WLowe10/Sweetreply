@@ -1,4 +1,4 @@
-import { authenticatedProcedure } from "@/trpc";
+import { authenticatedProcedure } from "@auth/procedures";
 import { updateProjectInputSchema } from "@sweetreply/shared/features/projects/schemas";
 import { projectNotFound } from "../errors";
 

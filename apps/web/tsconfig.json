@@ -5,8 +5,12 @@
 	"compilerOptions": {
 		"baseUrl": "./src",
 		"paths": {
-			"@/*": ["*"],
-			"@server/router": ["../../server/src/router.ts"]
+			"@server/router": ["../../server/src/router.ts"],
+			"@components/*": ["./components/*"],
+			"@hooks/*": ["./hooks/*"],
+			"@features/*": ["./features/*"],
+			"@lib/*": ["./lib/*"],
+			"@env": ["./env.ts"]
 		}
 	}
 }

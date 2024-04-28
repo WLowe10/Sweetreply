@@ -1,4 +1,4 @@
-import { openAI } from "@/lib/client/openai";
+import { openAI } from "@lib/client/openai";
 import { replyPrompt, type ReplyPromptData } from "../prompts/reply-prompt";
 
 export const replyCompletion = async ({ lead, project }: ReplyPromptData): Promise<string> => {

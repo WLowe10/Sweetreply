@@ -18,12 +18,6 @@ export const mustBeSignedIn = () =>
 		message: "You must be signed in",
 	});
 
-export const mustBeAdmin = () =>
-	new TRPCError({
-		code: "FORBIDDEN",
-		message: "You are not able to do this",
-	});
-
 export const alreadySignedIn = () =>
 	new TRPCError({
 		code: "FORBIDDEN",

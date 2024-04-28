@@ -1,4 +1,4 @@
-import { router } from "@/trpc";
+import { router } from "@lib/trpc";
 import { getProjectHandler } from "./get";
 import { getManyProjectsHandler } from "./get-many";
 import { createProjectHandler } from "./create";

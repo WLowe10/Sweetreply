@@ -1,4 +1,4 @@
-import { publicProcedure } from "@/trpc";
+import { publicProcedure } from "@lib/trpc";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { alreadyVerified } from "../errors";

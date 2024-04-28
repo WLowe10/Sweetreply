@@ -1,4 +1,4 @@
-import { adminProcedure } from "@/trpc";
+import { adminProcedure } from "@admin/procedures";
 
 export const getManyProjectsHandler = adminProcedure.query(async ({ ctx }) => {
 	const projectCount = await ctx.prisma.project.count();

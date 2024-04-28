@@ -7,15 +7,15 @@
 
 import jwt from "jsonwebtoken";
 import argon2 from "argon2";
-import { prisma } from "@/lib/db";
+import { prisma } from "@lib/db";
 import { emailService } from "../email/service";
 import { nanoid } from "nanoid";
 import { ok, err, type ResultAsync, Result } from "@sweetreply/shared/lib/result";
 import { emailAlreadyRegistered } from "./errors";
-import { env } from "@/env";
-import { stripe } from "@/lib/client/stripe";
+import { env } from "@env";
+import { stripe } from "@lib/client/stripe";
 import { TRPCError } from "@trpc/server";
-import { isDev } from "@/lib/utils";
+import { isDev } from "@lib/utils";
 import {
 	addMilliseconds,
 	subMilliseconds,

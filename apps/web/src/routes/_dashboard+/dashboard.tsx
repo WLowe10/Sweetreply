@@ -1,11 +1,11 @@
-import { useMe } from "@/features/auth/hooks/use-me";
-import { useLocalProject } from "@/features/projects/hooks/use-local-project";
-import { ResourceContainer } from "@/components/resource-container";
-import { trpc } from "@/lib/trpc";
-import { buildPageTitle } from "@/lib/utils";
+import { useMe } from "@features/auth/hooks/use-me";
+import { useLocalProject } from "@features/projects/hooks/use-local-project";
+import { ResourceContainer } from "@components/resource-container";
+import { trpc } from "@lib/trpc";
+import { buildPageTitle } from "@lib/utils";
 import { SimpleGrid, Skeleton } from "@mantine/core";
 import { IconCalendar, IconMessage, IconRadar } from "@tabler/icons-react";
-import { StatCard } from "@/components/stat-card";
+import { StatCard } from "@components/stat-card";
 import type { MetaFunction } from "@remix-run/react";
 
 export const meta: MetaFunction = () => [{ title: buildPageTitle("Dashboard") }];

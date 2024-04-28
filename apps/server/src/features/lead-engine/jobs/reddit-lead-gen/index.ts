@@ -1,7 +1,7 @@
 import pLimit from "p-limit";
 import { CronJob } from "cron";
-import { prisma } from "@/lib/db";
-import { logger } from "@/lib/logger";
+import { prisma } from "@lib/db";
+import { logger } from "@lib/logger";
 import { RedditPostSlurper } from "./post-slurper";
 import { Project } from "@sweetreply/prisma";
 import { parse, test } from "liqe";

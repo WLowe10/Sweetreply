@@ -1,12 +1,12 @@
-import { authenticatedProcedure } from "@/trpc";
+import { authenticatedProcedure } from "@auth/procedures";
 import { sendReplyInputSchema } from "@sweetreply/shared/features/leads/schemas";
 import { leadAlreadyReplied, leadNotFound } from "../errors";
-import { replyQueue } from "@/features/lead-engine/queues/reply";
+import { replyQueue } from "@features/lead-engine/queues/reply";
 import { replyStatus } from "@sweetreply/shared/features/leads/constants";
 import { canSendReply } from "@sweetreply/shared/features/leads/utils";
 import { TRPCError } from "@trpc/server";
 import { differenceInMilliseconds, isFuture } from "date-fns";
-import { addReplyJob } from "@/features/lead-engine/utils/add-reply-job";
+import { addReplyJob } from "@features/lead-engine/utils/add-reply-job";
 
 export const sendReplyHandler = authenticatedProcedure
 	.input(sendReplyInputSchema)

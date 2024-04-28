@@ -1,4 +1,4 @@
-import { trpc } from "@/lib/trpc";
+import { trpc } from "@lib/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Flex, Modal, TextInput, type ModalProps } from "@mantine/core";
 import { useForm } from "react-hook-form";

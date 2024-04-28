@@ -1,8 +1,8 @@
-import { authenticatedProcedure } from "@/trpc";
+import { authenticatedProcedure } from "@auth/procedures";
 import { z } from "zod";
 import { failedToDeleteReply, failedToUndoReply, leadHasNoReply, leadNotFound } from "../errors";
 import { sleep } from "@sweetreply/shared/lib/utils";
-import { createBotHandler } from "@/features/bots/utils/create-bot-handler";
+import { createBotHandler } from "@features/bots/utils/create-bot-handler";
 import { replyStatus } from "@sweetreply/shared/features/leads/constants";
 import { canUndoReply } from "@sweetreply/shared/features/leads/utils";
 

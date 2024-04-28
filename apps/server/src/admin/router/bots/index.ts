@@ -1,4 +1,4 @@
-import { router } from "@/trpc";
+import { router } from "@lib/trpc";
 import { getManyBotsHandler } from "./get-many";
 import { checkBannedHandler } from "./check-banned";
 import { getBotHandler } from "./get";

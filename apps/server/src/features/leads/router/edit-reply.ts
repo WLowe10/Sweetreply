@@ -1,7 +1,7 @@
-import { authenticatedProcedure } from "@/trpc";
+import { authenticatedProcedure } from "@auth/procedures";
 import { editReplyInputSchema } from "@sweetreply/shared/features/leads/schemas";
 import { leadNotFound } from "../errors";
-import { projectNotFound } from "@/features/projects/errors";
+import { projectNotFound } from "@features/projects/errors";
 import { TRPCError } from "@trpc/server";
 import { replyStatus } from "@sweetreply/shared/features/leads/constants";
 import { canEditReply } from "@sweetreply/shared/features/leads/utils";

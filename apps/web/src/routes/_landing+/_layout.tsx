@@ -1,6 +1,6 @@
 import { Link, Outlet } from "@remix-run/react";
 import { Anchor, Box, Button, Divider, Flex, Group, Image, Stack, Text } from "@mantine/core";
-import { useMe } from "@/features/auth/hooks/use-me";
+import { useMe } from "@features/auth/hooks/use-me";
 import { IconBrandDiscordFilled, IconBrandXFilled } from "@tabler/icons-react";
 import { useWindowScroll } from "@mantine/hooks";
 

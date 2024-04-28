@@ -1,15 +1,15 @@
-import { RelativeDate } from "@/components/relative-date";
-import { ResourceContainer } from "@/components/resource-container";
-import { useMe } from "@/features/auth/hooks/use-me";
-import { PricingCard } from "@/features/billing/components/pricing-card";
-import { ThankYouModal } from "@/features/billing/components/thank-you-modal";
-import { plans } from "@/features/billing/constants";
-import { trpc } from "@/lib/trpc";
+import { RelativeDate } from "@components/relative-date";
+import { ResourceContainer } from "@components/resource-container";
+import { useMe } from "@features/auth/hooks/use-me";
+import { PricingCard } from "@features/billing/components/pricing-card";
+import { ThankYouModal } from "@features/billing/components/thank-you-modal";
+import { plans } from "@features/billing/constants";
+import { trpc } from "@lib/trpc";
 import { Button, SimpleGrid, Skeleton, Stack, Table } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { useState } from "react";
 import { getMonthlyReplies } from "@sweetreply/shared/features/billing/utils";
-import { buildPageTitle } from "@/lib/utils";
+import { buildPageTitle } from "@lib/utils";
 import type { MetaFunction } from "@remix-run/react";
 
 export const meta: MetaFunction = () => [{ title: buildPageTitle("Billing") }];

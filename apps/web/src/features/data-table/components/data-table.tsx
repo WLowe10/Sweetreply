@@ -1,5 +1,5 @@
 import { ActionIcon, Flex, Group, Skeleton } from "@mantine/core";
-import { SimpleTable, type SimpleTableProps } from "@/components/simple-table";
+import { SimpleTable, type SimpleTableProps } from "@components/simple-table";
 import { DataTableProvider, DataTableProviderProps } from "./data-table-provider";
 import { DataTableSearch } from "./data-table-search";
 import { DataTableLimit } from "./data-table-limit";

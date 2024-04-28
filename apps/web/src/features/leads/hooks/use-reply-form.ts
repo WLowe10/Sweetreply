@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { useLeadContext } from "./use-lead-context";
 import { useState } from "react";
 import { notifications } from "@mantine/notifications";
-import { trpc } from "@/lib/trpc";
+import { trpc } from "@lib/trpc";
 
 export const useReplyForm = () => {
 	const lead = useLeadContext();

@@ -1,5 +1,5 @@
-import { buildFrontendUrl } from "@/lib/utils";
-import { authenticatedProcedure } from "@/trpc";
+import { buildFrontendUrl } from "@lib/utils";
+import { authenticatedProcedure } from "@auth/procedures";
 import { TRPCError } from "@trpc/server";
 
 export const createBillingPortalHandler = authenticatedProcedure.mutation(

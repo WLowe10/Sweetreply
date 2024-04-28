@@ -1,4 +1,4 @@
-import { router } from "@/trpc";
+import { router } from "@lib/trpc";
 import { subscribeHandler } from "./subscribe";
 import { createBillingPortalHandler } from "./create-billing-portal";
 

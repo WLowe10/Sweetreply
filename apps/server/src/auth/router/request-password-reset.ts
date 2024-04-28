@@ -1,4 +1,4 @@
-import { authenticatedUnverifiedProcedure } from "@/trpc";
+import { authenticatedUnverifiedProcedure } from "@auth/procedures";
 
 export const requestPasswordResetHandler = authenticatedUnverifiedProcedure.mutation(
 	async ({ ctx }) => {

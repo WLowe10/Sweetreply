@@ -1,4 +1,4 @@
-import { router } from "@/trpc";
+import { router } from "@lib/trpc";
 import { getManySessionsHandler } from "./get-many";
 
 export const sessionsRouter = router({

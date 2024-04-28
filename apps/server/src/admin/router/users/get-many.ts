@@ -1,5 +1,5 @@
-import { orderBySchema, paginationSchema, skip } from "@/lib/pagination";
-import { adminProcedure } from "@/trpc";
+import { orderBySchema, paginationSchema, skip } from "@lib/pagination";
+import { adminProcedure } from "@admin/procedures";
 import { z } from "zod";
 import type { Prisma } from "@sweetreply/prisma";
 

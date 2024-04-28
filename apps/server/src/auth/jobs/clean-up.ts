@@ -1,6 +1,6 @@
 import { CronJob } from "cron";
 import { authService } from "../service";
-import { logger } from "@/lib/logger";
+import { logger } from "@lib/logger";
 
 /**
  * This job will run every day at midnight to delete expired sessions.

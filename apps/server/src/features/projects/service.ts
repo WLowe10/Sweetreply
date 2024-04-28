@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/db";
+import { prisma } from "@lib/db";
 import type { Project } from "@sweetreply/prisma";
 
 const replyCreditAlertLevel = 10;

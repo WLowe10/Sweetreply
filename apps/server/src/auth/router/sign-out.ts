@@ -1,4 +1,4 @@
-import { authenticatedUnverifiedProcedure } from "@/trpc";
+import { authenticatedUnverifiedProcedure } from "@auth/procedures";
 import { z } from "zod";
 
 const signOutInputSchema = z

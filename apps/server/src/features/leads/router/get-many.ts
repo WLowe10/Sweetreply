@@ -1,8 +1,8 @@
-import { authenticatedProcedure } from "@/trpc";
-import { paginationSchema, orderBySchema, skip } from "@/lib/pagination";
+import { authenticatedProcedure } from "@auth/procedures";
+import { paginationSchema, orderBySchema, skip } from "@lib/pagination";
 import { z } from "zod";
 import type { Prisma } from "@sweetreply/prisma";
-import { projectNotFound } from "@/features/projects/errors";
+import { projectNotFound } from "@features/projects/errors";
 
 const getManyLeadsInputSchema = z.object({
 	projectId: z.string(),

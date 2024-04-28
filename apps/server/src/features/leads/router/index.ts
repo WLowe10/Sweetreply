@@ -1,4 +1,4 @@
-import { router } from "@/trpc";
+import { router } from "@lib/trpc";
 import { getLeadHandler } from "./get";
 import { getManyLeadsHandler } from "./get-many";
 import { deleteLeadHandler } from "./delete";

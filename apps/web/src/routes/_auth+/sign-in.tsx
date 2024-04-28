@@ -14,10 +14,10 @@ import {
 import { IconInfoCircle } from "@tabler/icons-react";
 import { signInInputSchema, type SignInInputType } from "@sweetreply/shared/features/auth/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useSignIn } from "@/features/auth/hooks/use-sign-in";
-import { AuthFormContainer } from "@/features/auth/components/auth-form-container";
-import { buildPageTitle } from "@/lib/utils";
-import { useMe } from "@/features/auth/hooks/use-me";
+import { useSignIn } from "@features/auth/hooks/use-sign-in";
+import { AuthFormContainer } from "@features/auth/components/auth-form-container";
+import { buildPageTitle } from "@lib/utils";
+import { useMe } from "@features/auth/hooks/use-me";
 import { useEffect } from "react";
 
 export const meta: MetaFunction = () => [{ title: buildPageTitle("Sign-in") }];

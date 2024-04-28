@@ -1,7 +1,7 @@
-import { authenticatedProcedure } from "@/trpc";
+import { authenticatedProcedure } from "@auth/procedures";
 import { buyTokensInputSchema } from "@sweetreply/shared/features/projects/schemas";
 import { getTokensPrice } from "@sweetreply/shared/features/projects/utils";
-import { buildFrontendUrl } from "@/lib/utils";
+import { buildFrontendUrl } from "@lib/utils";
 import { TokenCheckoutMetadataType } from "../schemas";
 import { projectNotFound } from "../errors";
 

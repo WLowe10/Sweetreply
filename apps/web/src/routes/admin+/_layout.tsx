@@ -1,4 +1,4 @@
-import { UserMenu } from "@/features/auth/components/user-menu";
+import { UserMenu } from "@features/auth/components/user-menu";
 import { Badge, Box, Flex, NavLink, Stack } from "@mantine/core";
 import { Link, Outlet, useLocation } from "@remix-run/react";
 import {

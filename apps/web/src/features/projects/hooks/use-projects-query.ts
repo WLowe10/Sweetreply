@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { trpc } from "@/lib/trpc";
+import { trpc } from "@lib/trpc";
 import { useLocalProject } from "./use-local-project";
 
 export const useProjectsQuery = () => {

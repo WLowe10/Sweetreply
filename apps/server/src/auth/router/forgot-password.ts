@@ -1,4 +1,4 @@
-import { unauthenticatedProcedure } from "@/trpc";
+import { unauthenticatedProcedure } from "@auth/procedures";
 import { forgotPasswordInputSchema } from "@sweetreply/shared/features/auth/schemas";
 
 export const forgotPasswordHandler = unauthenticatedProcedure

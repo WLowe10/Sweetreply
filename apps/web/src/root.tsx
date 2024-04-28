@@ -3,10 +3,10 @@ import { Links, Meta, Outlet, Scripts, ScrollRestoration, useLoaderData } from "
 import { ColorSchemeScript, MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { env } from "@/env";
-import { TRPCProvider } from "@/lib/trpc";
-import { theme } from "@/lib/theme";
-import { buildPageTitle } from "@/lib/utils";
+import { env } from "@env";
+import { TRPCProvider } from "@lib/trpc";
+import { theme } from "@lib/theme";
+import { buildPageTitle } from "@lib/utils";
 import type { PropsWithChildren } from "react";
 
 import "@mantine/core/styles.css";

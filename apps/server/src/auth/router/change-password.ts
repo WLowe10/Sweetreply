@@ -1,4 +1,4 @@
-import { publicProcedure } from "@/trpc";
+import { publicProcedure } from "@lib/trpc";
 import { changePasswordInputSchema } from "@sweetreply/shared/features/auth/schemas";
 
 export const changePasswordHandler = publicProcedure

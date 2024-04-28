@@ -15,8 +15,7 @@ import { updateMeInputSchema } from "@sweetreply/shared/features/auth/schemas";
 import { useForm } from "react-hook-form";
 import { useMe } from "../hooks/use-me";
 import { useSignOut } from "../hooks/use-sign-out";
-import { IconAlertTriangle, IconCheck } from "@tabler/icons-react";
-import { trpc } from "@/lib/trpc";
+import { trpc } from "@lib/trpc";
 import { notifications } from "@mantine/notifications";
 import z from "zod";
 

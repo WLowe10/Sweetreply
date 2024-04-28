@@ -26,13 +26,13 @@ import {
 	IconTrash,
 	IconWand,
 } from "@tabler/icons-react";
-import { RelativeDate } from "@/components/relative-date";
+import { RelativeDate } from "@components/relative-date";
 import { useLeadContext } from "../hooks/use-lead-context";
 import { useReplyForm } from "../hooks/use-reply-form";
 import { replyStatus } from "@sweetreply/shared/features/leads/constants";
 import { getReplyStatusColor } from "@sweetreply/shared/features/leads/utils";
-import { PlatformIcon } from "@/components/platform-icon";
-import { useMe } from "@/features/auth/hooks/use-me";
+import { PlatformIcon } from "@components/platform-icon";
+import { useMe } from "@features/auth/hooks/use-me";
 import { SendReplyModal } from "./send-reply-modal";
 import { useDisclosure } from "@mantine/hooks";
 

@@ -1,8 +1,8 @@
 import Queue from "bull";
-import { env } from "@/env";
-import { prisma } from "@/lib/db";
+import { env } from "@env";
+import { prisma } from "@lib/db";
 import { addMinutes, isFuture, subDays } from "date-fns";
-import { logger } from "@/lib/logger";
+import { logger } from "@lib/logger";
 import { replyStatus } from "@sweetreply/shared/features/leads/constants";
 import { shouldReplyCompletion } from "../utils/completions/should-reply-completion";
 import { replyCompletion } from "../utils/completions/reply-completion";

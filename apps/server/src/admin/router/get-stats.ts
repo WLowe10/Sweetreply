@@ -1,5 +1,5 @@
-import { adminProcedure } from "@/trpc";
-import { prisma } from "@/lib/db";
+import { adminProcedure } from "@admin/procedures";
+import { prisma } from "@lib/db";
 
 function queryUserData({
 	startDate,

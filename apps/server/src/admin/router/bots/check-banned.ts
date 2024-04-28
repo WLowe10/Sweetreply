@@ -1,4 +1,4 @@
-import { adminProcedure } from "@/trpc";
+import { adminProcedure } from "@admin/procedures";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 

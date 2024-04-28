@@ -1,4 +1,4 @@
-import { useMe } from "@/features/auth/hooks/use-me";
+import { useMe } from "@features/auth/hooks/use-me";
 import { BillingPlanReplyCredits } from "@sweetreply/shared/features/billing/constants";
 
 export const useReplyCreditsUsage = () => {

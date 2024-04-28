@@ -1,10 +1,10 @@
-import { trpc } from "@/lib/trpc";
-import { ResourceContainer } from "@/components/resource-container";
-import { buildPageTitle } from "@/lib/utils";
+import { trpc } from "@lib/trpc";
+import { ResourceContainer } from "@components/resource-container";
+import { buildPageTitle } from "@lib/utils";
 import { MetaFunction } from "@remix-run/react";
-import { SimpleTableColumns } from "@/components/simple-table";
-import { DataTable } from "@/features/data-table/components/data-table";
-import { useDataTableParams } from "@/features/data-table/hooks/use-data-table-params";
+import { SimpleTableColumns } from "@components/simple-table";
+import { DataTable } from "@features/data-table/components/data-table";
+import { useDataTableParams } from "@features/data-table/hooks/use-data-table-params";
 import type { RouterOutput } from "@server/router";
 
 export const meta: MetaFunction = () => [{ title: buildPageTitle("Users", "Sweetreply Admin") }];

@@ -1,16 +1,16 @@
 import { Card, Stack, TextInput, PasswordInput, Alert, Button, Center, Text } from "@mantine/core";
 import { useForm } from "react-hook-form";
-import { AuthFormContainer } from "@/features/auth/components/auth-form-container";
+import { AuthFormContainer } from "@features/auth/components/auth-form-container";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
 	ForgotPasswordInputType,
 	forgotPasswordInputSchema,
 } from "@sweetreply/shared/features/auth/schemas";
-import { buildPageTitle } from "@/lib/utils";
+import { buildPageTitle } from "@lib/utils";
 import { useNavigate, type MetaFunction } from "@remix-run/react";
 import { useEffect, useState } from "react";
-import { useMe } from "@/features/auth/hooks/use-me";
-import { trpc } from "@/lib/trpc";
+import { useMe } from "@features/auth/hooks/use-me";
+import { trpc } from "@lib/trpc";
 import { notifications } from "@mantine/notifications";
 import { IconCircleCheck } from "@tabler/icons-react";
 

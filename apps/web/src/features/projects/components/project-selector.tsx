@@ -1,7 +1,7 @@
 import { Button, Flex, Popover } from "@mantine/core";
 import { IconPlus, IconSwitchVertical } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
-import { trpc } from "@/lib/trpc";
+import { trpc } from "@lib/trpc";
 import { CreateProjectModal } from "./create-project-modal";
 import { useCurrentProjectQuery } from "../hooks/use-current-project-query";
 import { useLocalProject } from "../hooks/use-local-project";

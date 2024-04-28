@@ -14,7 +14,7 @@ import {
 	createBotInputSchema,
 	type CreateBotInputType,
 } from "@sweetreply/shared/features/admin/schemas";
-import { trpc } from "@/lib/trpc";
+import { trpc } from "@lib/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { notifications } from "@mantine/notifications";

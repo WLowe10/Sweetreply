@@ -1,5 +1,5 @@
 import { shouldReplyPrompt, type ShouldReplyPromptData } from "../prompts/should-reply-prompt";
-import { openAI } from "@/lib/client/openai";
+import { openAI } from "@lib/client/openai";
 import { z } from "zod";
 
 const shouldReplyOutputSchema = z.boolean();

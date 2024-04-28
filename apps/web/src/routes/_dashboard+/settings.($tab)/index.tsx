@@ -1,12 +1,12 @@
 import { useNavigate, useParams, type MetaFunction } from "@remix-run/react";
-import { ResourceContainer } from "@/components/resource-container";
-import { buildPageTitle } from "@/lib/utils";
+import { ResourceContainer } from "@components/resource-container";
+import { buildPageTitle } from "@lib/utils";
 import { Alert, Skeleton, Tabs } from "@mantine/core";
 import { GeneralForm } from "./general-form";
 import { SitesForm } from "./sites-form";
 import { ReplyForm } from "./reply-form";
 import { NotificationsForm } from "./notifications-form";
-import { useCurrentProjectQuery } from "@/features/projects/hooks/use-current-project-query";
+import { useCurrentProjectQuery } from "@features/projects/hooks/use-current-project-query";
 import { IconAlertTriangle } from "@tabler/icons-react";
 
 export const meta: MetaFunction = () => [{ title: buildPageTitle("Settings") }];

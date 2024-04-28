@@ -1,5 +1,5 @@
 import { updateMeInputSchema } from "@sweetreply/shared/features/auth/schemas";
-import { authenticatedProcedure } from "@/trpc";
+import { authenticatedProcedure } from "@auth/procedures";
 import type { User } from "@sweetreply/prisma";
 
 export const updateMeHandler = authenticatedProcedure

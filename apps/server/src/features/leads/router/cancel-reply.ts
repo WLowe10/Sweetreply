@@ -1,5 +1,5 @@
-import { authenticatedProcedure } from "@/trpc";
-import { replyQueue } from "@/features/lead-engine/queues/reply";
+import { authenticatedProcedure } from "@auth/procedures";
+import { replyQueue } from "@features/lead-engine/queues/reply";
 import { z } from "zod";
 import { failedToCancelReply, leadNotFound } from "../errors";
 import { replyStatus } from "@sweetreply/shared/features/leads/constants";

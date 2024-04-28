@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/db";
+import { prisma } from "@lib/db";
 import argon2 from "argon2";
 
 /**

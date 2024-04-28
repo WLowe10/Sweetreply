@@ -1,5 +1,5 @@
 import { BillingPlan } from "@sweetreply/shared/features/billing/constants";
-import { env } from "@/env";
+import { env } from "@env";
 
 export const BillingPlanPrice = {
 	[BillingPlan.HOBBY]: env.STRIPE_PRICE_ID_HOBBY,

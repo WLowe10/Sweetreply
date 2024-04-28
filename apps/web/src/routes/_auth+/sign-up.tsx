@@ -14,13 +14,13 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { IconInfoCircle } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
-import { useSignUp } from "@/features/auth/hooks/use-sign-up";
+import { useSignUp } from "@features/auth/hooks/use-sign-up";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AuthFormContainer } from "@/features/auth/components/auth-form-container";
+import { AuthFormContainer } from "@features/auth/components/auth-form-container";
 import { signUpInputSchema } from "@sweetreply/shared/features/auth/schemas";
-import { buildPageTitle } from "@/lib/utils";
+import { buildPageTitle } from "@lib/utils";
 import { useEffect } from "react";
-import { useMe } from "@/features/auth/hooks/use-me";
+import { useMe } from "@features/auth/hooks/use-me";
 
 export const meta: MetaFunction = () => [{ title: buildPageTitle("Sign-up") }];
 

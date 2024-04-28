@@ -1,4 +1,4 @@
-import { authenticatedProcedure } from "@/trpc";
+import { authenticatedProcedure } from "@auth/procedures";
 
 export const getManyProjectsHandler = authenticatedProcedure.query(({ ctx }) => {
 	return ctx.prisma.project.findMany({

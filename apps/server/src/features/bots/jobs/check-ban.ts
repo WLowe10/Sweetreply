@@ -1,7 +1,7 @@
 import { CronJob } from "cron";
 import { RedditBot } from "@sweetreply/bots";
-import { logger } from "@/lib/logger";
-import { prisma } from "@/lib/db";
+import { logger } from "@lib/logger";
+import { prisma } from "@lib/db";
 import { botStatus } from "../constants";
 
 // not currently enabled, POC

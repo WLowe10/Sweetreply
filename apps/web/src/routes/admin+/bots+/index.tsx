@@ -1,7 +1,7 @@
-import { PlatformIcon } from "@/components/platform-icon";
-import { ResourceContainer } from "@/components/resource-container";
-import { useDataTableParams } from "@/features/data-table/hooks/use-data-table-params";
-import { trpc } from "@/lib/trpc";
+import { PlatformIcon } from "@components/platform-icon";
+import { ResourceContainer } from "@components/resource-container";
+import { useDataTableParams } from "@features/data-table/hooks/use-data-table-params";
+import { trpc } from "@lib/trpc";
 import {
 	Table,
 	Badge,
@@ -19,13 +19,13 @@ import {
 } from "@mantine/core";
 import { useClipboard, useDisclosure } from "@mantine/hooks";
 import { IconCheck, IconCopy, IconDots, IconX } from "@tabler/icons-react";
-import { EditBotModal } from "@/features/admin/components/edit-bot-modal";
+import { EditBotModal } from "@features/admin/components/edit-bot-modal";
 import { MetaFunction } from "@remix-run/react";
-import { buildPageTitle } from "@/lib/utils";
-import { CreateBotModal } from "@/features/admin/components/create-bot-modal";
-import { DataTable } from "@/features/data-table/components/data-table";
+import { buildPageTitle } from "@lib/utils";
+import { CreateBotModal } from "@features/admin/components/create-bot-modal";
+import { DataTable } from "@features/data-table/components/data-table";
 import { RouterOutput } from "@server/router";
-import type { SimpleTableColumns } from "@/components/simple-table";
+import type { SimpleTableColumns } from "@components/simple-table";
 
 export const meta: MetaFunction = () => [{ title: buildPageTitle("Bots", "Sweetreply Admin") }];
 

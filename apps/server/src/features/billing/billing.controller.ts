@@ -1,10 +1,10 @@
 import { Controller, Post, Req, Res } from "routing-controllers";
-import { stripe } from "@/lib/client/stripe";
-import { env } from "@/env";
-import { prisma } from "@/lib/db";
+import { stripe } from "@lib/client/stripe";
+import { env } from "@env";
+import { prisma } from "@lib/db";
 import { PriceBillingPlan } from "./constants";
 import { BillingPlanReplyCredits } from "@sweetreply/shared/features/billing/constants";
-import { logger } from "@/lib/logger";
+import { logger } from "@lib/logger";
 import type { Request, Response } from "express";
 import type Stripe from "stripe";
 

@@ -1,4 +1,4 @@
-import { adminProcedure } from "@/trpc";
+import { adminProcedure } from "@admin/procedures";
 
 export const getActiveCountsHandler = adminProcedure.query(async ({ ctx }) => {
 	const redditActiveBotCount = await ctx.prisma.bot.count({

@@ -1,8 +1,8 @@
-import { AuthFormContainer } from "@/features/auth/components/auth-form-container";
-import { buildPageTitle } from "@/lib/utils";
+import { AuthFormContainer } from "@features/auth/components/auth-form-container";
+import { buildPageTitle } from "@lib/utils";
 import { useNavigate, useSearchParams, type MetaFunction } from "@remix-run/react";
-import { useMe } from "@/features/auth/hooks/use-me";
-import { trpc } from "@/lib/trpc";
+import { useMe } from "@features/auth/hooks/use-me";
+import { trpc } from "@lib/trpc";
 import { notifications } from "@mantine/notifications";
 import { useEffect, useState } from "react";
 import { Button, Card, Center, Stack, Text } from "@mantine/core";

@@ -1,4 +1,4 @@
-import { adminProcedure } from "@/trpc";
+import { adminProcedure } from "@admin/procedures";
 import { createBotInputSchema } from "@sweetreply/shared/features/admin/schemas";
 
 export const createBotHandler = adminProcedure

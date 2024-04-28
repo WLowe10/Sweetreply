@@ -1,9 +1,9 @@
 import { Link, type MetaFunction } from "@remix-run/react";
-import { PlatformIcon } from "@/components/platform-icon";
-import { ResourceContainer } from "@/components/resource-container";
-import { useDataTableParams } from "@/features/data-table/hooks/use-data-table-params";
-import { trpc } from "@/lib/trpc";
-import { buildPageTitle } from "@/lib/utils";
+import { PlatformIcon } from "@components/platform-icon";
+import { ResourceContainer } from "@components/resource-container";
+import { useDataTableParams } from "@features/data-table/hooks/use-data-table-params";
+import { trpc } from "@lib/trpc";
+import { buildPageTitle } from "@lib/utils";
 import {
 	ActionIcon,
 	Badge,
@@ -20,11 +20,11 @@ import {
 	UnstyledButton,
 } from "@mantine/core";
 import { IconArrowRight, IconClock, IconDots } from "@tabler/icons-react";
-import { useLocalProject } from "@/features/projects/hooks/use-local-project";
-import { RelativeDate } from "@/components/relative-date";
+import { useLocalProject } from "@features/projects/hooks/use-local-project";
+import { RelativeDate } from "@components/relative-date";
 import { getReplyStatusColor } from "@sweetreply/shared/features/leads/utils";
-import { DataTable } from "@/features/data-table/components/data-table";
-import type { SimpleTableColumns } from "@/components/simple-table";
+import { DataTable } from "@features/data-table/components/data-table";
+import type { SimpleTableColumns } from "@components/simple-table";
 import type { RouterOutput } from "@server/router";
 
 export const meta: MetaFunction = () => [{ title: buildPageTitle("Leads") }];

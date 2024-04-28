@@ -14,12 +14,13 @@
 		"composite": true,
 		"baseUrl": "./src",
 		"paths": {
-			"@/*": ["*"]
-			// "@auth/*": ["./auth"],
-			// "@controllers/*": ["./controllers"],
-			// "@email/*": ["./email"],
-			// "@features/*": ["./features"],
-			// "@lib/*": ["./lib"],
+			"@auth/*": ["./auth/*"],
+			"@admin/*": ["./admin/*"],
+			"@controllers/*": ["./controllers/*"],
+			"@email/*": ["./email/*"],
+			"@features/*": ["./features/*"],
+			"@lib/*": ["./lib/*"],
+			"@env": ["./env.ts"]
 		}
 	}
 }

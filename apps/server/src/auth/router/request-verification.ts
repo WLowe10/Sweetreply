@@ -1,5 +1,5 @@
 import { alreadyVerified } from "../errors";
-import { authenticatedUnverifiedProcedure } from "@/trpc";
+import { authenticatedUnverifiedProcedure } from "@auth/procedures";
 
 export const requestVerificationHandler = authenticatedUnverifiedProcedure.mutation(
 	async ({ ctx }) => {

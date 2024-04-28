@@ -1,4 +1,4 @@
-import { publicProcedure, router } from "@/trpc";
+import { publicProcedure, router } from "@lib/trpc";
 import { signUpHandler } from "./sign-up";
 import { signInHandler } from "./sign-in";
 import { getMeHandler } from "./get-me";

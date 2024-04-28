@@ -1,4 +1,4 @@
-import { authenticatedProcedure } from "@/trpc";
+import { authenticatedProcedure } from "@auth/procedures";
 import { z } from "zod";
 import { projectNotFound } from "../errors";
 import { subDays } from "date-fns";

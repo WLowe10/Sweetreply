@@ -1,6 +1,6 @@
 import { render } from "@faire/mjml-react/utils/render";
 import { createElement } from "react";
-import { ses } from "@/lib/client/aws";
+import { ses } from "@lib/client/aws";
 import {
 	WelcomeEmail,
 	subject as welcomeEmailSubject,
@@ -21,7 +21,7 @@ import {
 // 	subject as lowOnTokensEmailSubject,
 // 	type LowOnTokensEmailProps,
 // } from "./templates/low-on-replies";
-import { env } from "@/env";
+import { env } from "@env";
 
 export type SendEmailData = {
 	to: string | string[];

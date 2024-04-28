@@ -1,4 +1,4 @@
-import { unauthenticatedProcedure } from "@/trpc";
+import { unauthenticatedProcedure } from "@auth/procedures";
 import { TRPCError } from "@trpc/server";
 import { signInInputSchema } from "@sweetreply/shared/features/auth/schemas";
 import { serializeUser } from "../utils";

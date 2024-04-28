@@ -5,7 +5,7 @@ import {
 	createProjectInputSchema,
 } from "@sweetreply/shared/features/projects/schemas";
 import { useForm } from "react-hook-form";
-import { trpc } from "@/lib/trpc";
+import { trpc } from "@lib/trpc";
 import { useLocalProject } from "../hooks/use-local-project";
 
 export const CreateProjectForm = () => {

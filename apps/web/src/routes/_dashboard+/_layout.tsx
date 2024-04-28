@@ -1,6 +1,6 @@
 import { Link, Outlet, useLocation, useNavigate } from "@remix-run/react";
-import { UserMenu } from "@/features/auth/components/user-menu";
-import { ProjectSelector } from "@/features/projects/components/project-selector";
+import { UserMenu } from "@features/auth/components/user-menu";
+import { ProjectSelector } from "@features/projects/components/project-selector";
 import { Box, Center, Container, Divider, Flex, NavLink, Stack } from "@mantine/core";
 import {
 	IconCreditCard,
@@ -8,12 +8,12 @@ import {
 	IconMessageReply,
 	IconSettings,
 } from "@tabler/icons-react";
-import { ReplyCreditsDisplay } from "@/features/billing/components/reply-credits-display";
-import { useMe } from "@/features/auth/hooks/use-me";
+import { ReplyCreditsDisplay } from "@features/billing/components/reply-credits-display";
+import { useMe } from "@features/auth/hooks/use-me";
 import { useEffect } from "react";
-import { useProjectsQuery } from "@/features/projects/hooks/use-projects-query";
-import { CreateProjectForm } from "@/features/projects/components/create-project-form";
-import { ResourceContainer } from "@/components/resource-container";
+import { useProjectsQuery } from "@features/projects/hooks/use-projects-query";
+import { CreateProjectForm } from "@features/projects/components/create-project-form";
+import { ResourceContainer } from "@components/resource-container";
 
 export default function DashboardLayout() {
 	const { me, isAuthenticated, isInitialized } = useMe();

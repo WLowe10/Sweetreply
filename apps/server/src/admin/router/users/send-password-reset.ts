@@ -1,4 +1,4 @@
-import { adminProcedure } from "@/trpc";
+import { adminProcedure } from "@admin/procedures";
 import { z } from "zod";
 
 const sendPasswordResetInputSchema = z.object({

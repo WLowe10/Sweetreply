@@ -1,6 +1,6 @@
 import { Box, Button, Card, Flex, Progress, Skeleton, Stack, Text, ThemeIcon } from "@mantine/core";
 import { IconMessage } from "@tabler/icons-react";
-import { useMe } from "@/features/auth/hooks/use-me";
+import { useMe } from "@features/auth/hooks/use-me";
 import { useReplyCreditsUsage } from "../hooks/use-reply-credits-usage";
 import { Link } from "@remix-run/react";
 

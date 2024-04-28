@@ -1,12 +1,12 @@
 import Queue from "bull";
-import { logger } from "@/lib/logger";
-import { prisma } from "@/lib/db";
-import { env } from "@/env";
+import { logger } from "@lib/logger";
+import { prisma } from "@lib/db";
+import { env } from "@env";
 import { sleep } from "@sweetreply/shared/lib/utils";
-import { botsService } from "@/features/bots/service";
-import { createBotHandler } from "@/features/bots/utils/create-bot-handler";
+import { botsService } from "@features/bots/service";
+import { createBotHandler } from "@features/bots/utils/create-bot-handler";
 import { replyStatus } from "@sweetreply/shared/features/leads/constants";
-import { ReplyResultData } from "@/features/bots/types";
+import { ReplyResultData } from "@features/bots/types";
 
 export type ReplyQueueJobData = {
 	lead_id: string;

@@ -1,5 +1,5 @@
-import { authenticatedProcedure } from "@/trpc";
-import { buildFrontendUrl } from "@/lib/utils";
+import { authenticatedProcedure } from "@auth/procedures";
+import { buildFrontendUrl } from "@lib/utils";
 import { TRPCError } from "@trpc/server";
 import { billingPlanSchema } from "@sweetreply/shared/features/billing/schemas";
 import { BillingPlanPrice } from "../constants";
