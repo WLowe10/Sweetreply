@@ -28,6 +28,8 @@ export const baseProjectSchema = projectModel.extend({
 	description: z.string().min(6).max(1024),
 	query: z
 		.string()
+		.trim()
+		.min(5)
 		.max(512)
 		.refine((query) => isValidLiqeString(query), { message: "Invalid query" }),
 
