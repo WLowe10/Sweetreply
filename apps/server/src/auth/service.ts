@@ -20,16 +20,17 @@ import {
 	addMilliseconds,
 	subMilliseconds,
 	isAfter,
-	isBefore,
 	isPast,
 	minutesToMilliseconds,
 	hoursToMilliseconds,
-	weeksToDays,
 	millisecondsToMinutes,
 } from "date-fns";
 import type { SignUpInputType, SignInInputType } from "@sweetreply/shared/features/auth/schemas";
 import type { Session, User } from "@sweetreply/prisma";
 import type { Request, Response } from "express";
+import { logger } from "@lib/logger";
+import axios from "axios";
+import { sendDiscordNotification } from "@lib/discord-notifications";
 
 type EmailVerificationTokenPayloadType = { user_id: string };
 
@@ -130,13 +131,34 @@ export class AuthService {
 
 		const verificationToken = this.createEmailVerificationToken(newUser.id);
 
-		await emailService.sendWelcome({
-			to: data.email,
-			data: {
-				firstName: data.first_name,
-				verificationToken,
-			},
-		});
+		logger.info({ email: normalizedEmail }, "User signed up");
+
+		try {
+			await emailService.sendWelcome({
+				to: data.email,
+				data: {
+					firstName: data.first_name,
+					verificationToken,
+				},
+			});
+
+			await sendDiscordNotification({
+				title: "New sign-up",
+				description: "A new user signed up!",
+				fields: [
+					{
+						name: "Name",
+						value: `${newUser.first_name} ${newUser.last_name}`,
+					},
+					{
+						name: "Email",
+						value: newUser.email,
+					},
+				],
+			});
+		} catch {
+			// noop
+		}
 
 		return newUser;
 	}

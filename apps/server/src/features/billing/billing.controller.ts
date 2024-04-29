@@ -5,7 +5,7 @@ import { prisma } from "@lib/db";
 import { PriceBillingPlan } from "./constants";
 import { BillingPlanReplyCredits } from "@sweetreply/shared/features/billing/constants";
 import { logger } from "@lib/logger";
-import { sendShowoffWebhook } from "./utils/send-showoff-webhook";
+import { sendDiscordNotification } from "@lib/discord-notifications";
 import type { Request, Response } from "express";
 import type Stripe from "stripe";
 
@@ -44,10 +44,24 @@ async function handleInvoicePaid(event: Stripe.Event) {
 		},
 	});
 
-	await sendShowoffWebhook({
-		userID: updatedUser.id,
-		userEmail: updatedUser.email,
-		money: String(invoice.total / 100),
+	await sendDiscordNotification({
+		title: "Cha-Ching!",
+		description: "💸 Invoice paid, money made! 💸",
+		color: 5814783,
+		fields: [
+			{
+				name: "User ID",
+				value: updatedUser.id,
+			},
+			{
+				name: "User email",
+				value: updatedUser.email,
+			},
+			{
+				name: "Amount",
+				value: `$${invoice.total / 100}`,
+			},
+		],
 	});
 }
 

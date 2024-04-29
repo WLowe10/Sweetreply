@@ -30,6 +30,7 @@ export const useMe = () => {
 		query: getMeQuery,
 		mutation: updateMeMutation,
 		updateMe,
+		isSubscribed: getMeQuery.data && getMeQuery.data.plan !== null,
 		isAuthenticated,
 		isInitialized,
 	};

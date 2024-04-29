@@ -1,7 +1,6 @@
 import { trpc } from "@lib/trpc";
 import { notifications } from "@mantine/notifications";
 import { useNavigate } from "@remix-run/react";
-import { Lead } from "@sweetreply/prisma";
 import { SendReplyInputDataType } from "@sweetreply/shared/features/leads/schemas";
 import {
 	canEditReply,
@@ -11,7 +10,6 @@ import {
 	canGenerateReply,
 	canDeleteLead,
 } from "@sweetreply/shared/features/leads/utils";
-import { useState } from "react";
 
 export type UseLeadType = ReturnType<typeof useLead>;
 

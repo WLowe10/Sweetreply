@@ -1,14 +1,12 @@
-import { authenticatedProcedure } from "@auth/procedures";
 import { sendReplyInputSchema } from "@sweetreply/shared/features/leads/schemas";
-import { leadAlreadyReplied, leadNotFound } from "../errors";
-import { replyQueue } from "@features/lead-engine/queues/reply";
-import { replyStatus } from "@sweetreply/shared/features/leads/constants";
+import { failedToSendReply, leadAlreadyReplied, leadNotFound } from "../errors";
+import { ReplyStatus } from "@sweetreply/shared/features/leads/constants";
 import { canSendReply } from "@sweetreply/shared/features/leads/utils";
 import { TRPCError } from "@trpc/server";
-import { differenceInMilliseconds, isFuture } from "date-fns";
 import { addReplyJob } from "@features/lead-engine/utils/add-reply-job";
+import { subscribedProcedure } from "@features/billing/procedures";
 
-export const sendReplyHandler = authenticatedProcedure
+export const sendReplyHandler = subscribedProcedure
 	.input(sendReplyInputSchema)
 	.mutation(async ({ input, ctx }) => {
 		const lead = await ctx.prisma.lead.findUnique({
@@ -41,6 +39,10 @@ export const sendReplyHandler = authenticatedProcedure
 			throw leadAlreadyReplied();
 		}
 
+		if (!ctx.user.plan) {
+			throw failedToSendReply();
+		}
+
 		addReplyJob(lead.id, {
 			date: input.data?.date ?? undefined,
 		});
@@ -51,7 +53,7 @@ export const sendReplyHandler = authenticatedProcedure
 				id: lead.id,
 			},
 			data: {
-				reply_status: replyStatus.SCHEDULED,
+				reply_status: ReplyStatus.SCHEDULED,
 				reply_scheduled_at: input.data?.date || new Date(),
 			},
 			select: {

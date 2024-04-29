@@ -1,8 +1,10 @@
-export const leadPlatform = {
+export const LeadPlatform = {
 	REDDIT: "reddit",
 } as const;
 
-export const replyStatus = {
+export type LeadPlatformType = (typeof LeadPlatform)[keyof typeof LeadPlatform];
+
+export const ReplyStatus = {
 	PENDING: "pending",
 	SCHEDULED: "scheduled",
 	DRAFT: "draft",
@@ -11,11 +13,17 @@ export const replyStatus = {
 	NONE: null,
 } as const;
 
-export const replyStatusColors = {
-	[replyStatus.PENDING]: "teal",
-	[replyStatus.SCHEDULED]: "blue",
-	[replyStatus.DRAFT]: "gray",
-	[replyStatus.REPLIED]: "green",
-	[replyStatus.FAILED]: "red",
+export type ReplyStatusType = (typeof ReplyStatus)[keyof typeof ReplyStatus];
+
+export const ReplyStatusColor = {
+	[ReplyStatus.PENDING]: "teal",
+	[ReplyStatus.SCHEDULED]: "blue",
+	[ReplyStatus.DRAFT]: "gray",
+	[ReplyStatus.REPLIED]: "green",
+	[ReplyStatus.FAILED]: "red",
 	NONE: "gray",
+} as const;
+
+export const ReplyCharacterLimit = {
+	[LeadPlatform.REDDIT]: 4096,
 } as const;

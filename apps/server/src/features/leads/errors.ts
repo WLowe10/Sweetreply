@@ -19,10 +19,22 @@ export const leadHasNoReply = () =>
 		message: "This lead has no reply",
 	});
 
-export const failedToReply = () =>
+export const failedToSendReply = () =>
 	new TRPCError({
 		code: "INTERNAL_SERVER_ERROR",
-		message: "Failed to reply",
+		message: "Failed to send reply",
+	});
+
+export const failedToEditReply = () =>
+	new TRPCError({
+		code: "INTERNAL_SERVER_ERROR",
+		message: "Failed to edit reply",
+	});
+
+export const failedToGenerateReply = () =>
+	new TRPCError({
+		code: "INTERNAL_SERVER_ERROR",
+		message: "Failed to generate reply",
 	});
 
 export const failedToDeleteReply = () =>

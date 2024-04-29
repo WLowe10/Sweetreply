@@ -2,7 +2,7 @@ import { authenticatedProcedure } from "@auth/procedures";
 import { replyQueue } from "@features/lead-engine/queues/reply";
 import { z } from "zod";
 import { failedToCancelReply, leadNotFound } from "../errors";
-import { replyStatus } from "@sweetreply/shared/features/leads/constants";
+import { ReplyStatus } from "@sweetreply/shared/features/leads/constants";
 import { canCancelReply } from "@sweetreply/shared/features/leads/utils";
 
 const cancelReplyInputSchema = z.object({
@@ -62,7 +62,7 @@ export const cancelReplyHandler = authenticatedProcedure
 			data: {
 				replied_at: null,
 				reply_scheduled_at: null,
-				reply_status: replyStatus.DRAFT,
+				reply_status: ReplyStatus.DRAFT,
 			},
 			select: {
 				id: true,

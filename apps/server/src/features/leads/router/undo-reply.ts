@@ -1,18 +1,20 @@
-import { authenticatedProcedure } from "@auth/procedures";
 import { z } from "zod";
 import { failedToDeleteReply, failedToUndoReply, leadHasNoReply, leadNotFound } from "../errors";
 import { sleep } from "@sweetreply/shared/lib/utils";
 import { createBotHandler } from "@features/bots/utils/create-bot-handler";
-import { replyStatus } from "@sweetreply/shared/features/leads/constants";
+import { ReplyStatus } from "@sweetreply/shared/features/leads/constants";
 import { canUndoReply } from "@sweetreply/shared/features/leads/utils";
+import { subscribedProcedure } from "@features/billing/procedures";
 
 const undoReplyInputSchema = z.object({
 	lead_id: z.string(),
 });
 
-export const undoReplyHandler = authenticatedProcedure
+export const undoReplyHandler = subscribedProcedure
 	.input(undoReplyInputSchema)
 	.mutation(async ({ input, ctx }) => {
+		if (!ctx.user.plan) {
+		}
 		const lead = await ctx.prisma.lead.findUnique({
 			where: {
 				id: input.lead_id,
@@ -75,7 +77,7 @@ export const undoReplyHandler = authenticatedProcedure
 				reply_bot_id: null,
 				reply_remote_id: null,
 				reply_scheduled_at: null,
-				reply_status: replyStatus.DRAFT,
+				reply_status: ReplyStatus.DRAFT,
 			},
 			select: {
 				id: true,

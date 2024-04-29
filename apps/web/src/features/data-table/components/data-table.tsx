@@ -21,10 +21,14 @@ export const DataTable = (props: DataTableProps) => {
 					<DataTableSearch />
 					<DataTableLoader />
 				</Group>
-				<ActionIcon.Group>
+				<Group>
+					<DataTableLimit />
+				</Group>
+
+				{/* <ActionIcon.Group>
 					<DataTableSort />
 					<DataTableFilter />
-				</ActionIcon.Group>
+				</ActionIcon.Group> */}
 			</Flex>
 			{props.isLoading ? (
 				<SimpleTable
@@ -34,11 +38,10 @@ export const DataTable = (props: DataTableProps) => {
 			) : (
 				<SimpleTable columns={props.columns} data={props.data} />
 			)}
-			<Group mt="md">
-				<DataTablePagination />
-				<DataTableLimit />
+			<Flex justify="space-between" mt="md">
 				<DataTableRange size="sm" c="dimmed" />
-			</Group>
+				<DataTablePagination />
+			</Flex>
 		</DataTableProvider>
 	);
 };

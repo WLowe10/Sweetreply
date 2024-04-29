@@ -78,7 +78,7 @@ export const ReplyForm = () => {
 						render={({ field }) => (
 							<Radio.Group
 								label="Mention mode"
-								description="Select the way you'd like to be mentioned"
+								description="Select the way you'd like your product to be mentioned"
 								value={field.value}
 								onChange={field.onChange}
 							>

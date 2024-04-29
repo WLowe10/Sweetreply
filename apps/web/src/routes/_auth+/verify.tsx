@@ -16,6 +16,8 @@ export default function VerifyPage() {
 	const [searchParams] = useSearchParams();
 	const [submitted, setSubmitted] = useState(false);
 
+	const trpcUtils = trpc.useUtils();
+
 	const verifyAccountMutation = trpc.auth.verifyAccount.useMutation();
 	const requestVerificationMutation = trpc.auth.requestVerification.useMutation();
 
@@ -55,13 +57,11 @@ export default function VerifyPage() {
 					token,
 				},
 				{
-					onSuccess: () => {
+					onSuccess: ({ verified_at }) => {
 						notifications.show({
 							title: "Account verified",
-							message: "You can now use the app",
+							message: "You can now continue to your dashboard",
 						});
-
-						navigate("/dashboard");
 					},
 					onError: (err) => {
 						notifications.show({
@@ -73,7 +73,7 @@ export default function VerifyPage() {
 				}
 			);
 		}
-	}, [token]);
+	}, [token, isAuthenticated]);
 
 	return (
 		<AuthFormContainer

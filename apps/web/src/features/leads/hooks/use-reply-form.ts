@@ -23,6 +23,8 @@ export const useReplyForm = () => {
 		},
 	});
 
+	const replyLength = form.watch("reply_text")?.length || 0;
+
 	const onSubmit = form.handleSubmit((data) => {
 		editReplyMutation.mutate(
 			{
@@ -67,5 +69,6 @@ export const useReplyForm = () => {
 		onSubmit,
 		onEdit,
 		onCancel,
+		replyLength,
 	};
 };

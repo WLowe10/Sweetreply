@@ -2,7 +2,7 @@ import { ActionIcon, Popover, Select, Stack, TextInput } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
 import { IconFilter } from "@tabler/icons-react";
 import { useDataTableContext } from "../hooks/use-data-table-context";
-import { replyStatus } from "@sweetreply/shared/features/leads/constants";
+import { ReplyStatus } from "@sweetreply/shared/features/leads/constants";
 
 export const DataTableFilter = () => {
 	const { params } = useDataTableContext();
@@ -24,7 +24,7 @@ export const DataTableFilter = () => {
 					/>
 					<Select
 						label="Reply status"
-						data={[replyStatus.REPLIED]}
+						data={[ReplyStatus.REPLIED]}
 						comboboxProps={{ withinPortal: false }}
 					/>
 					<DatePickerInput

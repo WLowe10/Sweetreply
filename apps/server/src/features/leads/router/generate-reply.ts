@@ -1,16 +1,17 @@
 import { authenticatedProcedure } from "@auth/procedures";
 import { z } from "zod";
-import { leadNotFound } from "../errors";
+import { failedToGenerateReply, leadNotFound } from "../errors";
 import { replyCompletion } from "@features/lead-engine/utils/completions/reply-completion";
-import { replyStatus } from "@sweetreply/shared/features/leads/constants";
+import { ReplyStatus } from "@sweetreply/shared/features/leads/constants";
 import { TRPCError } from "@trpc/server";
 import { canGenerateReply } from "@sweetreply/shared/features/leads/utils";
+import { subscribedProcedure } from "@features/billing/procedures";
 
 const generateReplyInputSchema = z.object({
 	lead_id: z.string(),
 });
 
-export const generateReplyHandler = authenticatedProcedure
+export const generateReplyHandler = subscribedProcedure
 	.input(generateReplyInputSchema)
 	.mutation(async ({ input, ctx }) => {
 		if (!ctx.user.plan) {
@@ -47,6 +48,13 @@ export const generateReplyHandler = authenticatedProcedure
 			});
 		}
 
+		if (!project.description) {
+			throw new TRPCError({
+				code: "BAD_REQUEST",
+				message: "Project description is required to generate a reply",
+			});
+		}
+
 		const generatedReply = await replyCompletion({
 			lead,
 			project,
@@ -57,7 +65,7 @@ export const generateReplyHandler = authenticatedProcedure
 				id: lead.id,
 			},
 			data: {
-				reply_status: lead.reply_status === null ? replyStatus.DRAFT : undefined,
+				reply_status: lead.reply_status === null ? ReplyStatus.DRAFT : undefined,
 				reply_text: generatedReply,
 				replies_generated: {
 					increment: 1,

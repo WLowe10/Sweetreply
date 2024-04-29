@@ -29,7 +29,11 @@ import {
 import { RelativeDate } from "@components/relative-date";
 import { useLeadContext } from "../hooks/use-lead-context";
 import { useReplyForm } from "../hooks/use-reply-form";
-import { replyStatus } from "@sweetreply/shared/features/leads/constants";
+import {
+	LeadPlatform,
+	ReplyCharacterLimit,
+	ReplyStatus,
+} from "@sweetreply/shared/features/leads/constants";
 import { getReplyStatusColor } from "@sweetreply/shared/features/leads/utils";
 import { PlatformIcon } from "@components/platform-icon";
 import { useMe } from "@features/auth/hooks/use-me";
@@ -39,8 +43,8 @@ import { IconSweetReply } from "@components/icons/sweetreply";
 
 export const RedditLead = () => {
 	const lead = useLeadContext();
-	const { me } = useMe();
-	const { form, isEditing, onEdit, onCancel, onSubmit } = useReplyForm();
+	const { me, isSubscribed } = useMe();
+	const { form, replyLength, isEditing, onEdit, onCancel, onSubmit } = useReplyForm();
 	const [isOpen, { open, close }] = useDisclosure();
 
 	return (
@@ -134,7 +138,7 @@ export const RedditLead = () => {
 									<>
 										{" "}
 										•{" "}
-										{lead.data.reply_status === replyStatus.SCHEDULED && (
+										{lead.data.reply_status === ReplyStatus.SCHEDULED && (
 											<Text component="span" c="dimmed">
 												scheduled for{" "}
 											</Text>
@@ -149,7 +153,7 @@ export const RedditLead = () => {
 								<ActionIcon
 									variant="subtle"
 									color="gray"
-									disabled={lead.data.reply_status === replyStatus.PENDING}
+									disabled={lead.data.reply_status === ReplyStatus.PENDING}
 								>
 									<IconDots size={18} />
 								</ActionIcon>
@@ -176,7 +180,7 @@ export const RedditLead = () => {
 									<Menu.Item
 										onClick={open}
 										leftSection={<IconSend size={18} />}
-										disabled={me?.reply_credits === 0}
+										disabled={!isSubscribed || me?.reply_credits === 0}
 									>
 										Send reply
 									</Menu.Item>
@@ -185,13 +189,14 @@ export const RedditLead = () => {
 									<Menu.Item
 										onClick={lead.generateReply}
 										leftSection={<IconWand size={18} />}
-										disabled={!lead.canGenerateReply || !me?.plan}
+										disabled={!lead.canGenerateReply || !isSubscribed}
 									>{`Generate reply (${lead.data.replies_generated}/2)`}</Menu.Item>
 								)}
 								{lead.canEditReply && (
 									<Menu.Item
 										onClick={onEdit}
 										leftSection={<IconPencil size={18} />}
+										disabled={!isSubscribed}
 									>
 										Edit reply
 									</Menu.Item>
@@ -200,6 +205,7 @@ export const RedditLead = () => {
 									<Menu.Item
 										onClick={lead.undoReply}
 										leftSection={<IconArrowBackUp size={18} />}
+										disabled={!isSubscribed}
 									>
 										Undo reply
 									</Menu.Item>
@@ -252,9 +258,15 @@ export const RedditLead = () => {
 					{lead.data.reply_status && (
 						<>
 							<Divider />
-							<Badge size="sm" bg={getReplyStatusColor(lead.data.reply_status)}>
-								{lead.data.reply_status}
-							</Badge>
+							<Flex justify="space-between">
+								<Badge size="sm" bg={getReplyStatusColor(lead.data.reply_status)}>
+									{lead.data.reply_status}
+								</Badge>
+								<Text
+									size="xs"
+									c="dimmed"
+								>{`(${isEditing ? replyLength : lead.data.reply_text?.length ?? 0}/${ReplyCharacterLimit[LeadPlatform.REDDIT]})`}</Text>
+							</Flex>
 						</>
 					)}
 				</Stack>

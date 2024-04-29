@@ -1,4 +1,5 @@
 import type { Project, Lead } from "@sweetreply/prisma";
+import { LeadPlatformType, ReplyCharacterLimit } from "@sweetreply/shared/features/leads/constants";
 
 export type ReplyPromptData = {
 	project: Pick<
@@ -11,9 +12,10 @@ export type ReplyPromptData = {
 		| "reply_custom_instructions"
 	>;
 	lead: Pick<Lead, "title" | "content">;
+	characterLimit?: number;
 };
 
-export const replyPrompt = ({ project, lead }: ReplyPromptData) => {
+export const replyPrompt = ({ project, lead, characterLimit }: ReplyPromptData) => {
 	const productURL =
 		project.website_url && project.reply_with_domain
 			? new URL(project.website_url).hostname
@@ -34,7 +36,7 @@ export const replyPrompt = ({ project, lead }: ReplyPromptData) => {
 - This reply will be the only interaction, there will not be any further communication.
 - Keep your response formal, no emojis.
 
-You will simply output a text response that represents the reply. Only reference the product by its ${mentionMode}.
+You will simply output a text response that represents the reply. ${typeof characterLimit === "number" ? `The reply must not be longer than ${characterLimit} characters.` : ""} Only reference the product by its ${mentionMode}.
 
 Social media post: 
 \`\`\`
@@ -48,6 +50,7 @@ Product description: ${project.description}`;
 // console.log(
 // 	replyPrompt({
 // 		lead: {
+// 			platform: "test",
 // 			title: null,
 // 			content: "I am looking for a lawn mowing service in Olathe, KS. Any recommendations?",
 // 		},

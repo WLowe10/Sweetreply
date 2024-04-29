@@ -17,8 +17,6 @@ export const signUpHandler = unauthenticatedProcedure
 		const user = await ctx.authService.registerUser(input);
 		const session = await ctx.authService.createSessionForUser(user.id);
 
-		ctx.logger.info({ email: input.email }, "User signed up");
-
 		ctx.authService.sendSessionCookie(ctx.res, session);
 
 		return serializeUser(user);

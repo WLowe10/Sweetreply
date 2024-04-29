@@ -3,7 +3,7 @@ import { env } from "@env";
 import { prisma } from "@lib/db";
 import { addMinutes, isFuture, subDays } from "date-fns";
 import { logger } from "@lib/logger";
-import { replyStatus } from "@sweetreply/shared/features/leads/constants";
+import { ReplyStatus } from "@sweetreply/shared/features/leads/constants";
 import { shouldReplyCompletion } from "../utils/completions/should-reply-completion";
 import { replyCompletion } from "../utils/completions/reply-completion";
 import { addReplyJob } from "../utils/add-reply-job";
@@ -77,7 +77,7 @@ processLeadQueue.process(async (job) => {
 	// counts all of the replies within the last 24 hours
 	const repliesLast24Hours = await prisma.lead.count({
 		where: {
-			reply_status: replyStatus.REPLIED,
+			reply_status: ReplyStatus.REPLIED,
 			replied_at: {
 				gte: subDays(new Date(), 1),
 			},
@@ -124,7 +124,7 @@ processLeadQueue.process(async (job) => {
 			id: lead.id,
 		},
 		data: {
-			reply_status: replyStatus.SCHEDULED,
+			reply_status: ReplyStatus.SCHEDULED,
 			reply_text: generatedReply,
 			reply_scheduled_at: scheduledAt,
 			replies_generated: {

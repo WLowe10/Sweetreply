@@ -1,19 +1,21 @@
 import { useNavigate, useParams, type MetaFunction } from "@remix-run/react";
 import { ResourceContainer } from "@components/resource-container";
 import { buildPageTitle } from "@lib/utils";
-import { Alert, Skeleton, Tabs } from "@mantine/core";
+import { Alert, List, Skeleton, Tabs } from "@mantine/core";
 import { GeneralForm } from "./general-form";
 import { SitesForm } from "./sites-form";
 import { ReplyForm } from "./reply-form";
 import { NotificationsForm } from "./notifications-form";
 import { useCurrentProjectQuery } from "@features/projects/hooks/use-current-project-query";
 import { IconAlertTriangle } from "@tabler/icons-react";
+import { useCurrentProjectIssues } from "@features/projects/hooks/use-current-project-issues";
 
 export const meta: MetaFunction = () => [{ title: buildPageTitle("Settings") }];
 
 export default function SettingsPage() {
 	const { tab } = useParams();
 	const { data } = useCurrentProjectQuery();
+	const issues = useCurrentProjectIssues();
 	const navigate = useNavigate();
 
 	return (
@@ -22,7 +24,7 @@ export default function SettingsPage() {
 				<Skeleton height={500} />
 			) : (
 				<>
-					{(data.query === null || data.query.length === 0) && (
+					{issues.length > 0 && (
 						<Alert
 							variant="outline"
 							color="red"
@@ -30,7 +32,11 @@ export default function SettingsPage() {
 							title="Alert"
 							icon={<IconAlertTriangle />}
 						>
-							You cannot monitor posts until you have configured a query
+							<List>
+								{issues.map((issue, idx) => (
+									<List.Item key={idx}>{issue}</List.Item>
+								))}
+							</List>
 						</Alert>
 					)}
 					<Tabs

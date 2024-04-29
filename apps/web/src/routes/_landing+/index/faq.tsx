@@ -25,8 +25,8 @@ export const FAQ = (boxProps: BoxProps) => {
 						</Accordion.Control>
 						<Accordion.Panel>
 							Sweetreply is designed to be user-friendly and easy to set up. After
-							creating a project and setup your query, leads will begin appearing
-							within minutes.
+							creating a project and setting up your filters, leads will begin
+							appearing within minutes of them being posted.
 						</Accordion.Panel>
 					</Accordion.Item>
 					<Accordion.Item value="replies">

@@ -22,7 +22,7 @@ const executeSlurper = async (
 		const searchDocument = postSlurper.getSearchDocument(lead);
 		const limit = pLimit(20);
 
-		await Promise.all(
+		await Promise.allSettled(
 			projects.map((project) =>
 				limit(async () => {
 					if (!project.reddit_allow_nsfw && lead.is_nsfw) {
@@ -106,18 +106,9 @@ export const redditLeadGenJob = CronJob.from({
 			const projects = await prisma.project.findMany({
 				where: {
 					reddit_monitor_enabled: true,
-					AND: [
-						{
-							query: {
-								not: null,
-							},
-						},
-						{
-							query: {
-								not: "",
-							},
-						},
-					],
+					query: {
+						not: null,
+					},
 				},
 			});
 

@@ -101,10 +101,7 @@ export default function DashboardLayout() {
 			</Flex>
 			<Box ml="280" flex={1} mih="100vh">
 				{hasNoProjects ? (
-					<ResourceContainer
-						title="Create your first project"
-						subtitle="Setup your first project!"
-					>
+					<ResourceContainer title="Create your first project">
 						<CreateProjectForm />
 					</ResourceContainer>
 				) : (

@@ -1,12 +1,15 @@
-import { authenticatedProcedure } from "@auth/procedures";
 import { editReplyInputSchema } from "@sweetreply/shared/features/leads/schemas";
-import { leadNotFound } from "../errors";
-import { projectNotFound } from "@features/projects/errors";
+import { failedToEditReply, leadNotFound } from "../errors";
 import { TRPCError } from "@trpc/server";
-import { replyStatus } from "@sweetreply/shared/features/leads/constants";
+import {
+	ReplyCharacterLimit,
+	ReplyStatus,
+	type LeadPlatformType,
+} from "@sweetreply/shared/features/leads/constants";
 import { canEditReply } from "@sweetreply/shared/features/leads/utils";
+import { subscribedProcedure } from "@features/billing/procedures";
 
-export const editReplyHandler = authenticatedProcedure
+export const editReplyHandler = subscribedProcedure
 	.input(editReplyInputSchema)
 	.mutation(async ({ input, ctx }) => {
 		const lead = await ctx.prisma.lead.findUnique({
@@ -29,9 +32,19 @@ export const editReplyHandler = authenticatedProcedure
 		}
 
 		if (!canEditReply(lead)) {
+			throw failedToEditReply();
+		}
+
+		const replyCharacterLimit = ReplyCharacterLimit[lead.platform as LeadPlatformType];
+
+		if (!replyCharacterLimit) {
+			throw failedToEditReply();
+		}
+
+		if (input.data.reply_text.length > replyCharacterLimit) {
 			throw new TRPCError({
 				code: "BAD_REQUEST",
-				message: "You can't update a reply that has already been sent",
+				message: `Reply can not be longer than ${replyCharacterLimit} characters`,
 			});
 		}
 
@@ -40,7 +53,7 @@ export const editReplyHandler = authenticatedProcedure
 				id: lead.id,
 			},
 			data: {
-				reply_status: lead.reply_status === null ? replyStatus.DRAFT : undefined,
+				reply_status: lead.reply_status === null ? ReplyStatus.DRAFT : undefined,
 				reply_text: input.data.reply_text,
 			},
 			select: {

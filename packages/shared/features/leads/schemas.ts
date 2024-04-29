@@ -1,10 +1,14 @@
 import { leadModel } from "@sweetreply/prisma/zod";
-import { addDays, endOfDay, isBefore, isFuture } from "date-fns";
-import { z } from "zod";
+import { isBefore, isFuture } from "date-fns";
 import { getMaxFutureReplyDate } from "./utils";
+import { z } from "zod";
+import { LeadPlatform, ReplyCharacterLimit } from "./constants";
+
+export const leadPlatformSchema = z.enum([LeadPlatform.REDDIT]);
 
 export const baseLeadSchema = leadModel.extend({
-	reply_text: z.string().min(3).max(4096),
+	platform: leadPlatformSchema,
+	reply_text: z.string().min(3),
 });
 
 export const sendReplyInputDataSchema = z.object({

@@ -20,6 +20,7 @@ export const generatePlaygroundReplyHandler = ratelimitedPublicProcedure
 		const reply = await replyCompletion({
 			lead: {
 				title: null,
+				platform: "reddit",
 				content: input.social_media_post,
 			},
 			project: {

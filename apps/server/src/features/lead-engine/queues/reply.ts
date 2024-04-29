@@ -5,7 +5,7 @@ import { env } from "@env";
 import { sleep } from "@sweetreply/shared/lib/utils";
 import { botsService } from "@features/bots/service";
 import { createBotHandler } from "@features/bots/utils/create-bot-handler";
-import { replyStatus } from "@sweetreply/shared/features/leads/constants";
+import { ReplyStatus } from "@sweetreply/shared/features/leads/constants";
 import { ReplyResultData } from "@features/bots/types";
 
 export type ReplyQueueJobData = {
@@ -43,7 +43,7 @@ replyQueue.process(async (job) => {
 		return;
 	}
 
-	if (lead.reply_status === replyStatus.REPLIED) {
+	if (lead.reply_status === ReplyStatus.REPLIED) {
 		return;
 	}
 
@@ -79,7 +79,7 @@ replyQueue.process(async (job) => {
 				id: lead.id,
 			},
 			data: {
-				reply_status: replyStatus.DRAFT,
+				reply_status: ReplyStatus.DRAFT,
 				reply_scheduled_at: null,
 				replied_at: null,
 			},
@@ -125,7 +125,7 @@ replyQueue.process(async (job) => {
 			id: lead.id,
 		},
 		data: {
-			reply_status: replyStatus.REPLIED,
+			reply_status: ReplyStatus.REPLIED,
 			replied_at: new Date(),
 			reply_bot_id: botAccount.id,
 			reply_remote_id: replyResult.reply_remote_id,
@@ -160,7 +160,7 @@ replyQueue.on("active", async (job) => {
 			id: jobData.lead_id,
 		},
 		data: {
-			reply_status: replyStatus.PENDING,
+			reply_status: ReplyStatus.PENDING,
 		},
 	});
 });
@@ -175,7 +175,7 @@ replyQueue.on("completed", async (job) => {
 			id: jobData.lead_id,
 		},
 		data: {
-			reply_status: replyStatus.REPLIED,
+			reply_status: ReplyStatus.REPLIED,
 		},
 	});
 });
@@ -192,7 +192,7 @@ replyQueue.on("failed", async (job, err) => {
 					id: jobData.lead_id,
 				},
 				data: {
-					reply_status: replyStatus.FAILED,
+					reply_status: ReplyStatus.FAILED,
 				},
 			});
 		} catch {}

@@ -1,13 +1,14 @@
 import { useCurrentProjectQuery } from "@features/projects/hooks/use-current-project-query";
 import { trpc } from "@lib/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Box, Button, Stack, Tabs, TextInput, Textarea } from "@mantine/core";
+import { Anchor, Box, Button, Stack, Tabs, Text, TextInput, Textarea } from "@mantine/core";
 import {
 	UpdateProjectInputType,
 	updateProjectInputSchema,
 } from "@sweetreply/shared/features/projects/schemas";
 import { IconX } from "@tabler/icons-react";
 import { Controller, useForm } from "react-hook-form";
+import { Link } from "@remix-run/react";
 
 export const NotificationsForm = () => {
 	const { data: project } = useCurrentProjectQuery();
@@ -54,7 +55,15 @@ export const NotificationsForm = () => {
 						render={({ field, fieldState }) => (
 							<TextInput
 								label="Webhook"
-								description="The URL to send notifications to."
+								description={
+									<Text size="sm">
+										Webhooks allow you to receive HTTP POST requests to a URL
+										whenever we find a new lead.{" "}
+										<Anchor component={Link} to="/help/webhook">
+											Learn about webhooks
+										</Anchor>
+									</Text>
+								}
 								value={field.value ?? ""}
 								onChange={field.onChange}
 								error={fieldState.error?.message}
