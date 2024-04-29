@@ -9,6 +9,7 @@ export const Header = ({ children }: PropsWithChildren) => {
 			<MjmlImage
 				target="_blank"
 				height="48px"
+				width="48px"
 				href={env.FRONTEND_URL}
 				src={appConfig.iconURL}
 			/>

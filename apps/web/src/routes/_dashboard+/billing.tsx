@@ -15,7 +15,7 @@ import type { MetaFunction } from "@remix-run/react";
 export const meta: MetaFunction = () => [{ title: buildPageTitle("Billing") }];
 
 export default function BillingPage() {
-	const { me } = useMe();
+	const { me, isSubscribed } = useMe();
 	const subscribeMutation = trpc.billing.subscribe.useMutation();
 	const createBillingPortalMutation = trpc.billing.createBillingPortal.useMutation();
 
@@ -48,16 +48,16 @@ export default function BillingPage() {
 		});
 	};
 
-	return (
+	return me ? (
 		<ResourceContainer
 			title="Billing"
 			subtitle={
-				me?.plan
+				me.plan
 					? `You are subscribed to the ${me.plan} plan`
 					: "Subscribe to a plan today to unlock replies!"
 			}
 			rightSection={
-				me?.plan && (
+				me.plan && (
 					<Button
 						disabled={!me?.plan}
 						loading={createBillingPortalMutation.isLoading}
@@ -68,54 +68,52 @@ export default function BillingPage() {
 				)
 			}
 		>
-			{me ? (
-				me.plan ? (
-					<Table>
-						<Table.Tbody>
-							<Table.Tr>
-								<Table.Td>Plan</Table.Td>
-								<Table.Td>{me.plan}</Table.Td>
-							</Table.Tr>
-							<Table.Tr>
-								<Table.Td>Monthly replies</Table.Td>
-								<Table.Td>{getMonthlyReplies(me.plan as any)}</Table.Td>
-							</Table.Tr>
-							<Table.Tr>
-								<Table.Td>Ends at</Table.Td>
-								<Table.Td>
-									<RelativeDate size="sm" date={me.subscription_ends_at!} />
-								</Table.Td>
-							</Table.Tr>
-						</Table.Tbody>
-					</Table>
-				) : (
-					<SimpleGrid cols={{ base: 1, md: 3 }}>
-						{plans.map((plan) => (
-							<PricingCard
-								key={plan.title}
-								{...plan}
-								highlighed={false}
-								cta={
-									<Button
-										mt="md"
-										loading={planCheckoutLoading === plan.id}
-										disabled={subscribeMutation.isLoading}
-										onClick={() => {
-											subscribe(plan.id);
-											setPlanCheckoutLoading(plan.id);
-										}}
-									>
-										Subscribe
-									</Button>
-								}
-							/>
-						))}
-					</SimpleGrid>
-				)
+			{isSubscribed ? (
+				<Table>
+					<Table.Tbody>
+						<Table.Tr>
+							<Table.Td>Plan</Table.Td>
+							<Table.Td>{me.plan}</Table.Td>
+						</Table.Tr>
+						<Table.Tr>
+							<Table.Td>Monthly replies</Table.Td>
+							<Table.Td>{getMonthlyReplies(me.plan as any)}</Table.Td>
+						</Table.Tr>
+						<Table.Tr>
+							<Table.Td>Ends at</Table.Td>
+							<Table.Td>
+								<RelativeDate size="sm" date={me.subscription_ends_at!} />
+							</Table.Td>
+						</Table.Tr>
+					</Table.Tbody>
+				</Table>
 			) : (
-				<Skeleton h={500} />
+				<SimpleGrid cols={{ base: 1, md: 3 }}>
+					{plans.map((plan) => (
+						<PricingCard
+							key={plan.title}
+							{...plan}
+							highlighed={false}
+							cta={
+								<Button
+									mt="md"
+									loading={planCheckoutLoading === plan.id}
+									disabled={subscribeMutation.isLoading}
+									onClick={() => {
+										subscribe(plan.id);
+										setPlanCheckoutLoading(plan.id);
+									}}
+								>
+									Subscribe
+								</Button>
+							}
+						/>
+					))}
+				</SimpleGrid>
 			)}
 			<ThankYouModal />
 		</ResourceContainer>
+	) : (
+		<Skeleton height="100%" />
 	);
 }

@@ -31,14 +31,13 @@ export const ProjectSelector = () => {
 			>
 				<Popover.Target>
 					<Button
-						variant="subtle"
-						color="gray"
+						variant="default"
 						fullWidth
 						justify="space-between"
 						rightSection={<IconSwitchVertical size={16} />}
 						onClick={toggleProjectsPopover}
 					>
-						{currentProject?.name}
+						{currentProject?.name || "Select project"}
 					</Button>
 				</Popover.Target>
 				<Popover.Dropdown p={0}>
@@ -55,6 +54,7 @@ export const ProjectSelector = () => {
 						))}
 					</Flex>
 					<Button
+						variant="default"
 						fullWidth={true}
 						style={{
 							borderTopRightRadius: 0,

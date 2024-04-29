@@ -11,25 +11,27 @@ async function test() {
 
 	await new Promise((res) => setTimeout(res, 1000));
 
-	// console.log("commenting");
+	console.log("commenting");
 
-	// const result = await bot.comment({
-	// 	postId: "1blgh0s",
-	// 	targetType: "post",
-	// 	content: `hello world post test ${Date.now()}`,
-	// 	subredditName: "replyon",
-	// });
+	const result = await bot.comment({
+		postId: "1blgh0d",
+		targetType: "link",
+		content: `hello world post test ${Date.now()}`,
+		subredditName: "replyon",
+	});
+
+	console.log(result.id);
 
 	// console.log(result.contentText);
 
 	// --- Delete Comment ---
 
-	console.log("deleting comment");
+	// console.log("deleting comment");
 
-	await bot.deleteComment({
-		commentId: "l0gg",
-		subredditName: "replyon",
-	});
+	// await bot.deleteComment({
+	// 	commentId: "l0gg",
+	// 	subredditName: "replyon",
+	// });
 
 	console.log("deleted comment");
 }

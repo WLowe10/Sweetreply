@@ -21,7 +21,10 @@ export const baseProjectSchema = projectModel.extend({
 	website_url: z
 		.string()
 		.max(128)
-		.refine((url) => isValidURLString(url), { message: "Invalid URL" }),
+		.nullish()
+		.refine((url) => (url ? isValidURLString(url) : true), {
+			message: "Invalid URL",
+		}),
 	description: z.string().min(6).max(1024),
 	query: z
 		.string()

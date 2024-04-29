@@ -7,12 +7,14 @@ import { SimpleGrid, Skeleton } from "@mantine/core";
 import { IconCalendar, IconMessage, IconRadar } from "@tabler/icons-react";
 import { StatCard } from "@components/stat-card";
 import type { MetaFunction } from "@remix-run/react";
+import { useCurrentProjectQuery } from "@features/projects/hooks/use-current-project-query";
 
 export const meta: MetaFunction = () => [{ title: buildPageTitle("Dashboard") }];
 
 export default function DashboardPage() {
 	const { me } = useMe();
 	const [projectId] = useLocalProject();
+	const { data } = useCurrentProjectQuery();
 
 	const getStatsQuery = trpc.projects.getStats.useQuery(
 		{
@@ -23,8 +25,8 @@ export default function DashboardPage() {
 		}
 	);
 
-	return (
-		<ResourceContainer title="Dashboard" subtitle={me && `Welcome, ${me?.first_name}`}>
+	return data ? (
+		<ResourceContainer title={data.name || ""} subtitle={me && `Welcome, ${me?.first_name}`}>
 			<SimpleGrid cols={{ base: 1, md: 2 }}>
 				{getStatsQuery.isLoading ? (
 					<>
@@ -62,5 +64,7 @@ export default function DashboardPage() {
 				)}
 			</SimpleGrid>
 		</ResourceContainer>
+	) : (
+		<Skeleton height="100%" />
 	);
 }

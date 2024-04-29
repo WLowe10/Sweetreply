@@ -2,8 +2,8 @@ import axios, { type Axios, type AxiosProxyConfig } from "axios";
 import { wrapper } from "axios-cookiejar-support";
 import { CookieJar } from "tough-cookie";
 import { userAgents } from "../constants";
-import { createThing, extractIdFromThing } from "@sweetreply/shared/features/reddit/utils";
-import { RedditThing, type RedditThingType } from "@sweetreply/shared/features/reddit/constants";
+import { createThing } from "@sweetreply/shared/features/reddit/utils";
+import { type RedditThingType } from "@sweetreply/shared/features/reddit/constants";
 import type { IBot } from "../types";
 
 const redditBase = new URL("https://www.reddit.com/api");

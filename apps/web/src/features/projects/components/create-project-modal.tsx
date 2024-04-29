@@ -1,6 +1,6 @@
 import { trpc } from "@lib/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button, Flex, Modal, TextInput, type ModalProps } from "@mantine/core";
+import { Button, Flex, Group, Modal, Stack, TextInput, type ModalProps } from "@mantine/core";
 import { useForm } from "react-hook-form";
 import { useLocalProject } from "../hooks/use-local-project";
 import {
@@ -36,7 +36,10 @@ export const CreateProjectModal = ({ modalProps }: CreateTeamModalProps) => {
 				trpcUtils.projects.getMany.setData(undefined, (prev) =>
 					prev ? [...prev, newTeam] : [newTeam]
 				);
+
 				setId(newTeam.id);
+
+				modalProps.onClose();
 			},
 		});
 	});
@@ -44,19 +47,23 @@ export const CreateProjectModal = ({ modalProps }: CreateTeamModalProps) => {
 	return (
 		<Modal title="Create Project" {...modalProps}>
 			<form onSubmit={handleSubmit}>
-				<TextInput
-					{...form.register("name")}
-					label="Project Name"
-					error={form.formState.errors.name?.message}
-				/>
-				<Flex align="center" justify="space-between" mt="md">
-					<Button variant="outline" onClick={onClose}>
-						Cancel
-					</Button>
-					<Button type="submit" loading={createTeamMutation.isLoading}>
-						Continue
-					</Button>
-				</Flex>
+				<Stack>
+					<TextInput
+						{...form.register("name")}
+						label="Project Name"
+						error={form.formState.errors.name?.message}
+					/>
+					<Flex justify="flex-end">
+						<Group>
+							<Button variant="subtle" color="gray" onClick={onClose}>
+								Cancel
+							</Button>
+							<Button type="submit" loading={createTeamMutation.isLoading}>
+								Continue
+							</Button>
+						</Group>
+					</Flex>
+				</Stack>
 			</form>
 		</Modal>
 	);
