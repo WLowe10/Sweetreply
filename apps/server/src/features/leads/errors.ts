@@ -6,10 +6,10 @@ export const leadNotFound = () =>
 		message: "Lead not found",
 	});
 
-export const leadAlreadyReplied = () => {
+export const replyAlreadySent = () => {
 	new TRPCError({
 		code: "BAD_REQUEST",
-		message: "This lead has already been replied to",
+		message: "This reply has already been sent",
 	});
 };
 

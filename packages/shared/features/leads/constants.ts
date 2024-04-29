@@ -4,6 +4,14 @@ export const LeadPlatform = {
 
 export type LeadPlatformType = (typeof LeadPlatform)[keyof typeof LeadPlatform];
 
+export const LeadType = {
+	POST: "post",
+	COMMENT: "comment",
+} as const;
+
+// bruh
+export type LeadTypeType = (typeof LeadType)[keyof typeof LeadType];
+
 export const ReplyStatus = {
 	PENDING: "pending",
 	SCHEDULED: "scheduled",

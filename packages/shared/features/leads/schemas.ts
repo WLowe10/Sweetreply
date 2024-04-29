@@ -8,7 +8,7 @@ export const leadPlatformSchema = z.enum([LeadPlatform.REDDIT]);
 
 export const baseLeadSchema = leadModel.extend({
 	platform: leadPlatformSchema,
-	reply_text: z.string().min(3),
+	reply_text: z.string().trim().min(10),
 });
 
 export const sendReplyInputDataSchema = z.object({

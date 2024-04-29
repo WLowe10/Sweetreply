@@ -1,10 +1,11 @@
 import { sendReplyInputSchema } from "@sweetreply/shared/features/leads/schemas";
-import { failedToSendReply, leadAlreadyReplied, leadNotFound } from "../errors";
+import { failedToSendReply, leadNotFound, replyAlreadySent } from "../errors";
 import { ReplyStatus } from "@sweetreply/shared/features/leads/constants";
 import { canSendReply } from "@sweetreply/shared/features/leads/utils";
 import { TRPCError } from "@trpc/server";
 import { addReplyJob } from "@features/lead-engine/utils/add-reply-job";
 import { subscribedProcedure } from "@features/billing/procedures";
+import { outOfReplyCredits } from "@features/billing/errors";
 
 export const sendReplyHandler = subscribedProcedure
 	.input(sendReplyInputSchema)
@@ -28,18 +29,15 @@ export const sendReplyHandler = subscribedProcedure
 			throw leadNotFound();
 		}
 
+		if (lead.reply_status === ReplyStatus.REPLIED) {
+			throw replyAlreadySent();
+		}
+
 		if (ctx.user.reply_credits === 0) {
-			throw new TRPCError({
-				code: "FORBIDDEN",
-				message: "You are out of reply credits. Please upgrade your plan.",
-			});
+			throw outOfReplyCredits();
 		}
 
 		if (!canSendReply(lead)) {
-			throw leadAlreadyReplied();
-		}
-
-		if (!ctx.user.plan) {
 			throw failedToSendReply();
 		}
 
@@ -47,7 +45,6 @@ export const sendReplyHandler = subscribedProcedure
 			date: input.data?.date ?? undefined,
 		});
 
-		// set to pending (waiting for reply in the queue)
 		return await ctx.prisma.lead.update({
 			where: {
 				id: lead.id,

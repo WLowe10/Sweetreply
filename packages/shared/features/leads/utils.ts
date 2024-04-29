@@ -15,7 +15,7 @@ export const canSendReply = (lead: Pick<Lead, "reply_status" | "reply_text">) =>
 		lead.reply_status === ReplyStatus.NONE ||
 		lead.reply_status === ReplyStatus.DRAFT) &&
 	lead.reply_text &&
-	lead.reply_text.length > 0;
+	lead.reply_text.trim().length > 0;
 
 export const canUndoReply = (lead: Pick<Lead, "reply_status">) =>
 	lead.reply_status === ReplyStatus.REPLIED;

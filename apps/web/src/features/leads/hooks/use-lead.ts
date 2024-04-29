@@ -20,6 +20,17 @@ export const useLead = (leadId: string) => {
 		{ id: leadId },
 		{
 			refetchInterval: (data) => (data?.reply_status === "pending" ? 2500 : false),
+			retry: (failureCount, err) => err.data?.code !== "NOT_FOUND",
+			onError: (err) => {
+				if (err.data?.code === "NOT_FOUND") {
+					notifications.show({
+						title: "Lead not found",
+						message: err.message,
+					});
+
+					navigate("/leads");
+				}
+			},
 		}
 	);
 

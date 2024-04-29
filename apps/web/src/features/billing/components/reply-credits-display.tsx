@@ -5,7 +5,7 @@ import { useReplyCreditsUsage } from "../hooks/use-reply-credits-usage";
 import { Link } from "@remix-run/react";
 
 export const ReplyCreditsDisplay = () => {
-	const { me } = useMe();
+	const { me, isSubscribed } = useMe();
 	const usage = useReplyCreditsUsage();
 
 	return (
@@ -21,9 +21,11 @@ export const ReplyCreditsDisplay = () => {
 						} remaining`}</Text>
 					</Flex>
 					<Progress value={usage} />
-					<Button component={Link} to="/billing" size="xs">
-						Get more
-					</Button>
+					{!isSubscribed && (
+						<Button component={Link} to="/billing" size="xs">
+							Get more
+						</Button>
+					)}
 				</Stack>
 			) : (
 				<Skeleton height={60} />

@@ -86,8 +86,19 @@ sendLeadWebhookQueue.process(async (job) => {
 		});
 	} else {
 		await axios.post(project.webhook_url, {
-			project_id: project.id,
-			lead: lead,
+			event: "lead.created",
+			project: project.id,
+			data: {
+				id: lead.id,
+				type: lead.type,
+				platform: lead.platform,
+				username: lead.username,
+				channel: lead.channel,
+				title: lead.title,
+				content: lead.content,
+				date: lead.date,
+				created_at: lead.created_at,
+			},
 		});
 	}
 });

@@ -23,6 +23,11 @@ const processLeadQueue = new Queue<ProcessLeadQueueJobData>("process-lead", {
 			delay: 4000,
 		},
 	},
+	// this lines up with half the openAI rate limit,
+	limiter: {
+		max: 40,
+		duration: 1000,
+	},
 });
 
 processLeadQueue.process(async (job) => {
@@ -65,9 +70,9 @@ processLeadQueue.process(async (job) => {
 
 	// --- Generate Reply ---
 
-	const shouldGenerateRedditReply = lead.platform === "reddit" && project.reddit_replies_enabled;
+	const redditAutoRepliesEnabled = lead.platform === "reddit" && project.reddit_replies_enabled;
 
-	if (!shouldGenerateRedditReply) {
+	if (!redditAutoRepliesEnabled) {
 		return;
 	}
 
@@ -99,25 +104,19 @@ processLeadQueue.process(async (job) => {
 
 	const generatedReply = await replyCompletion({ lead, project });
 
-	if (generatedReply.length === 0) {
-		return;
-	}
-
-	let scheduledAt = new Date();
+	let scheduledAt: Date | undefined;
 
 	if (project.reply_delay > 0) {
 		const replyDate = addMinutes(lead.date, project.reply_delay);
 
 		if (isFuture(replyDate)) {
 			scheduledAt = replyDate;
-
-			addReplyJob(lead.id, {
-				date: scheduledAt,
-			});
 		}
-	} else {
-		addReplyJob(lead.id);
 	}
+
+	addReplyJob(lead.id, {
+		date: scheduledAt,
+	});
 
 	await prisma.lead.update({
 		where: {

@@ -100,6 +100,17 @@ replyQueue.process(async (job) => {
 	const handler = createBotHandler({ bot: botAccount, lead });
 
 	if (!handler) {
+		await prisma.lead.update({
+			where: {
+				id: lead.id,
+			},
+			data: {
+				reply_status: ReplyStatus.DRAFT,
+				reply_scheduled_at: null,
+				replied_at: null,
+			},
+		});
+
 		return;
 	}
 
@@ -146,14 +157,14 @@ replyQueue.process(async (job) => {
 			},
 		});
 	} catch {
-		// noop, we won't redo a reply just because the deduction magically failed
+		// noop, we won't redo a reply just because the deduction fails for some reason
 	}
 });
 
 replyQueue.on("active", async (job) => {
 	const jobData = job.data;
 
-	logger.info(`Processing reply job for lead ${jobData.lead_id}`);
+	logger.info(`Reply job [lead:${job.data.lead_id}] began processing`);
 
 	await prisma.lead.update({
 		where: {

@@ -3,6 +3,7 @@ import { userAgents } from "@lib/constants";
 import { generateDescendingRedditIds, generateBatchedRedditInfoUrls } from "../../utils/reddit";
 import { RedditThing } from "@sweetreply/shared/features/reddit/constants";
 import { extractIdFromThing } from "@sweetreply/shared/features/reddit/utils";
+import { LeadPlatform, LeadType } from "@sweetreply/shared/features/leads/constants";
 
 export class RedditPostSlurper {
 	private client: Axios;
@@ -73,8 +74,8 @@ export class RedditPostSlurper {
 
 	public getLead(redditPost: any) {
 		return {
-			platform: "reddit",
-			type: "post",
+			platform: LeadPlatform.REDDIT,
+			type: LeadType.POST,
 			is_nsfw: redditPost.over_18,
 			remote_id: redditPost.id,
 			channel: redditPost.subreddit,
