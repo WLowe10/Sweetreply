@@ -11,7 +11,7 @@
 	max-width: rem(600px);
 	margin: auto;
 
-	&::after {
+	/* &::after {
 		content: "";
 		display: block;
 		background-color: var(--mantine-color-blue-filled);
@@ -20,7 +20,7 @@
 		margin-top: var(--mantine-spacing-sm);
 		margin-left: auto;
 		margin-right: auto;
-	}
+	} */
 }
 
 .card {

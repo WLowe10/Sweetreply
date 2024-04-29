@@ -15,8 +15,8 @@ export const FAQ = (boxProps: BoxProps) => {
 						</Accordion.Control>
 						<Accordion.Panel>
 							Currently we only support Reddit, however we are working on adding
-							support for X and Hacker News. As Reddit is our first platform, we are
-							focusing on making it the best.
+							support for X and Hacker News. As Reddit is our first and the most
+							important platform, we are focusing on making it the best.
 						</Accordion.Panel>
 					</Accordion.Item>
 					<Accordion.Item value="results">
@@ -29,12 +29,25 @@ export const FAQ = (boxProps: BoxProps) => {
 							within minutes.
 						</Accordion.Panel>
 					</Accordion.Item>
+					<Accordion.Item value="replies">
+						<Accordion.Control>Where do the replies come from?</Accordion.Control>
+						<Accordion.Panel>
+							We reply to your leads using our pool of Reddit accounts. We plan to
+							allow you to connect your own accounts soon.
+						</Accordion.Panel>
+					</Accordion.Item>
+					<Accordion.Item value="other">
+						<Accordion.Control>What are some other features?</Accordion.Control>
+						<Accordion.Panel>
+							We also allow you to schedule and manually create replies.
+						</Accordion.Panel>
+					</Accordion.Item>
 					<Accordion.Item value="free-plan">
 						<Accordion.Control>Is there a free plan?</Accordion.Control>
 						<Accordion.Panel>
-							If you do not purchase tokens, you will not be able to use Sweetreply to
-							generate replies. However, you may use Sweetreply as a keyword
-							monitoring tool free of charge.
+							If you do not purchase a subscription, you will not be able to use
+							Sweetreply to generate replies. However, you may use Sweetreply as a
+							keyword monitoring tool free of charge.
 						</Accordion.Panel>
 					</Accordion.Item>
 				</Accordion>

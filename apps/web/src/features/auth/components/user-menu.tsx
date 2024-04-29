@@ -11,7 +11,7 @@ import {
 } from "@mantine/core";
 import { useMe } from "../hooks/use-me";
 import { useSignOut } from "../hooks/use-sign-out";
-import { IconDoorOff, IconShield, IconUser } from "@tabler/icons-react";
+import { IconDoorExit, IconDoorOff, IconShield, IconUser } from "@tabler/icons-react";
 import { ProfileModal } from "./profile-modal";
 import { useDisclosure } from "@mantine/hooks";
 import { Link } from "@remix-run/react";
@@ -67,7 +67,7 @@ export const UserMenu = () => {
 						Profile
 					</Menu.Item>
 					<Menu.Item
-						leftSection={<IconDoorOff size={18} color="var(--mantine-color-gray-6)" />}
+						leftSection={<IconDoorExit size={18} color="var(--mantine-color-gray-6)" />}
 						onClick={() => signOut()}
 					>
 						Sign out

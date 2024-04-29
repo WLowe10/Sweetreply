@@ -85,8 +85,8 @@ export const Hero = (boxProps: BoxProps) => {
 						The Secret Weapon in Your Marketing Arsenal
 					</Title>
 					<Text size="lg" c="dimmed">
-						Sweetreply, your AI ambassador, slips mentions of your product into
-						conversations seamlessly.
+						Sweetreply, your friendly AI ambassador, slips shoutouts of your product
+						into online conversations seamlessly.
 					</Text>
 				</Box>
 				<Button

@@ -133,6 +133,21 @@ replyQueue.process(async (job) => {
 			reply_scheduled_at: null,
 		},
 	});
+
+	try {
+		await prisma.user.update({
+			where: {
+				id: project.user_id,
+			},
+			data: {
+				reply_credits: {
+					decrement: 1,
+				},
+			},
+		});
+	} catch {
+		// noop, we won't redo a reply just because the deduction magically failed
+	}
 });
 
 replyQueue.on("active", async (job) => {
@@ -153,40 +168,22 @@ replyQueue.on("active", async (job) => {
 replyQueue.on("completed", async (job) => {
 	const jobData = job.data;
 
-	try {
-		const lead = await prisma.lead.findUniqueOrThrow({
-			where: {
-				id: jobData.lead_id,
-			},
-		});
+	logger.info(`Reply job [lead:${job.data.lead_id}] completed`);
 
-		const project = await prisma.project.findUniqueOrThrow({
-			where: {
-				id: lead.project_id,
-			},
-		});
-
-		await prisma.user.update({
-			where: {
-				id: project.user_id,
-			},
-			data: {
-				reply_credits: {
-					decrement: 1,
-				},
-			},
-		});
-	} catch {
-		// noop
-	}
+	await prisma.lead.update({
+		where: {
+			id: jobData.lead_id,
+		},
+		data: {
+			reply_status: replyStatus.REPLIED,
+		},
+	});
 });
 
 replyQueue.on("failed", async (job, err) => {
 	const jobData = job.data;
 
-	logger.error(
-		`Reply job [${job.id}][lead:${job.data.lead_id}] failed with error: ${err.message}`
-	);
+	logger.error(`Reply job [lead:${job.data.lead_id}] failed with error: ${err.message}`);
 
 	if (job.attemptsMade === job.opts.attempts) {
 		try {

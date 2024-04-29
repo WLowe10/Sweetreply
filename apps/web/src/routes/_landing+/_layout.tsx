@@ -100,21 +100,21 @@ export default function LandingLayout() {
 						<Anchor component={Link} c="dimmed" to="/pricing">
 							Pricing
 						</Anchor>
-						<Anchor component={Link} c="dimmed" to="/pricing">
+						{/* <Anchor component={Link} c="dimmed" to="/pricing">
 							What's new
 						</Anchor>
 						<Anchor component={Link} c="dimmed" to="/pricing">
 							Roadmap
-						</Anchor>
+						</Anchor> */}
 					</Stack>
 					<Stack gap="xs">
 						<Text fw="bold">Help</Text>
 						<Anchor component={Link} c="dimmed" to="/help/get-started">
 							Get started
 						</Anchor>
-						<Anchor component={Link} c="dimmed" to="">
+						{/* <Anchor component={Link} c="dimmed" to="">
 							How-to guides
-						</Anchor>
+						</Anchor> */}
 					</Stack>
 					<Stack>
 						<Stack gap="xs">

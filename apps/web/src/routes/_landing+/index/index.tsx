@@ -8,8 +8,8 @@ export default function HomePage() {
 	return (
 		<Container size="lg" mb="16rem" px="lg">
 			<Hero mb="16rem" />
-			<Playground mb="20rem" />
 			<Features mb="20rem" />
+			<Playground mb="20rem" />
 			<FAQ />
 		</Container>
 	);
