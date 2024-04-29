@@ -5,6 +5,7 @@ import { prisma } from "@lib/db";
 import { PriceBillingPlan } from "./constants";
 import { BillingPlanReplyCredits } from "@sweetreply/shared/features/billing/constants";
 import { logger } from "@lib/logger";
+import { sendShowoffWebhook } from "./utils/send-showoff-webhook";
 import type { Request, Response } from "express";
 import type Stripe from "stripe";
 
@@ -33,7 +34,7 @@ async function handleInvoicePaid(event: Stripe.Event) {
 
 	const newCredits = BillingPlanReplyCredits[billingPlan];
 
-	await prisma.user.update({
+	const updatedUser = await prisma.user.update({
 		where: {
 			stripe_subscription_id: subscription.id,
 			stripe_customer_id: customerId,
@@ -41,6 +42,12 @@ async function handleInvoicePaid(event: Stripe.Event) {
 		data: {
 			reply_credits: newCredits,
 		},
+	});
+
+	await sendShowoffWebhook({
+		userID: updatedUser.id,
+		userEmail: updatedUser.email,
+		money: String(invoice.total / 100),
 	});
 }
 

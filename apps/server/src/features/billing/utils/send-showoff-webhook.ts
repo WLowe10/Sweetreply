@@ -2,18 +2,12 @@ import axios from "axios";
 import { env } from "@env";
 
 export type SendShowoffWebhookData = {
-	projectName: string;
-	projectId: string;
-	tokens: number;
+	userID: string;
+	userEmail: string;
 	money: string;
 };
 
-export const sendShowoffWebhook = ({
-	projectName,
-	projectId,
-	tokens,
-	money,
-}: SendShowoffWebhookData) => {
+export const sendShowoffWebhook = ({ userID, userEmail, money }: SendShowoffWebhookData) => {
 	return axios.post(env.NOTIFICATION_WEBHOOK_URL, {
 		content: null,
 		username: "Sweetreply Notifications",
@@ -22,22 +16,16 @@ export const sendShowoffWebhook = ({
 		embeds: [
 			{
 				title: "Cha-Ching!",
-				description: "A project purchased tokens!",
+				description: "💸 Invoice paid, money made! 💸",
 				color: 5814783,
 				fields: [
 					{
-						name: "Project ID",
-						value: projectId,
-						inline: true,
+						name: "User ID",
+						value: userID,
 					},
 					{
-						name: "Project Name",
-						value: projectName,
-						inline: true,
-					},
-					{
-						name: "Tokens",
-						value: tokens,
+						name: "User email",
+						value: userEmail,
 					},
 					{
 						name: "Money",

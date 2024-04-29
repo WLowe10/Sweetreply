@@ -91,10 +91,11 @@ export const Features = (boxProps: BoxProps) => {
 					<Timeline.Item title="Filter" bullet={<IconFilter size={18} />}>
 						<Text c="dimmed" size="sm" mb="sm">
 							Sweetreply uses your filters to directly target your audience. We don't
-							hope that your ad will be seen by the right people, we make sure it is.
+							hope that your product is be seen by the right people, we make sure it
+							is.
 						</Text>
 						<Text c="dimmed" size="sm" fs="italic">
-							Sweetreply finds new posts so fast that we had to add a setting to slow
+							Sweetreply finds new posts so fast that we had to add an option to slow
 							it down (seriously).
 						</Text>
 					</Timeline.Item>
