@@ -114,7 +114,7 @@ export const Hero = (boxProps: BoxProps) => {
 						const isMiddle = idx === 1;
 
 						return (
-							<div className={classes.marquee}>
+							<div className={classes.marquee} key={idx}>
 								<div
 									className={`${classes.marquee_track} ${isMiddle ? classes.animate_marquee_fast : classes.animate_marquee}`}
 								>

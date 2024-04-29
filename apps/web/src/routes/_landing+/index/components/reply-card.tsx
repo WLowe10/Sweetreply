@@ -14,7 +14,7 @@ export const ReplyCard = ({ avatar, username, content, reply }: ReplyCardProps) 
 			<Card withBorder>
 				<Stack>
 					<Group gap="sm" align="center">
-						<Avatar size="sm" src={avatar} />
+						<Avatar size="sm" alt={username} src={avatar} />
 						<Text size="xs" c="dimmed">
 							{username}
 						</Text>
