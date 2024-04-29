@@ -1,4 +1,4 @@
-import { authenticatedProcedure } from "@auth/procedures";
+import { authenticatedProcedure } from "@features/auth/procedures";
 import { updateProjectInputSchema } from "@sweetreply/shared/features/projects/schemas";
 import { projectNotFound } from "../errors";
 

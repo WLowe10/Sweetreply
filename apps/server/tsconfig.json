@@ -14,10 +14,6 @@
 		"composite": true,
 		"baseUrl": "./src",
 		"paths": {
-			"@auth/*": ["./auth/*"],
-			"@admin/*": ["./admin/*"],
-			"@controllers/*": ["./controllers/*"],
-			"@email/*": ["./email/*"],
 			"@features/*": ["./features/*"],
 			"@lib/*": ["./lib/*"],
 			"@env": ["./env.ts"]

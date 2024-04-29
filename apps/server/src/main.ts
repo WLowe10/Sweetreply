@@ -16,7 +16,7 @@ import { logger } from "./lib/logger";
 import { isDev } from "./lib/utils";
 
 // REST controllers
-import { CommonController } from "./controllers/common";
+import { CommonController } from "./features/common/controllers/common";
 import { BillingController } from "./features/billing/billing.controller";
 
 async function bootstrap() {

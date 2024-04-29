@@ -1,6 +1,6 @@
 import { router } from "./lib/trpc";
-import { authRouter } from "./auth/router";
-import { adminRouter } from "./admin/router";
+import { authRouter } from "./features/auth/router";
+import { adminRouter } from "./features/admin/router";
 import { billingRouter } from "./features/billing/router";
 import { projectsRouter } from "./features/projects/router";
 import { leadsRouter } from "./features/leads/router";

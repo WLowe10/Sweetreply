@@ -1,4 +1,4 @@
-import { authenticatedProcedure } from "@auth/procedures";
+import { authenticatedProcedure } from "@features/auth/procedures";
 import { createProjectInputSchema } from "@sweetreply/shared/features/projects/schemas";
 import { TRPCError } from "@trpc/server";
 

@@ -1,4 +1,4 @@
-import { authenticatedProcedure } from "@auth/procedures";
+import { authenticatedProcedure } from "@features/auth/procedures";
 import { replyQueue } from "@features/lead-engine/queues/reply";
 import { z } from "zod";
 import { failedToCancelReply, leadNotFound } from "../errors";

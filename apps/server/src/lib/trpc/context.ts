@@ -1,8 +1,8 @@
 import { prisma } from "@lib/db";
 import { logger } from "@lib/logger";
 import { stripe } from "@lib/client/stripe";
-import { authService } from "@auth/service";
-import { emailService } from "@email/service";
+import { authService } from "@features/auth/service";
+import { emailService } from "@features/email/service";
 import { projectsService } from "@features/projects/service";
 import { botsService } from "@features/bots/service";
 import type { CreateExpressContextOptions } from "@trpc/server/adapters/express";

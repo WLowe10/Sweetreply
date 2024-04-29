@@ -1,4 +1,4 @@
-import { authenticatedProcedure } from "@auth/procedures";
+import { authenticatedProcedure } from "@features/auth/procedures";
 import { z } from "zod";
 import { failedToGenerateReply, leadNotFound } from "../errors";
 import { replyCompletion } from "@features/lead-engine/utils/completions/reply-completion";

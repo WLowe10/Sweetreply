@@ -1,4 +1,4 @@
-import { authenticatedProcedure } from "@auth/procedures";
+import { authenticatedProcedure } from "@features/auth/procedures";
 import { z } from "zod";
 import { leadNotFound } from "../errors";
 import { canDeleteLead } from "@sweetreply/shared/features/leads/utils";

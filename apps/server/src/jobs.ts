@@ -1,4 +1,4 @@
-import { cleanUpJob } from "./auth/jobs/clean-up";
+import { cleanUpJob } from "./features/auth/jobs/clean-up";
 import { redditLeadGenJob } from "./features/lead-engine/jobs/reddit-lead-gen";
 import type { CronJob } from "cron";
 

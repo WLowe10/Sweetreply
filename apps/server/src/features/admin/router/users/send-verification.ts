@@ -1,0 +1,14 @@
+import { adminProcedure } from "@features/admin/procedures";
+import { z } from "zod";
+
+const sendVerificationInputSchema = z.object({
+	userId: z.string(),
+});
+
+export const sendVerificationHandler = adminProcedure
+	.input(sendVerificationInputSchema)
+	.mutation(({ input, ctx }) => {
+		return ctx.authService.dispatchVerification(input.userId, {
+			ignoreRateLimit: true,
+		});
+	});

@@ -1,4 +1,4 @@
-import { authenticatedProcedure } from "@auth/procedures";
+import { authenticatedProcedure } from "@features/auth/procedures";
 import { baseProjectSchema } from "@sweetreply/shared/features/projects/schemas";
 import { z } from "zod";
 import { projectNotFound } from "../errors";

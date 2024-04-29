@@ -1,4 +1,4 @@
-import { authenticatedProcedure } from "@auth/procedures";
+import { authenticatedProcedure } from "@features/auth/procedures";
 import { mustBeSubscribed } from "./errors";
 
 export const subscribedProcedure = authenticatedProcedure.unstable_concat(
