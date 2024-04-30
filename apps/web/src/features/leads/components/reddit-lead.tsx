@@ -16,10 +16,15 @@ import {
 	ButtonGroup,
 	Divider,
 	Loader,
+	Paper,
+	Tooltip,
+	Center,
 } from "@mantine/core";
 import {
 	IconArrowBackUp,
 	IconDots,
+	IconLock,
+	IconLockSquareRounded,
 	IconPencil,
 	IconPlayerStop,
 	IconSend,
@@ -53,6 +58,17 @@ export const RedditLead = () => {
 				leadId={lead.data.id}
 				modalProps={{ centered: true, opened: isOpen, onClose: close }}
 			/>
+			{lead.data.locked && (
+				<Tooltip
+					label={`This lead is locked. This could be because the post is deleted or locked on ${lead.data.platform}.`}
+				>
+					<Paper withBorder p="xs" style={{ alignSelf: "center" }}>
+						<Center>
+							<IconLockSquareRounded />
+						</Center>
+					</Paper>
+				</Tooltip>
+			)}
 			<Card withBorder>
 				<Stack>
 					<Flex justify="space-between">

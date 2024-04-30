@@ -1,10 +1,11 @@
-import axios, { type Axios, type AxiosProxyConfig } from "axios";
+import axios, { AxiosError, type Axios, type AxiosProxyConfig } from "axios";
 import { wrapper } from "axios-cookiejar-support";
 import { CookieJar } from "tough-cookie";
 import { userAgents } from "../constants";
 import { createThing } from "@sweetreply/shared/features/reddit/utils";
 import { type RedditThingType } from "@sweetreply/shared/features/reddit/constants";
 import type { IBot } from "../types";
+import { BotAuthError, BotError, BotReplyError } from "../errors";
 
 const redditBase = new URL("https://www.reddit.com/api");
 const oldRedditBase = new URL("https://old.reddit.com/api");
@@ -53,6 +54,10 @@ export class RedditBot implements IBot {
 		return response.data.includes('<span slot="title">This account has been suspended</span>');
 	}
 
+	public isAuthenticated() {
+		return this.modhash !== null;
+	}
+
 	public async login() {
 		const formData = new URLSearchParams({
 			op: "login",
@@ -62,6 +67,7 @@ export class RedditBot implements IBot {
 			passwd: this.password,
 		});
 
+		// always returns 200, therefore if the request fails, we know it isnt the bot's fault
 		const postLoginResponse = await this.client.post(
 			`${redditBase}/login/${this.username}`,
 			formData,
@@ -90,7 +96,7 @@ export class RedditBot implements IBot {
 		const { data } = postLoginResponse;
 
 		if (data.json.errors.length > 0) {
-			throw new Error(`${this.username} failed to authenticate`);
+			throw new BotAuthError("Failed to authenticate");
 		}
 
 		const modhash = data.json.data.modhash;
@@ -211,15 +217,27 @@ export class RedditBot implements IBot {
 			}
 		);
 
-		if (postCommentResponse.data.success === false) {
-			const errorMsg = postCommentResponse.data.jquery[14][3];
+		const jquery = postCommentResponse.data.jquery;
 
-			throw new Error(`Failed to comment: ${errorMsg}`);
+		if (postCommentResponse.data.success === false) {
+			let isRatelimited = false;
+
+			if (jquery[14]) {
+				if (jquery[14][3]) {
+					isRatelimited = true;
+				}
+			}
+
+			if (isRatelimited) {
+				throw new BotReplyError("Reply rate limited");
+			} else {
+				throw new BotReplyError("Failed to reply");
+			}
 		}
 
-		let data;
+		let result: RedditCommentData | undefined;
 
-		for (const item of postCommentResponse.data.jquery) {
+		for (const item of jquery) {
 			const type = item[2];
 			const value = item[3];
 
@@ -230,17 +248,17 @@ export class RedditBot implements IBot {
 					const newComment = dataArray[0];
 
 					if (newComment) {
-						data = newComment.data;
+						result = newComment.data;
 					}
 				}
 			}
 		}
 
-		if (!data) {
-			throw new Error("Failed to parse new Reddit comment");
+		if (!result) {
+			throw new BotReplyError("Failed to reply", true);
 		}
 
-		return data;
+		return result;
 	}
 
 	public async deleteComment({
@@ -250,9 +268,9 @@ export class RedditBot implements IBot {
 		commentId: string;
 		subredditName: string;
 	}) {
-		// if (!this.isAuthenticated()) {
-		// 	throw new Error("Not authenticated");
-		// }
+		if (!this.isAuthenticated()) {
+			throw new Error("Not authenticated");
+		}
 
 		const thingId = createThing("comment", commentId);
 
@@ -294,68 +312,5 @@ export class RedditBot implements IBot {
 		}
 
 		return response;
-	}
-
-	// todo
-	public async upvote({
-		postId,
-		subredditName,
-		targetType,
-	}: {
-		postId: string;
-		subredditName: string;
-		targetType: TargetType;
-	}) {
-		// if (!this.isAuthenticated()) {
-		// 	throw new Error("Not authenticated");
-		// }
-		// const upvoteResponse = await this.client.post(
-		// 	"https://old.reddit.com/api/vote",
-		// 	new URLSearchParams({
-		// 		id: createRedditThing(targetType, postId),
-		// 		dir: "1", // 1 is upvote
-		// 		// vh comes from the html of the page
-		// 		vh: "qpDloBMTymxKq5IJOeCC4oWggtuacw6AELF/rG/2eqJ6YwJliYJllikO9CBwDrxkb6Nobmhcc02llv0u0eWQw/gAc3Z8KyzfctjZRQFy5GLafBikvE7T/wNnC83teb/rSp4pSTO9NMC80xU+hAr3x8Yp0iArmQiqfVNi30brWxA=",
-		// 		isTrusted: "true",
-		// 		vote_event_data: '{"page_type":"self","sort":"confidence"}',
-		// 		r: "replyon",
-		// 		uh: this.modhash!,
-		// 		renderstyle: "html",
-		// 	}),
-		// 	{
-		// 		params: {
-		// 			dir: "1",
-		// 			id: "t3_1blgh0s",
-		// 			sr: "replyon",
-		// 		},
-		// 		headers: {
-		// 			"accept": "application/json, text/javascript, */*; q=0.01",
-		// 			"accept-language": "en-US,en;q=0.5",
-		// 			"cache-control": "no-cache",
-		// 			"content-type": "application/x-www-form-urlencoded; charset=UTF-8",
-		// 			"origin": "https://old.reddit.com",
-		// 			"pragma": "no-cache",
-		// 			"priority": "u=1, i",
-		// 			// "referer": "https://old.reddit.com/r/replyon/comments/1blgh0s/hello_world/",
-		// 			"sec-ch-ua": '"Chromium";v="124", "Brave";v="124", "Not-A.Brand";v="99"',
-		// 			"sec-ch-ua-mobile": "?0",
-		// 			"sec-ch-ua-platform": '"Windows"',
-		// 			"sec-fetch-dest": "empty",
-		// 			"sec-fetch-mode": "cors",
-		// 			"sec-fetch-site": "same-origin",
-		// 			"sec-gpc": "1",
-		// 			"user-agent":
-		// 				"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-		// 			"x-requested-with": "XMLHttpRequest",
-		// 		},
-		// 	}
-		// );
-		// if (upvoteResponse.data.success === false) {
-		// 	throw new Error("Failed to upvote");
-		// }
-	}
-
-	public isAuthenticated() {
-		return this.modhash !== null;
 	}
 }

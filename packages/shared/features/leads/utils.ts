@@ -10,15 +10,16 @@ export const canDeleteLead = (lead: Pick<Lead, "reply_status">) =>
 	lead.reply_status === ReplyStatus.FAILED ||
 	lead.reply_status === ReplyStatus.DRAFT;
 
-export const canSendReply = (lead: Pick<Lead, "reply_status" | "reply_text">) =>
+export const canSendReply = (lead: Pick<Lead, "reply_status" | "reply_text" | "locked">) =>
 	(lead.reply_status === ReplyStatus.FAILED ||
 		lead.reply_status === ReplyStatus.NONE ||
 		lead.reply_status === ReplyStatus.DRAFT) &&
+	!lead.locked &&
 	lead.reply_text &&
 	lead.reply_text.trim().length > 0;
 
-export const canUndoReply = (lead: Pick<Lead, "reply_status">) =>
-	lead.reply_status === ReplyStatus.REPLIED;
+export const canUndoReply = (lead: Pick<Lead, "reply_status" | "locked">) =>
+	lead.reply_status === ReplyStatus.REPLIED && !lead.locked;
 
 export const canEditReply = (lead: Pick<Lead, "reply_status">) =>
 	lead.reply_status === ReplyStatus.DRAFT ||

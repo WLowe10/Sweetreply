@@ -11,10 +11,10 @@ export const createProjectHandler = authenticatedProcedure
 			},
 		});
 
-		if (projectCount >= 5) {
+		if (projectCount >= 10) {
 			throw new TRPCError({
 				code: "FORBIDDEN",
-				message: "You cannot create more than 5 projects",
+				message: "You cannot create more than 10 projects",
 			});
 		}
 

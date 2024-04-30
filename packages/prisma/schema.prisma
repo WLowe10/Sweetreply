@@ -175,10 +175,11 @@ model Project {
 // Lead
 
 model Lead {
-    id         String @id @default(uuid())
-    type       String @default("post")
+    id         String  @id @default(uuid())
+    type       String  @default("post")
     project_id String
     platform   String
+    locked     Boolean @default(false) // locked leads cannot be replied
 
     // social media post
     username          String

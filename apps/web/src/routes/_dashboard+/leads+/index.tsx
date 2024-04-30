@@ -62,18 +62,7 @@ const columns: SimpleTableColumns<RouterOutput["leads"]["getMany"]["data"][0]> =
 	},
 	{
 		id: "reply_status",
-		Header: () => (
-			<Popover withArrow>
-				<Popover.Target>
-					<Button size="compact-sm" variant="subtle" color="gray" ta="start" fullWidth>
-						Reply status
-					</Button>
-				</Popover.Target>
-				<Popover.Dropdown>
-					<Select data={["one", "two"]} />
-				</Popover.Dropdown>
-			</Popover>
-		),
+		Header: () => "Reply status",
 		Cell: (data) => (
 			<Badge bg={getReplyStatusColor(data.reply_status)}>{data.reply_status || "none"}</Badge>
 		),

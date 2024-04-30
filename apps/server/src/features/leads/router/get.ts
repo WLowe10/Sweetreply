@@ -17,6 +17,7 @@ export const getLeadHandler = authenticatedProcedure
 				id: true,
 				platform: true,
 				type: true,
+				locked: true,
 				remote_channel_id: true,
 				username: true,
 				content: true,

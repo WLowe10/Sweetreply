@@ -75,6 +75,7 @@ export const generateReplyHandler = subscribedProcedure
 				id: true,
 				platform: true,
 				type: true,
+				locked: true,
 				remote_channel_id: true,
 				username: true,
 				content: true,

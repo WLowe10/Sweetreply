@@ -7,11 +7,11 @@ async function test() {
 		password: redditInfo.password,
 	});
 
-	await bot.login();
+	// await bot.login();
 
-	await new Promise((res) => setTimeout(res, 1000));
+	// await new Promise((res) => setTimeout(res, 1000));
 
-	console.log("commenting");
+	// console.log("commenting");
 
 	const result = await bot.comment({
 		postId: "1blgh0d",

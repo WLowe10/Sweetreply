@@ -95,8 +95,6 @@ replyQueue.process(async (job) => {
 		throw new Error(`Lead ${jobData.lead_id} could not find an account to reply with`);
 	}
 
-	// move this bot to the bottom of the stack
-
 	const handler = createBotHandler({ bot: botAccount, lead });
 
 	if (!handler) {
@@ -117,8 +115,8 @@ replyQueue.process(async (job) => {
 	let replyResult: ReplyResultData;
 
 	try {
-		// generate random delay between 2500 and 5000 ms after logging in
-		const loginDelay = Math.floor(Math.random() * (5000 - 2500 + 1)) + 2500;
+		// generate random delay between 5000 and 10000 ms after logging in
+		const loginDelay = Math.floor(Math.random() * (10000 - 5000 + 1)) + 5000;
 
 		await handler.login();
 
@@ -126,11 +124,32 @@ replyQueue.process(async (job) => {
 
 		replyResult = await handler.reply();
 	} catch (err: any) {
+		// if (err instanceof BotError) {
+		// 	if (err instanceof BotReplyError) {
+		// 		if (err.shouldLock) {
+		// 			await prisma.lead.update({
+		// 				where: {
+		// 					id: lead.id,
+		// 				},
+		// 				data: {
+		// 					locked: true,
+		// 					reply_scheduled_at: null,
+		// 					replied_at: null,
+		// 					reply_status: ReplyStatus.DRAFT,
+		// 				},
+		// 			});
+		// 		}
+		// 	} else {
+		// 		await botsService.appendError(botAccount.id, err.message);
+		// 	}
+		// }
+
 		await botsService.appendError(botAccount.id, err.message);
 
 		throw err;
 	}
 
+	// update the lead with the reply details
 	await prisma.lead.update({
 		where: {
 			id: lead.id,
@@ -145,6 +164,7 @@ replyQueue.process(async (job) => {
 		},
 	});
 
+	// deduct the reply credit from the user
 	try {
 		await prisma.user.update({
 			where: {
@@ -180,15 +200,6 @@ replyQueue.on("completed", async (job) => {
 	const jobData = job.data;
 
 	logger.info(`Reply job [lead:${job.data.lead_id}] completed`);
-
-	await prisma.lead.update({
-		where: {
-			id: jobData.lead_id,
-		},
-		data: {
-			reply_status: ReplyStatus.REPLIED,
-		},
-	});
 });
 
 replyQueue.on("failed", async (job, err) => {
@@ -204,6 +215,8 @@ replyQueue.on("failed", async (job, err) => {
 				},
 				data: {
 					reply_status: ReplyStatus.FAILED,
+					replied_at: null,
+					reply_scheduled_at: null,
 				},
 			});
 		} catch {}

@@ -66,6 +66,7 @@ export const cancelReplyHandler = authenticatedProcedure
 			},
 			select: {
 				id: true,
+				locked: true,
 				platform: true,
 				type: true,
 				remote_channel_id: true,

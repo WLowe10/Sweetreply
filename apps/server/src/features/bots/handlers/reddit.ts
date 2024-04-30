@@ -16,6 +16,7 @@ export class RedditBotHandler implements IBotHandler {
 			username: bot.username,
 			password: bot.password,
 			proxy: proxyIsDefined(bot) && {
+				protocol: "http",
 				host: bot.proxy_host!,
 				port: bot.proxy_port!,
 				auth: {
@@ -26,8 +27,8 @@ export class RedditBotHandler implements IBotHandler {
 		});
 	}
 
-	public login() {
-		return this.redditBot.login();
+	public async login() {
+		await this.redditBot.login();
 	}
 
 	public async reply() {
