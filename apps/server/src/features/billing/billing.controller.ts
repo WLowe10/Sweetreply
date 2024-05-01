@@ -8,6 +8,7 @@ import { logger } from "@lib/logger";
 import { sendDiscordNotification } from "@lib/discord-notifications";
 import type { Request, Response } from "express";
 import type Stripe from "stripe";
+import { leadEngineService } from "@features/lead-engine/service";
 
 async function handleInvoicePaid(event: Stripe.Event) {
 	const invoice = event.data.object as Stripe.Invoice;
@@ -114,7 +115,7 @@ async function handleSubscriptionDeleted(event: Stripe.Event) {
 	const subscription = event.data.object as Stripe.Subscription;
 	const subscriptionId = subscription.id;
 
-	await prisma.user.update({
+	const updatedUser = await prisma.user.update({
 		where: {
 			stripe_subscription_id: subscriptionId,
 		},
@@ -126,6 +127,14 @@ async function handleSubscriptionDeleted(event: Stripe.Event) {
 			subscription_ends_at: null,
 		},
 	});
+
+	try {
+		// cancel all of a user's scheduled replies when their subscription ends
+
+		await leadEngineService.cancelUserScheduledReplies(updatedUser.id);
+	} catch {
+		// noop
+	}
 }
 
 @Controller("/billing")

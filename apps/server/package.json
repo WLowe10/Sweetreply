@@ -47,7 +47,6 @@
 		"react": "^18",
 		"react-dom": "^18",
 		"reflect-metadata": "^0.2.1",
-		"replicate": "^0.29.1",
 		"routing-controllers": "^0.10.4",
 		"stripe": "^14.21.0",
 		"superjson": "1.13.3",

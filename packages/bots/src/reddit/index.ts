@@ -7,6 +7,7 @@ import type { IBot } from "../types";
 import type { Bot, Lead } from "@sweetreply/prisma";
 import { proxyIsDefined } from "../utils";
 import { createThing, extractIdFromThing } from "@sweetreply/shared/features/reddit/utils";
+import { BotError, FatalBotError, LockLead } from "../errors";
 
 const redditBase = new URL("https://www.reddit.com/api");
 const oldRedditBase = new URL("https://old.reddit.com/api");
@@ -100,10 +101,16 @@ export class RedditBot implements IBot {
 		);
 
 		const { data } = postLoginResponse;
+		const errors = data.json.errors;
 
-		if (data.json.errors.length > 0) {
-			// throw new BotAuthError("Failed to authenticate");
-			throw new Error("Failed to authenticate");
+		if (errors.length > 0) {
+			if (errors[0]) {
+				if (errors[0][0] === "INCORRECT_USERNAME_PASSWORD") {
+					throw new FatalBotError("Incorrect username or password");
+				}
+			}
+
+			throw new FatalBotError("Failed to authenticate");
 		}
 
 		const modhash = data.json.data.modhash;
@@ -217,23 +224,21 @@ export class RedditBot implements IBot {
 			}
 		);
 
-		const jquery = postCommentResponse.data.jquery;
+		const { data } = postCommentResponse;
+
+		const jquery = data.jquery;
 
 		if (postCommentResponse.data.success === false) {
-			let isRatelimited = false;
+			const jqueryText = JSON.stringify(jquery);
 
-			if (jquery[14]) {
-				if (jquery[14][3]) {
-					isRatelimited = true;
-				}
-			}
+			// console.log(jqueryText);
 
-			if (isRatelimited) {
-				// throw new BotReplyError("Reply rate limited");
-				throw new Error("Reply rate limited");
+			if (jqueryText.includes(".error.RATELIMIT.field-ratelimit")) {
+				throw new FatalBotError("Rate limited");
+			} else if (jqueryText.includes(".error.THREAD_LOCKED.field-parent")) {
+				throw new LockLead();
 			} else {
-				// throw new BotReplyError("Failed to reply");
-				throw new Error("Failed to reply");
+				throw new BotError("Failed to reply");
 			}
 		}
 
@@ -257,8 +262,8 @@ export class RedditBot implements IBot {
 		}
 
 		if (!result) {
-			// throw new BotReplyError("Failed to reply", true);
-			throw new Error("Failed to reply");
+			// failed to reply, lead may be locked
+			throw new LockLead();
 		}
 
 		const remoteId = extractIdFromThing(result.id);

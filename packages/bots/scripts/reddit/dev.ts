@@ -1,5 +1,6 @@
-import { RedditBot } from "../../src/bots/reddit";
+import { RedditBot } from "../../src/reddit";
 import { redditInfo } from "../../secrets";
+import { sleep, sleepRange } from "@sweetreply/shared/lib/utils";
 
 async function test() {
 	const bot = new RedditBot({
@@ -7,20 +8,25 @@ async function test() {
 		password: redditInfo.password,
 	});
 
-	// await bot.login();
+	await bot.login();
 
-	// await new Promise((res) => setTimeout(res, 1000));
+	await sleepRange(5000, 10000);
+
+	await bot.reply({
+		type: "comment",
+		channel: "replyon",
+		remote_id: "l25db21",
+		reply_text: "test reply",
+	});
 
 	// console.log("commenting");
 
-	const result = await bot.comment({
-		postId: "1blgh0d",
-		targetType: "link",
-		content: `hello world post test ${Date.now()}`,
-		subredditName: "replyon",
-	});
-
-	console.log(result.id);
+	// const result = await bot.comment({
+	// 	postId: "1blgh0d",
+	// 	targetType: "link",
+	// 	content: `hello world post test ${Date.now()}`,
+	// 	subredditName: "replyon",
+	// });
 
 	// console.log(result.contentText);
 
@@ -33,7 +39,7 @@ async function test() {
 	// 	subredditName: "replyon",
 	// });
 
-	console.log("deleted comment");
+	console.log("done");
 }
 
 test();

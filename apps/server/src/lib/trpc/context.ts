@@ -5,6 +5,7 @@ import { authService } from "@features/auth/service";
 import { emailService } from "@features/email/service";
 import { projectsService } from "@features/projects/service";
 import { botsService } from "@features/bots/service";
+import { leadEngineService } from "@features/lead-engine/service";
 import type { CreateExpressContextOptions } from "@trpc/server/adapters/express";
 import type { Request, Response } from "express";
 
@@ -22,8 +23,9 @@ function createInnerContext(opts: CreateContextOptions) {
 		stripe,
 		authService,
 		emailService,
-		projectsService: projectsService,
+		projectsService,
 		botsService,
+		leadEngineService,
 		user: null,
 		session: null,
 	};

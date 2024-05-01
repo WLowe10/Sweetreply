@@ -1,4 +1,4 @@
-export const botStatus = {
+export const BotStatus = {
 	UNRESTRICTED: "unrestricted",
 	RESTRICTED: "restricted",
 	BANNED: "banned",

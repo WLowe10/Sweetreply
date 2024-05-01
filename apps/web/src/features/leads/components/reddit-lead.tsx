@@ -59,15 +59,13 @@ export const RedditLead = () => {
 				modalProps={{ centered: true, opened: isOpen, onClose: close }}
 			/>
 			{lead.data.locked && (
-				<Tooltip
-					label={`This lead is locked. This could be because the post is deleted or locked on ${lead.data.platform}.`}
-				>
-					<Paper withBorder p="xs" style={{ alignSelf: "center" }}>
-						<Center>
-							<IconLockSquareRounded />
-						</Center>
-					</Paper>
-				</Tooltip>
+				<Center>
+					<Tooltip
+						label={`This lead is locked. This could be because the post is locked on ${lead.data.platform}.`}
+					>
+						<IconLockSquareRounded color="var(--mantine-color-red-5)" />
+					</Tooltip>
+				</Center>
 			)}
 			<Card withBorder>
 				<Stack>

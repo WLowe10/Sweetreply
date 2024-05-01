@@ -4,23 +4,20 @@ export class BotError extends Error {
 	}
 }
 
-export class BotLeadLock extends BotError {
+export class LockLead extends BotError {
 	constructor(message?: string) {
 		super(message);
 	}
 }
 
-export class BotAuthError extends BotError {
+export class FatalBotError extends BotError {
 	constructor(message?: string) {
 		super(message);
 	}
 }
 
-export class BotReplyError extends BotError {
-	public shouldLock: boolean;
-
-	constructor(message?: string, shouldLock?: boolean) {
+export class Banned extends FatalBotError {
+	constructor(message?: string) {
 		super(message);
-		this.shouldLock = shouldLock || false;
 	}
 }

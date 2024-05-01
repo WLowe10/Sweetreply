@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { failedToDeleteReply, failedToUndoReply, leadHasNoReply, leadNotFound } from "../errors";
-import { sleep } from "@sweetreply/shared/lib/utils";
-import { createBotHandler } from "@features/bots/utils/create-bot-handler";
+import { sleep, sleepRange } from "@sweetreply/shared/lib/utils";
+import { createBot } from "@sweetreply/bots";
 import { ReplyStatus } from "@sweetreply/shared/features/leads/constants";
 import { canUndoReply } from "@sweetreply/shared/features/leads/utils";
 import { subscribedProcedure } from "@features/billing/procedures";
@@ -52,18 +52,18 @@ export const undoReplyHandler = subscribedProcedure
 			throw failedToUndoReply();
 		}
 
-		const handler = createBotHandler({ bot: botAccount, lead });
+		const bot = createBot(botAccount);
 
-		if (!handler) {
+		if (!bot) {
 			throw failedToUndoReply();
 		}
 
 		try {
-			await handler.login();
+			await bot.login();
 
-			await sleep(2500);
+			await sleepRange(5000, 10000);
 
-			await handler.deleteReply();
+			await bot.deleteReply(lead);
 		} catch {
 			throw failedToDeleteReply();
 		}

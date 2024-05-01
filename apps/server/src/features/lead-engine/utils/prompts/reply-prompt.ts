@@ -1,5 +1,4 @@
 import type { Project, Lead } from "@sweetreply/prisma";
-import { LeadPlatformType, ReplyCharacterLimit } from "@sweetreply/shared/features/leads/constants";
 
 export type ReplyPromptData = {
 	project: Pick<
@@ -28,7 +27,8 @@ export const replyPrompt = ({ project, lead, characterLimit }: ReplyPromptData) 
 				? "url"
 				: "name or url";
 
-	return `Given a social media post and information about a product, provide a reply to the post that takes the following into account:
+	return {
+		system: `Given a social media post and information about a product, provide a reply to the post that takes the following into account:
 - You are an unbiased and helpful social media user with no affiliations to the product.
 - You have used the product and therefore can give a worthy shout out to it.
 - Make sure to mention the product in some capacity, feel free to include a personal anecdote.
@@ -36,15 +36,15 @@ export const replyPrompt = ({ project, lead, characterLimit }: ReplyPromptData) 
 - This reply will be the only interaction, there will not be any further communication.
 - Keep your response formal, no emojis.
 
-You will simply output a text response that represents the reply. ${typeof characterLimit === "number" ? `The reply must not be longer than ${characterLimit} characters.` : ""} Only reference the product by its ${mentionMode}.
-
-Social media post: 
+You will simply output a text response that represents the reply. ${typeof characterLimit === "number" ? `The reply must not be longer than ${characterLimit} characters.` : ""} Only reference the product by its ${mentionMode}.`,
+		user: `Social media post: 
 \`\`\`
 ${lead.title ? `${lead.title}. ` : ""}${lead.content}
 \`\`\`
 
 ${project.reply_mention_mode === "name" || !productURL ? `Product name: ${project.name}` : project.reply_mention_mode === "url" && productURL ? `Product url: ${productURL}` : project.reply_mention_mode === "name_or_url" ? `Product name: ${project.name}\nProduct url: ${productURL}` : ""}
-Product description: ${project.description}`;
+Product description: ${project.description}`,
+	};
 };
 
 // console.log(

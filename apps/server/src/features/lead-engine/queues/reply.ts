@@ -2,11 +2,12 @@ import Queue from "bull";
 import { logger } from "@lib/logger";
 import { prisma } from "@lib/db";
 import { env } from "@env";
-import { sleep } from "@sweetreply/shared/lib/utils";
+import { sleepRange } from "@sweetreply/shared/lib/utils";
 import { botsService } from "@features/bots/service";
 import { ReplyStatus } from "@sweetreply/shared/features/leads/constants";
 import { ReplyResultData } from "@features/bots/types";
-import { createBot } from "@sweetreply/bots";
+import { Banned, BotError, FatalBotError, LockLead, createBot } from "@sweetreply/bots";
+import { BotStatus } from "@features/bots/constants";
 
 export type ReplyQueueJobData = {
 	lead_id: string;
@@ -20,7 +21,7 @@ const replyQueue = new Queue<ReplyQueueJobData>("reply", {
 		duration: 1000,
 	},
 	defaultJobOptions: {
-		attempts: 5,
+		attempts: 3,
 		removeOnComplete: true,
 		removeOnFail: true,
 		backoff: {
@@ -98,7 +99,7 @@ replyQueue.process(async (job) => {
 	const bot = createBot(botAccount);
 
 	if (!bot) {
-		// ! a platform's lead should never try to reply if it isn't supported
+		// ? a platform's lead should never try to reply if it isn't supported
 
 		await prisma.lead.update({
 			where: {
@@ -118,35 +119,76 @@ replyQueue.process(async (job) => {
 
 	try {
 		// generate random delay between 5000 and 10000 ms after logging in
-		const loginDelay = Math.floor(Math.random() * (10000 - 5000 + 1)) + 5000;
-
 		await bot.login();
 
-		await sleep(loginDelay);
+		await sleepRange(5000, 10000);
 
 		replyResult = await bot.reply(lead);
 	} catch (err: any) {
-		// if (err instanceof BotError) {
-		// 	if (err instanceof BotReplyError) {
-		// 		if (err.shouldLock) {
-		// 			await prisma.lead.update({
-		// 				where: {
-		// 					id: lead.id,
-		// 				},
-		// 				data: {
-		// 					locked: true,
-		// 					reply_scheduled_at: null,
-		// 					replied_at: null,
-		// 					reply_status: ReplyStatus.DRAFT,
-		// 				},
-		// 			});
-		// 		}
-		// 	} else {
-		// 		await botsService.appendError(botAccount.id, err.message);
-		// 	}
-		// }
+		if (!(err instanceof BotError)) {
+			throw err;
+		}
 
-		await botsService.appendError(botAccount.id, err.message);
+		if (err instanceof LockLead) {
+			logger.error(
+				{
+					bot_id: botAccount.id,
+					lead_id: lead.id,
+					message: err.message,
+				},
+				"Lead has been locked"
+			);
+
+			await prisma.lead.update({
+				where: {
+					id: lead.id,
+				},
+				data: {
+					reply_status: ReplyStatus.DRAFT,
+					locked: true,
+					reply_scheduled_at: null,
+					replied_at: null,
+				},
+			});
+
+			return;
+		}
+
+		if (err instanceof FatalBotError) {
+			if (err instanceof Banned) {
+				logger.error(
+					{
+						bot_id: botAccount.id,
+						lead_id: lead.id,
+						message: err.message,
+					},
+					"Bot has been banned"
+				);
+
+				// this fatal bot error will instantly make the bot inactive
+				await prisma.bot.update({
+					where: {
+						id: botAccount.id,
+					},
+					data: {
+						active: false,
+						status: BotStatus.BANNED,
+					},
+				});
+			} else {
+				logger.error(
+					{
+						bot_id: botAccount.id,
+						lead_id: lead.id,
+						message: err.message,
+					},
+					"Fatal bot error"
+				);
+
+				// 3 fatal bot errors in 24 hours will make the bot inactive
+				await botsService.appendError(botAccount.id, err.message);
+			}
+		}
 
 		throw err;
 	}
@@ -186,7 +228,12 @@ replyQueue.process(async (job) => {
 replyQueue.on("active", async (job) => {
 	const jobData = job.data;
 
-	logger.info(`Reply job [lead:${job.data.lead_id}] began processing`);
+	logger.info(
+		{
+			lead_id: jobData.lead_id,
+		},
+		"Reply job began"
+	);
 
 	await prisma.lead.update({
 		where: {
@@ -201,16 +248,29 @@ replyQueue.on("active", async (job) => {
 replyQueue.on("completed", async (job) => {
 	const jobData = job.data;
 
-	logger.info(`Reply job [lead:${job.data.lead_id}] completed`);
+	logger.info(
+		{
+			lead_id: jobData.lead_id,
+		},
+		"Reply job completed"
+	);
 });
 
 replyQueue.on("failed", async (job, err) => {
 	const jobData = job.data;
 
-	logger.error(`Reply job [lead:${job.data.lead_id}] failed with error: ${err.message}`);
+	logger.error(`Reply job [lead:${jobData.lead_id}] failed with error: ${err.message}`);
 
 	if (job.attemptsMade === job.opts.attempts) {
 		try {
+			logger.info(
+				{
+					lead_id: jobData.lead_id,
+					message: err.message,
+				},
+				"Reply job failed"
+			);
+
 			await prisma.lead.update({
 				where: {
 					id: jobData.lead_id,
