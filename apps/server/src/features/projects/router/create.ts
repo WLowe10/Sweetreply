@@ -20,8 +20,10 @@ export const createProjectHandler = authenticatedProcedure
 
 		return ctx.prisma.project.create({
 			data: {
-				name: input.name,
 				user_id: ctx.user.id,
+				name: input.name,
+				description: input.description,
+				website_url: input.website_url,
 			},
 		});
 	});

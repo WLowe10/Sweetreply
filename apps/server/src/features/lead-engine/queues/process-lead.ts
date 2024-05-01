@@ -53,6 +53,10 @@ processLeadQueue.process(async (job) => {
 		return;
 	}
 
+	if (!project.description || project.description.length < 10) {
+		return;
+	}
+
 	const user = await prisma.user.findUnique({
 		where: {
 			id: project.user_id,

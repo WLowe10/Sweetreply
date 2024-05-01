@@ -1,0 +1,40 @@
+---
+title: Webhooks
+published: 2024-04-30
+---
+
+import { buildPageTitle } from "@lib/utils";
+
+export const meta = () => [{ title: buildPageTitle(frontmatter.title) }];
+
+# {frontmatter.title}
+
+**Last updated: April 30, 2024**
+
+With webhooks, you can receive real-time notifications when certain events happen in Sweetreply.
+
+---
+
+## All events
+
+-   `lead.created`
+
+---
+
+# lead.created
+
+This event is sent whenever a new lead is detected in Sweetreply
+
+```json
+{
+	"event": "lead.created",
+	"data": {
+		// the id of the lead
+		"id": "lead_123",
+
+		// the username of the lead poster
+		"name": "John Doe",
+		"email": ""
+	}
+}
+```

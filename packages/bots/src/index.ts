@@ -1,1 +1,2 @@
-export * from "./bots/reddit";
+export * from "./reddit";
+export * from "./utils";

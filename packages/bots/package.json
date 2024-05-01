@@ -23,6 +23,7 @@
 	},
 	"devDependencies": {
 		"@sweetreply/tsconfig": "workspace:*",
+		"@sweetreply/prisma": "workspace:*",
 		"@types/tough-cookie": "^4.0.5",
 		"tsx": "^4.7.1",
 		"typescript": "^5"

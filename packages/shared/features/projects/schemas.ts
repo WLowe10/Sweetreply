@@ -21,11 +21,12 @@ export const baseProjectSchema = projectModel.extend({
 	website_url: z
 		.string()
 		.max(128)
-		.nullish()
-		.refine((url) => (url ? isValidURLString(url) : true), {
+		.refine(isValidURLString, {
 			message: "Invalid URL",
-		}),
-	description: z.string().min(6).max(1024),
+		})
+		.nullish()
+		.or(z.literal("")),
+	description: z.string().trim().min(10).max(1024),
 	query: z
 		.string()
 		.trim()
@@ -59,9 +60,16 @@ export const baseProjectSchema = projectModel.extend({
 		}),
 });
 
-export const createProjectInputSchema = baseProjectSchema.pick({
-	name: true,
-});
+export const createProjectInputSchema = baseProjectSchema
+	.pick({
+		name: true,
+		description: true,
+		website_url: true,
+	})
+	.extend({
+		website_url: baseProjectSchema.shape.website_url.nullish().or(z.literal("")),
+		description: baseProjectSchema.shape.description.nullish().or(z.literal("")),
+	});
 
 export const updateProjectInputSchema = z.object({
 	id: baseProjectSchema.shape.id,

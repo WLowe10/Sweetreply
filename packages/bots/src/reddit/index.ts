@@ -1,11 +1,12 @@
-import axios, { AxiosError, type Axios, type AxiosProxyConfig } from "axios";
+import axios, { type Axios } from "axios";
 import { wrapper } from "axios-cookiejar-support";
 import { CookieJar } from "tough-cookie";
-import { userAgents } from "../constants";
-import { createThing } from "@sweetreply/shared/features/reddit/utils";
-import { type RedditThingType } from "@sweetreply/shared/features/reddit/constants";
+import { UserAgents } from "../constants";
+import { RedditThing, type RedditThingType } from "@sweetreply/shared/features/reddit/constants";
 import type { IBot } from "../types";
-import { BotAuthError, BotError, BotReplyError } from "../errors";
+import type { Bot, Lead } from "@sweetreply/prisma";
+import { proxyIsDefined } from "../utils";
+import { createThing, extractIdFromThing } from "@sweetreply/shared/features/reddit/utils";
 
 const redditBase = new URL("https://www.reddit.com/api");
 const oldRedditBase = new URL("https://old.reddit.com/api");
@@ -26,23 +27,28 @@ export class RedditBot implements IBot {
 	private username: string;
 	private password: string;
 	private modhash: string | null;
-	private proxy: AxiosProxyConfig | undefined;
 	private client: Axios;
 	private cookieJar: CookieJar;
 
-	constructor(opts: { username: string; password: string; proxy?: AxiosProxyConfig }) {
-		this.username = opts.username;
-		this.password = opts.password;
-		this.proxy = opts.proxy;
+	constructor(bot: Bot) {
+		this.username = bot.username;
+		this.password = bot.password;
 		this.modhash = null;
 
 		this.cookieJar = new CookieJar();
 		this.client = wrapper(
 			axios.create({
 				jar: this.cookieJar,
-				proxy: this.proxy,
+				proxy: proxyIsDefined(bot) && {
+					host: bot.proxy_host!,
+					port: bot.proxy_port!,
+					auth: {
+						username: bot.proxy_user!,
+						password: bot.proxy_pass!,
+					},
+				},
 				headers: {
-					"User-Agent": userAgents.chrome,
+					"User-Agent": UserAgents.chrome,
 				},
 			})
 		);
@@ -96,33 +102,27 @@ export class RedditBot implements IBot {
 		const { data } = postLoginResponse;
 
 		if (data.json.errors.length > 0) {
-			throw new BotAuthError("Failed to authenticate");
+			// throw new BotAuthError("Failed to authenticate");
+			throw new Error("Failed to authenticate");
 		}
 
 		const modhash = data.json.data.modhash;
 		// const cookie = data.json.data.cookie;
 
 		this.modhash = modhash;
-
-		// return postLoginResponse;
 	}
 
-	public async comment({
-		postId,
-		targetType,
-		subredditName,
-		content,
-	}: {
-		postId: string;
-		targetType: TargetType;
-		subredditName: string;
-		content: string;
-	}): Promise<RedditCommentData> {
+	public async reply(lead: Lead) {
 		if (!this.isAuthenticated()) {
 			throw new Error("Not authenticated");
 		}
 
-		const redditPrefixedId = createThing(targetType, postId);
+		if (!lead.reply_text || !lead.channel) {
+			throw new Error("Lead has no reply text or channel");
+		}
+
+		const targetType: TargetType = lead.type === "post" ? "link" : "comment";
+		const redditPrefixedId = createThing(targetType, lead.remote_id);
 
 		// it seems like the id is optional. I'm not sure if it would minimize the change of being banned, but i'm ignoring it for now
 
@@ -183,8 +183,8 @@ export class RedditBot implements IBot {
 
 		const commentData: any = {
 			thing_id: redditPrefixedId,
-			r: subredditName,
-			text: content,
+			r: lead.channel,
+			text: lead.reply_text,
 			uh: this.modhash as string,
 			renderstyle: "html",
 		};
@@ -229,9 +229,11 @@ export class RedditBot implements IBot {
 			}
 
 			if (isRatelimited) {
-				throw new BotReplyError("Reply rate limited");
+				// throw new BotReplyError("Reply rate limited");
+				throw new Error("Reply rate limited");
 			} else {
-				throw new BotReplyError("Failed to reply");
+				// throw new BotReplyError("Failed to reply");
+				throw new Error("Failed to reply");
 			}
 		}
 
@@ -255,30 +257,34 @@ export class RedditBot implements IBot {
 		}
 
 		if (!result) {
-			throw new BotReplyError("Failed to reply", true);
+			// throw new BotReplyError("Failed to reply", true);
+			throw new Error("Failed to reply");
 		}
 
-		return result;
+		const remoteId = extractIdFromThing(result.id);
+
+		return {
+			reply_remote_id: remoteId,
+			reply_remote_url: `https://www.reddit.com/r/${lead.channel}/comments/${extractIdFromThing(result.link)}/comment/${remoteId}`,
+		};
 	}
 
-	public async deleteComment({
-		commentId,
-		subredditName,
-	}: {
-		commentId: string;
-		subredditName: string;
-	}) {
+	public async deleteReply(lead: Lead) {
 		if (!this.isAuthenticated()) {
 			throw new Error("Not authenticated");
 		}
 
-		const thingId = createThing("comment", commentId);
+		if (!lead.reply_remote_id || !lead.channel) {
+			throw new Error("Lead has no reply remote id or channel");
+		}
+
+		const thingId = createThing("comment", lead.reply_remote_id);
 
 		const response = await this.client.post(
 			`${oldRedditBase}/del`,
 			new URLSearchParams({
 				id: thingId,
-				r: subredditName,
+				r: lead.channel,
 				uh: this.modhash!,
 				executed: "deleted",
 				renderstyle: "html",
@@ -289,8 +295,6 @@ export class RedditBot implements IBot {
 					"accept-language": "en-US,en;q=0.5",
 					"cache-control": "no-cache",
 					"content-type": "application/x-www-form-urlencoded; charset=UTF-8",
-					// "cookie":
-					// 	"csv=2; edgebucket=jePKTP09eoJfaGVVRx; reddit_session=97401946053696%2C2024-04-20T14%3A22%3A28%2Cfa454aa566a98713483443af40c9764b40596348; loid=000000000yixu3u4ao.2.1713394883176.Z0FBQUFBQm1JOC1sZ2hFdDZtSWpORTdscC1HQzlVQTdvYUhSMU1oNXFKN0RJNXo1WWVYc3U0ZzJQYUgyQ0Z2eUdyMGswMHZVU1JqRnlwQ3dqMU9PNHBmRUV4akxIR3NmLWdCdTVocjEzUTZSR1dIUjBmMmRMaXpsMGNyNnNvM0hRanhuRGdFYXlQYm8; pc=lx; Less-Tear-8895_recentclicks2=t3_1blgh0s%2C; session_tracker=mbkkmpigrmbeeielkd.0.1713622989010.Z0FBQUFBQm1JOF9OTm1fb3k3S2dBbTNNYU9abVpvSlFVcXd2c1p1Y2ZRdzFYQ2tTYUtPZU5jd0xEQzlNX1BTRExubFVlRExLZndHS2JqSmE4UmxrMzZ1WnRWeGZuT3g1SHNxN2YxR0VHYVhtNFF3NGxIS1VaVlNwU1ctTDJxQ29NT0dZUWthV0RWV1g",
 					"origin": "https://old.reddit.com",
 					"pragma": "no-cache",
 					"priority": "u=1, i",
@@ -308,9 +312,7 @@ export class RedditBot implements IBot {
 		);
 
 		if (response.data.success === false) {
-			throw new Error(`Failed to delete comment ${commentId}`);
+			throw new Error(`Failed to delete reply`);
 		}
-
-		return response;
 	}
 }

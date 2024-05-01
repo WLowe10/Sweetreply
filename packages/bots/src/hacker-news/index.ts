@@ -2,7 +2,7 @@ import axios, { Axios } from "axios";
 import parse from "node-html-parser";
 import { wrapper } from "axios-cookiejar-support";
 import { CookieJar } from "tough-cookie";
-import { CHROME_USER_AGENT } from "../../lib/constants";
+import { UserAgents } from "../constants";
 
 const hackerNewsAPIBaseUrl = new URL("https://news.ycombinator.com");
 
@@ -21,7 +21,7 @@ export class HackerNewsBot {
 			axios.create({
 				jar: this.cookieJar,
 				headers: {
-					"User-Agent": CHROME_USER_AGENT,
+					"User-Agent": UserAgents.chrome,
 				},
 			})
 		);

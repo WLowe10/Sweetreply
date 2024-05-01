@@ -17,6 +17,7 @@ export const replyCompletion = async ({
 	const prompt = replyPrompt({ project, lead, characterLimit: replyCharacterLimit });
 
 	const completion = await openAI.chat.completions.create({
+		// model: "gpt-4-turbo", // replies seem to be better
 		model: "gpt-3.5-turbo",
 		temperature: 1,
 		max_tokens: maxTokens,

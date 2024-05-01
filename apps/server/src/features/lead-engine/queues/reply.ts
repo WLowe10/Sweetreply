@@ -4,9 +4,9 @@ import { prisma } from "@lib/db";
 import { env } from "@env";
 import { sleep } from "@sweetreply/shared/lib/utils";
 import { botsService } from "@features/bots/service";
-import { createBotHandler } from "@features/bots/utils/create-bot-handler";
 import { ReplyStatus } from "@sweetreply/shared/features/leads/constants";
 import { ReplyResultData } from "@features/bots/types";
+import { createBot } from "@sweetreply/bots";
 
 export type ReplyQueueJobData = {
 	lead_id: string;
@@ -95,9 +95,11 @@ replyQueue.process(async (job) => {
 		throw new Error(`Lead ${jobData.lead_id} could not find an account to reply with`);
 	}
 
-	const handler = createBotHandler({ bot: botAccount, lead });
+	const bot = createBot(botAccount);
 
-	if (!handler) {
+	if (!bot) {
+		// ! a platform's lead should never try to reply if it isn't supported
+
 		await prisma.lead.update({
 			where: {
 				id: lead.id,
@@ -118,11 +120,11 @@ replyQueue.process(async (job) => {
 		// generate random delay between 5000 and 10000 ms after logging in
 		const loginDelay = Math.floor(Math.random() * (10000 - 5000 + 1)) + 5000;
 
-		await handler.login();
+		await bot.login();
 
 		await sleep(loginDelay);
 
-		replyResult = await handler.reply();
+		replyResult = await bot.reply(lead);
 	} catch (err: any) {
 		// if (err instanceof BotError) {
 		// 	if (err instanceof BotReplyError) {

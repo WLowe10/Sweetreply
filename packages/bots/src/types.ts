@@ -1,3 +1,5 @@
+import type { Lead } from "@sweetreply/prisma";
+
 export type ProxyType = {
 	host: string;
 	port: number;
@@ -5,21 +7,13 @@ export type ProxyType = {
 	password: string;
 };
 
-export type GetLeadsInput<T = any> = {
-	keywords: string[];
-	negativeKeywords?: string[];
-	meta?: T;
+export type ReplyResultData = {
+	reply_remote_id: string;
+	reply_remote_url: string | null;
 };
-
-export type ReplyInput<T = any> = {
-	lead: T;
-};
-
-export interface IEngine {
-	getLeads: (input: GetLeadsInput) => any[] | Promise<any[]>;
-	reply: (input: ReplyInput) => void;
-}
 
 export interface IBot {
-	login: () => Promise<void>;
+	login(): Promise<void>;
+	reply(lead: Lead): Promise<ReplyResultData>;
+	deleteReply(lead: Lead): Promise<void>;
 }
