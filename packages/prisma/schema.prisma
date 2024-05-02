@@ -90,9 +90,11 @@ model Bot {
 }
 
 model BotError {
-    id      String   @id @default(uuid())
-    bot_id  String
-    message String
+    id     String @id @default(uuid())
+    bot_id String
+    code   String @default("unknown")
+
+    message String?
     date    DateTime @default(now()) @db.Timestamptz()
 
     bot Bot @relation(fields: [bot_id], references: [id], onDelete: Cascade)

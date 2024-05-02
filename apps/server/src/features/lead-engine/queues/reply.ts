@@ -15,7 +15,7 @@ export type ReplyQueueJobData = {
 
 const replyQueue = new Queue<ReplyQueueJobData>("reply", {
 	redis: env.REDIS_URL,
-	// reconsider the rate limit
+	// ? this may not be the best rate limit
 	limiter: {
 		max: 1,
 		duration: 1000,
@@ -129,15 +129,6 @@ replyQueue.process(async (job) => {
 			throw err;
 		}
 
-		logger.error(
-			{
-				bot_id: botAccount.id,
-				lead_id: lead.id,
-				message: err.message,
-			},
-			"Bot error"
-		);
-
 		// this is not treated as a failure, it cancels the job and marks the lead as locked
 		if (err.code === "REPLY_LOCKED") {
 			await prisma.lead.update({
@@ -155,30 +146,24 @@ replyQueue.process(async (job) => {
 			return;
 		}
 
-		if (err.code === "INVALID_CREDENTIALS") {
-			await prisma.bot.update({
-				where: {
-					id: botAccount.id,
-				},
-				data: {
-					active: false,
-					status: BotStatus.INVALID_CREDENTIALS,
-				},
-			});
-		} else if (err.code === "BANNED") {
-			await prisma.bot.update({
-				where: {
-					id: botAccount.id,
-				},
-				data: {
-					active: false,
-					status: BotStatus.BANNED,
-				},
-			});
-		}
+		logger.error(
+			{
+				bot_id: botAccount.id,
+				lead_id: lead.id,
+				message: err.message,
+			},
+			"Bot error"
+		);
 
-		// 3 bot errors in 24 hours will make the bot inactive
-		await botsService.appendError(botAccount.id, err.message);
+		const errIsFatal = err.code === "BANNED" || err.code === "INVALID_CREDENTIALS";
+
+		if (errIsFatal) {
+			console.log("fatal error");
+
+			await botsService.appendError(botAccount.id, err, 1);
+		} else {
+			await botsService.appendError(botAccount.id, err, 3);
+		}
 
 		throw err;
 	}
@@ -237,6 +222,8 @@ replyQueue.on("active", async (job) => {
 
 replyQueue.on("completed", async (job) => {
 	const jobData = job.data;
+
+	job.returnvalue;
 
 	logger.info(
 		{

@@ -35,7 +35,7 @@ export const replyPrompt = ({ project, lead, characterLimit }: ReplyPromptData) 
 		system: `You are a friendly and helpful ${userTypeText}
 Given a ${platformText} post and information about a product, provide a reply to the post that takes the following into account:
 - Match the tone of the post
-- Provide a formal reply
+- Provide a formal reply without emojis
 - You have used the product and therefore can give a worthy shout out to it. You have no affiliations with the product.
 - Make sure to mention the product in some capacity, feel free to include a personal anecdote.
 - Prioritize a genuine interaction and attempt to fulfill what the post requests (if they ask questions, offer valuable advice)

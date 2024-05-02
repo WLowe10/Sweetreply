@@ -2,6 +2,7 @@ import { prisma } from "@lib/db";
 import { RedditBot } from "@sweetreply/bots";
 import { subDays } from "date-fns";
 import { BotStatus } from "./constants";
+import { BotError } from "@sweetreply/bots";
 
 export class BotsService {
 	public getBot(id: string) {
@@ -39,17 +40,19 @@ export class BotsService {
 		return updatedBot;
 	}
 
-	public async appendError(botId: string, message: string) {
+	public async appendError(botId: string, err: BotError, limit?: number) {
 		const newError = await prisma.botError.create({
 			data: {
 				bot_id: botId,
-				message: message,
+				code: err.code,
+				message: err.message,
 			},
 		});
 
 		const errorCountLast24Hours = await prisma.botError.count({
 			where: {
 				bot_id: botId,
+				code: err.code,
 				date: {
 					gte: subDays(new Date(), 1),
 				},
@@ -57,14 +60,14 @@ export class BotsService {
 		});
 
 		// if there are more than 3 errors in the last 24 hours, the bot will become inactive, requiring manual verification
-		if (errorCountLast24Hours > 3) {
+		if (limit && errorCountLast24Hours >= limit) {
 			await prisma.bot.update({
 				where: {
 					id: botId,
 				},
 				data: {
 					active: false,
-					status: BotStatus.RESTRICTED,
+					status: err.code,
 				},
 			});
 		}

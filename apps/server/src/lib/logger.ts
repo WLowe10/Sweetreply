@@ -1,12 +1,15 @@
 import pino from "pino";
+import { isDev } from "./utils";
 
-// set a different transport during development
-
-export const logger = pino({
-    transport: {
-        target: "pino-pretty",
-        options: {
-            colorize: true,
-        },
-    },
-});
+export const logger = pino(
+	isDev()
+		? {
+				transport: {
+					target: "pino-pretty",
+					options: {
+						colorize: true,
+					},
+				},
+			}
+		: undefined
+);
