@@ -1,9 +1,9 @@
 import Queue from "bull";
+import * as botsService from "@features/bots/service";
 import { logger } from "@lib/logger";
 import { prisma } from "@lib/db";
 import { env } from "@env";
 import { sleepRange } from "@sweetreply/shared/lib/utils";
-import { botsService } from "@features/bots/service";
 import { ReplyStatus } from "@sweetreply/shared/features/leads/constants";
 import { ReplyResultData } from "@features/bots/types";
 import { BotError, createBot } from "@sweetreply/bots";
@@ -90,7 +90,7 @@ replyQueue.process(async (job) => {
 	}
 
 	// the bot service cycles through each bot
-	const botAccount = await botsService.getTop(lead.platform);
+	const botAccount = await botsService.dequeueBot(lead.platform);
 
 	if (!botAccount) {
 		throw new Error(`Lead ${jobData.lead_id} could not find an account to reply with`);
@@ -146,24 +146,7 @@ replyQueue.process(async (job) => {
 			return;
 		}
 
-		logger.error(
-			{
-				bot_id: botAccount.id,
-				lead_id: lead.id,
-				message: err.message,
-			},
-			"Bot error"
-		);
-
-		const errIsFatal = err.code === "BANNED" || err.code === "INVALID_CREDENTIALS";
-
-		if (errIsFatal) {
-			console.log("fatal error");
-
-			await botsService.appendError(botAccount.id, err, 1);
-		} else {
-			await botsService.appendError(botAccount.id, err, 3);
-		}
+		await botsService.handleBotError(botAccount.id, err);
 
 		throw err;
 	}

@@ -1,11 +1,11 @@
 import { prisma } from "@lib/db";
 import { logger } from "@lib/logger";
 import { stripe } from "@lib/client/stripe";
-import { authService } from "@features/auth/service";
-import { emailService } from "@features/email/service";
-import { projectsService } from "@features/projects/service";
-import { botsService } from "@features/bots/service";
-import { leadEngineService } from "@features/lead-engine/service";
+import * as authService from "@features/auth/service";
+import * as emailService from "@features/email/service";
+import * as projectsService from "@features/projects/service";
+import * as leadEngineService from "@features/lead-engine/service";
+import * as botsService from "@features/bots/service";
 import type { CreateExpressContextOptions } from "@trpc/server/adapters/express";
 import type { Request, Response } from "express";
 
@@ -24,8 +24,8 @@ function createInnerContext(opts: CreateContextOptions) {
 		authService,
 		emailService,
 		projectsService,
-		botsService,
 		leadEngineService,
+		botsService,
 		user: null,
 		session: null,
 	};

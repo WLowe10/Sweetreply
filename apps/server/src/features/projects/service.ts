@@ -1,37 +1,18 @@
 import { prisma } from "@lib/db";
-import type { Project } from "@sweetreply/prisma";
 
-export class ProjectsService {
-	public getProject(projectId: string) {
-		return prisma.project.findUnique({
-			where: {
-				id: projectId,
-			},
-		});
-	}
+export async function userOwnsProject({
+	projectID,
+	userID,
+}: {
+	projectID: string;
+	userID: string;
+}) {
+	const project = await prisma.project.findFirst({
+		where: {
+			id: projectID,
+			user_id: userID,
+		},
+	});
 
-	public async userOwnsProject({
-		userId,
-		projectId,
-	}: {
-		userId: string;
-		projectId: string;
-	}): Promise<Project | null> {
-		// const user = await authService.getUser(userId);
-
-		// if (!user) {
-		// 	return null;
-		// }
-
-		const project = await prisma.project.findFirst({
-			where: {
-				id: projectId,
-				user_id: userId,
-			},
-		});
-
-		return project;
-	}
+	return project;
 }
-
-export const projectsService = new ProjectsService();

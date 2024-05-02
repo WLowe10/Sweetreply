@@ -1,5 +1,5 @@
 import { CronJob } from "cron";
-import { authService } from "../service";
+import { deleteExpiredSessions } from "../service";
 import { logger } from "@lib/logger";
 
 /**
@@ -11,8 +11,8 @@ import { logger } from "@lib/logger";
 export const cleanUpJob = CronJob.from({
 	cronTime: "0 0 * * *",
 	onTick: async () => {
-		logger.info("Running clean up job");
+		logger.info("Running auth clean up job");
 
-		await authService.deleteExpiredSessions();
+		await deleteExpiredSessions();
 	},
 });

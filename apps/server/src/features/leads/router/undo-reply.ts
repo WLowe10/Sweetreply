@@ -1,7 +1,8 @@
 import { z } from "zod";
+import { handleBotError } from "@features/bots/service";
 import { failedToDeleteReply, failedToUndoReply, leadHasNoReply, leadNotFound } from "../errors";
 import { sleep, sleepRange } from "@sweetreply/shared/lib/utils";
-import { createBot } from "@sweetreply/bots";
+import { BotError, createBot } from "@sweetreply/bots";
 import { ReplyStatus } from "@sweetreply/shared/features/leads/constants";
 import { canUndoReply } from "@sweetreply/shared/features/leads/utils";
 import { subscribedProcedure } from "@features/billing/procedures";
@@ -48,7 +49,7 @@ export const undoReplyHandler = subscribedProcedure
 			},
 		});
 
-		if (!botAccount) {
+		if (!botAccount || !botAccount.active) {
 			throw failedToUndoReply();
 		}
 
@@ -64,7 +65,11 @@ export const undoReplyHandler = subscribedProcedure
 			await sleepRange(5000, 10000);
 
 			await bot.deleteReply(lead);
-		} catch {
+		} catch (err) {
+			if (err instanceof BotError) {
+				await handleBotError(botAccount.id, err);
+			}
+
 			throw failedToDeleteReply();
 		}
 
