@@ -1,9 +1,10 @@
 import { authenticatedProcedure } from "@features/auth/procedures";
 import { replyQueue } from "@features/lead-engine/queues/reply";
-import { z } from "zod";
 import { failedToCancelReply, leadNotFound } from "../errors";
 import { ReplyStatus } from "@sweetreply/shared/features/leads/constants";
 import { canCancelReply } from "@sweetreply/shared/features/leads/utils";
+import { z } from "zod";
+import { singleLeadQuerySelect } from "../constants";
 
 const cancelReplyInputSchema = z.object({
 	lead_id: z.string(),
@@ -12,24 +13,12 @@ const cancelReplyInputSchema = z.object({
 export const cancelReplyHandler = authenticatedProcedure
 	.input(cancelReplyInputSchema)
 	.mutation(async ({ input, ctx }) => {
-		// consider checking if the time is past replied_at
-
-		const lead = await ctx.prisma.lead.findUnique({
-			where: {
-				id: input.lead_id,
-			},
+		const lead = await ctx.leadsService.userOwnsLead({
+			userID: ctx.user.id,
+			leadID: input.lead_id,
 		});
 
 		if (!lead) {
-			throw leadNotFound();
-		}
-
-		const userOwnsProject = await ctx.projectsService.userOwnsProject({
-			userId: ctx.user.id,
-			projectId: lead.project_id,
-		});
-
-		if (!userOwnsProject) {
 			throw leadNotFound();
 		}
 
@@ -64,35 +53,6 @@ export const cancelReplyHandler = authenticatedProcedure
 				reply_scheduled_at: null,
 				reply_status: ReplyStatus.DRAFT,
 			},
-			select: {
-				id: true,
-				locked: true,
-				platform: true,
-				type: true,
-				remote_channel_id: true,
-				username: true,
-				content: true,
-				title: true,
-				created_at: true,
-				date: true,
-				name: true,
-				project_id: true,
-				remote_user_id: true,
-				remote_id: true,
-				remote_url: true,
-				channel: true,
-				reply_status: true,
-				replied_at: true,
-				reply_text: true,
-				reply_remote_url: true,
-				reply_remote_id: true,
-				reply_scheduled_at: true,
-				replies_generated: true,
-				reply_bot: {
-					select: {
-						username: true,
-					},
-				},
-			},
+			select: singleLeadQuerySelect,
 		});
 	});

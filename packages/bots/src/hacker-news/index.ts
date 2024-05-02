@@ -2,7 +2,7 @@ import axios, { Axios } from "axios";
 import parse from "node-html-parser";
 import { wrapper } from "axios-cookiejar-support";
 import { CookieJar } from "tough-cookie";
-import { UserAgents } from "../constants";
+import { UserAgents } from "@sweetreply/shared/constants";
 
 const hackerNewsAPIBaseUrl = new URL("https://news.ycombinator.com");
 

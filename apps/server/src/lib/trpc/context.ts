@@ -4,6 +4,7 @@ import { stripe } from "@lib/client/stripe";
 import * as authService from "@features/auth/service";
 import * as emailService from "@features/email/service";
 import * as projectsService from "@features/projects/service";
+import * as leadsService from "@features/leads/service";
 import * as leadEngineService from "@features/lead-engine/service";
 import * as botsService from "@features/bots/service";
 import type { CreateExpressContextOptions } from "@trpc/server/adapters/express";
@@ -24,6 +25,7 @@ function createInnerContext(opts: CreateContextOptions) {
 		authService,
 		emailService,
 		projectsService,
+		leadsService,
 		leadEngineService,
 		botsService,
 		user: null,

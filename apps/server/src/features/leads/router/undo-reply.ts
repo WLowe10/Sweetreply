@@ -6,6 +6,7 @@ import { BotError, createBot } from "@sweetreply/bots";
 import { ReplyStatus } from "@sweetreply/shared/features/leads/constants";
 import { canUndoReply } from "@sweetreply/shared/features/leads/utils";
 import { subscribedProcedure } from "@features/billing/procedures";
+import { singleLeadQuerySelect } from "../constants";
 
 const undoReplyInputSchema = z.object({
 	lead_id: z.string(),
@@ -14,24 +15,12 @@ const undoReplyInputSchema = z.object({
 export const undoReplyHandler = subscribedProcedure
 	.input(undoReplyInputSchema)
 	.mutation(async ({ input, ctx }) => {
-		if (!ctx.user.plan) {
-		}
-		const lead = await ctx.prisma.lead.findUnique({
-			where: {
-				id: input.lead_id,
-			},
+		const lead = await ctx.leadsService.userOwnsLead({
+			userID: ctx.user.id,
+			leadID: input.lead_id,
 		});
 
 		if (!lead) {
-			throw leadNotFound();
-		}
-
-		const userOwnsProject = await ctx.projectsService.userOwnsProject({
-			userId: ctx.user.id,
-			projectId: lead.project_id,
-		});
-
-		if (!userOwnsProject) {
 			throw leadNotFound();
 		}
 
@@ -84,35 +73,6 @@ export const undoReplyHandler = subscribedProcedure
 				reply_scheduled_at: null,
 				reply_status: ReplyStatus.DRAFT,
 			},
-			select: {
-				id: true,
-				platform: true,
-				type: true,
-				locked: true,
-				remote_channel_id: true,
-				username: true,
-				content: true,
-				title: true,
-				created_at: true,
-				date: true,
-				name: true,
-				project_id: true,
-				remote_user_id: true,
-				remote_id: true,
-				remote_url: true,
-				channel: true,
-				reply_status: true,
-				replied_at: true,
-				reply_text: true,
-				reply_remote_id: true,
-				reply_scheduled_at: true,
-				replies_generated: true,
-				reply_remote_url: true,
-				reply_bot: {
-					select: {
-						username: true,
-					},
-				},
-			},
+			select: singleLeadQuerySelect,
 		});
 	});

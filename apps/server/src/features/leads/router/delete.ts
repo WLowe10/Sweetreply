@@ -11,22 +11,12 @@ const deleteLeadInputSchema = z.object({
 export const deleteLeadHandler = authenticatedProcedure
 	.input(deleteLeadInputSchema)
 	.mutation(async ({ input, ctx }) => {
-		const lead = await ctx.prisma.lead.findUnique({
-			where: {
-				id: input.lead_id,
-			},
+		const lead = await ctx.leadsService.userOwnsLead({
+			userID: ctx.user.id,
+			leadID: input.lead_id,
 		});
 
 		if (!lead) {
-			throw leadNotFound();
-		}
-
-		const userOwnsProject = await ctx.projectsService.userOwnsProject({
-			userId: ctx.user.id,
-			projectId: lead.project_id,
-		});
-
-		if (!userOwnsProject) {
 			throw leadNotFound();
 		}
 

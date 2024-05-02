@@ -28,8 +28,8 @@ export const getManyLeadsHandler = authenticatedProcedure
 	.input(getManyLeadsInputSchema)
 	.query(async ({ input, ctx }) => {
 		const userOwnsProject = await ctx.projectsService.userOwnsProject({
-			userId: ctx.user.id,
-			projectId: input.projectId,
+			userID: ctx.user.id,
+			projectID: input.projectId,
 		});
 
 		if (!userOwnsProject) {

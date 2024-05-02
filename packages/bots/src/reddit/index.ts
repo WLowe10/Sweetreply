@@ -1,7 +1,7 @@
 import axios, { type Axios } from "axios";
 import { wrapper } from "axios-cookiejar-support";
 import { CookieJar } from "tough-cookie";
-import { UserAgents } from "../constants";
+import { UserAgents } from "@sweetreply/shared/constants";
 import { BotError } from "../errors";
 import { proxyIsDefined } from "../utils";
 import { createThing, extractIdFromThing } from "@sweetreply/shared/features/reddit/utils";

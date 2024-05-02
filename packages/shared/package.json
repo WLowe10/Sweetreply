@@ -4,6 +4,8 @@
 	"private": true,
 	"files": [
 		"config",
+		"constants",
+		"features",
 		"schemas",
 		"lib"
 	],

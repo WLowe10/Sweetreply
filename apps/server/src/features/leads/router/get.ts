@@ -1,6 +1,7 @@
 import { authenticatedProcedure } from "@features/auth/procedures";
 import { z } from "zod";
 import { leadNotFound } from "../errors";
+import { singleLeadQuerySelect } from "../constants";
 
 export const getLeadInputSchema = z.object({
 	id: z.string().uuid(),
@@ -9,54 +10,19 @@ export const getLeadInputSchema = z.object({
 export const getLeadHandler = authenticatedProcedure
 	.input(getLeadInputSchema)
 	.query(async ({ input, ctx }) => {
-		const lead = await ctx.prisma.lead.findFirst({
-			where: {
-				id: input.id,
-			},
-			select: {
-				id: true,
-				platform: true,
-				type: true,
-				locked: true,
-				remote_channel_id: true,
-				username: true,
-				content: true,
-				title: true,
-				created_at: true,
-				date: true,
-				name: true,
-				project_id: true,
-				remote_user_id: true,
-				remote_id: true,
-				remote_url: true,
-				channel: true,
-				reply_status: true,
-				replied_at: true,
-				reply_text: true,
-				reply_remote_id: true,
-				reply_scheduled_at: true,
-				replies_generated: true,
-				reply_remote_url: true,
-				reply_bot: {
-					select: {
-						username: true,
-					},
-				},
-			},
+		const lead = await ctx.leadsService.userOwnsLead({
+			userID: ctx.user.id,
+			leadID: input.id,
 		});
 
 		if (!lead) {
 			throw leadNotFound();
 		}
 
-		const userOwnsProject = await ctx.projectsService.userOwnsProject({
-			userId: ctx.user.id,
-			projectId: lead.project_id,
+		return ctx.prisma.lead.findFirst({
+			where: {
+				id: input.id,
+			},
+			select: singleLeadQuerySelect,
 		});
-
-		if (!userOwnsProject) {
-			throw leadNotFound();
-		}
-
-		return lead;
 	});

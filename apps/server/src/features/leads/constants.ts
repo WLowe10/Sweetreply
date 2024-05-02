@@ -1,0 +1,27 @@
+import { Prisma } from "@sweetreply/prisma";
+
+export const singleLeadQuerySelect: Prisma.LeadSelect = {
+	id: true,
+	platform: true,
+	type: true,
+	locked: true,
+	remote_channel_id: true,
+	username: true,
+	content: true,
+	title: true,
+	created_at: true,
+	date: true,
+	name: true,
+	project_id: true,
+	remote_user_id: true,
+	remote_id: true,
+	remote_url: true,
+	channel: true,
+	reply_status: true,
+	replied_at: true,
+	reply_text: true,
+	reply_remote_id: true,
+	reply_scheduled_at: true,
+	replies_generated: true,
+	reply_remote_url: true,
+} as const;

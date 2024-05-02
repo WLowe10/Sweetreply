@@ -1,5 +1,5 @@
 import axios, { type Axios } from "axios";
-import { userAgents } from "@lib/constants";
+import { UserAgents } from "@sweetreply/shared/constants";
 import { generateDescendingRedditIds, generateBatchedRedditInfoUrls } from "../../utils/reddit";
 import { RedditThing } from "@sweetreply/shared/features/reddit/constants";
 import { extractIdFromThing } from "@sweetreply/shared/features/reddit/utils";
@@ -12,7 +12,7 @@ export class RedditCommentSlurper {
 	constructor() {
 		this.client = axios.create({
 			headers: {
-				"User-Agent": userAgents.chrome,
+				"User-Agent": UserAgents.chrome,
 			},
 		});
 	}

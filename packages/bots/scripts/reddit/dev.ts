@@ -1,6 +1,6 @@
 import { RedditBot } from "../../src/reddit";
 import { redditInfo } from "../../secrets";
-import { sleep, sleepRange } from "@sweetreply/shared/lib/utils";
+import { sleepRange } from "@sweetreply/shared/lib/utils";
 
 async function test() {
 	const bot = new RedditBot({
