@@ -17,7 +17,7 @@ import { stripe } from "@lib/client/stripe";
 import { TRPCError } from "@trpc/server";
 import { isDev } from "@lib/utils";
 import { logger } from "@lib/logger";
-import { sendDiscordNotification } from "@lib/discord-notifications";
+import { sendDiscordNotification } from "@lib/discord-notification";
 import {
 	addMilliseconds,
 	subMilliseconds,

@@ -1,12 +1,12 @@
 import { Controller, Post, Req, Res } from "routing-controllers";
 import { stripe } from "@lib/client/stripe";
-import { env } from "@env";
 import { prisma } from "@lib/db";
+import { logger } from "@lib/logger";
+import { sendDiscordNotification } from "@lib/discord-notification";
+import { env } from "@env";
 import { PriceBillingPlan } from "./constants";
 import { BillingPlanReplyCredits } from "@sweetreply/shared/features/billing/constants";
-import { logger } from "@lib/logger";
-import { sendDiscordNotification } from "@lib/discord-notifications";
-import { leadEngineService } from "@features/lead-engine/service";
+import * as leadEngineService from "@features/lead-engine/service";
 import type { Request, Response } from "express";
 import type Stripe from "stripe";
 
@@ -14,8 +14,6 @@ async function handleInvoicePaid(event: Stripe.Event) {
 	const invoice = event.data.object as Stripe.Invoice;
 	const subscriptionId = invoice.subscription;
 	const customerId = invoice.customer;
-
-	console.log(invoice.total);
 
 	if (typeof subscriptionId !== "string" || typeof customerId !== "string") {
 		return;
