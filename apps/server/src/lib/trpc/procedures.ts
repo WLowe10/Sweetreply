@@ -4,7 +4,7 @@ import { TRPCError } from "@trpc/server";
 
 const rateLimiter = new RateLimiterMemory({
 	points: 1,
-	duration: 60,
+	duration: 10,
 });
 
 // base procedure
@@ -16,7 +16,7 @@ export const ratelimitedPublicProcedure = publicProcedure.use(async ({ ctx, next
 	if (!ip) {
 		throw new TRPCError({
 			code: "TOO_MANY_REQUESTS",
-			message: "Rate limit exceeded. Please try again later.",
+			message: "Rate limit exceeded. Please try again in 10 seconds.",
 		});
 	}
 
@@ -27,7 +27,7 @@ export const ratelimitedPublicProcedure = publicProcedure.use(async ({ ctx, next
 	} catch {
 		throw new TRPCError({
 			code: "TOO_MANY_REQUESTS",
-			message: "Rate limit exceeded. Please try again later.",
+			message: "Rate limit exceeded. Please try again in 10 seconds.",
 		});
 	}
 });

@@ -16,6 +16,8 @@ import { env } from "@env";
 import { stripe } from "@lib/client/stripe";
 import { TRPCError } from "@trpc/server";
 import { isDev } from "@lib/utils";
+import { logger } from "@lib/logger";
+import { sendDiscordNotification } from "@lib/discord-notifications";
 import {
 	addMilliseconds,
 	subMilliseconds,
@@ -28,9 +30,6 @@ import {
 import type { SignUpInputType, SignInInputType } from "@sweetreply/shared/features/auth/schemas";
 import type { Session, User } from "@sweetreply/prisma";
 import type { Request, Response } from "express";
-import { logger } from "@lib/logger";
-import axios from "axios";
-import { sendDiscordNotification } from "@lib/discord-notifications";
 
 type EmailVerificationTokenPayloadType = { user_id: string };
 
@@ -143,7 +142,7 @@ export class AuthService {
 			});
 
 			await sendDiscordNotification({
-				title: "New sign-up",
+				title: "New sign up",
 				description: "A new user signed up!",
 				fields: [
 					{
@@ -563,7 +562,7 @@ export class AuthService {
 		res.cookie(authConstants.SESSION_ID_TOKEN, session.id, {
 			maxAge: authConstants.SESSION_EXPIRATION,
 			signed: true,
-			// todo domain
+			domain: "." + env.DOMAIN,
 			httpOnly: true,
 			secure: !isDev(),
 			expires: session.expires_at,

@@ -34,14 +34,16 @@ export const replyPrompt = ({ project, lead, characterLimit }: ReplyPromptData) 
 	return {
 		system: `You are a friendly and helpful ${userTypeText}
 Given a ${platformText} post and information about a product, provide a reply to the post that takes the following into account:
+- Match the tone of the post
+- Provide a formal reply
 - You have used the product and therefore can give a worthy shout out to it. You have no affiliations with the product.
 - Make sure to mention the product in some capacity, feel free to include a personal anecdote.
-- Prioritize a genuine interaction and attempt to fulfill what the post requests (if they ask questions, offer actionable advice)
+- Prioritize a genuine interaction and attempt to fulfill what the post requests (if they ask questions, offer valuable advice)
 - This reply will be the only interaction, there will not be any further communication.
 - The reply should sound like the average helpul ${userTypeText} response.
 
 You will simply output a text response that represents the reply. ${typeof characterLimit === "number" ? `The reply must not be longer than ${characterLimit} characters.` : ""} Only reference the product by its ${mentionMode}.`,
-		user: `${platformText} post: 
+		user: `${project.reply_custom_instructions ? `${project.reply_custom_instructions}\n\n` : ""}${platformText} post: 
 \`\`\`
 ${lead.title ? `${lead.title}. ` : ""}${lead.content}
 \`\`\`
