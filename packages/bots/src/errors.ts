@@ -1,23 +1,26 @@
+export type BotErrorCode =
+	| "INVALID_CREDENTIALS"
+	| "RATE_LIMITED"
+	| "REPLY_LOCKED"
+	| "AUTHENTICATED_FAILED"
+	| "UNKNOWN"
+	| "BANNED";
+
+export const BotErrorMessage: Record<BotErrorCode, string> = {
+	INVALID_CREDENTIALS: "Bot has invalid credentials",
+	AUTHENTICATED_FAILED: "Failed to authenticate",
+	RATE_LIMITED: "Bot has been ratelimited",
+	REPLY_LOCKED: "Lead has been locked",
+	UNKNOWN: "An unknown error occurred",
+	BANNED: "Bot has been banned",
+} as const;
+
 export class BotError extends Error {
-	constructor(message?: string) {
-		super(message);
-	}
-}
+	public code: BotErrorCode;
 
-export class LockLead extends BotError {
-	constructor(message?: string) {
-		super(message);
-	}
-}
+	constructor(code: BotErrorCode, message?: string) {
+		super(message ?? BotErrorMessage[code]);
 
-export class FatalBotError extends BotError {
-	constructor(message?: string) {
-		super(message);
-	}
-}
-
-export class Banned extends FatalBotError {
-	constructor(message?: string) {
-		super(message);
+		this.code = code;
 	}
 }

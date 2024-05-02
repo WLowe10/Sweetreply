@@ -80,8 +80,13 @@ const executeSlurper = async (
 							},
 						});
 
-						addSendLeadWebhookJob(newLead.id);
-						addProcessLeadJob(newLead.id);
+						if (project.webhook_url) {
+							addSendLeadWebhookJob(newLead.id);
+						}
+
+						if (project.reddit_replies_enabled) {
+							addProcessLeadJob(newLead.id);
+						}
 					}
 				})
 			)
@@ -112,29 +117,40 @@ export const redditLeadGenJob = CronJob.from({
 				},
 			});
 
+			// 5 is the min length for a query, even though we santize user queries, we will be safe here too
+			const filteredProjects = projects.filter((project) => project.query!.trim().length > 5);
+
 			const slurpPosts = async () => {
 				try {
 					const timeStart = Date.now();
-					const leads = await executeSlurper(postSlurper, projects);
+					const leads = await executeSlurper(postSlurper, filteredProjects);
 
 					logger.info(
-						`Slurped ${leads.length} reddit posts in ${Date.now() - timeStart}ms`
+						{
+							amount: leads.length,
+							duration: Date.now() - timeStart,
+						},
+						"Finished slurping reddit posts"
 					);
 				} catch (err) {
-					logger.error(err, "Reddit post slurp failed");
+					logger.error(err, "Failed slurping reddit posts");
 				}
 			};
 
 			const slurpComments = async () => {
 				try {
 					const timeStart = Date.now();
-					const leads = await executeSlurper(commentSlurper, projects);
+					const leads = await executeSlurper(commentSlurper, filteredProjects);
 
 					logger.info(
-						`Slurped ${leads.length} reddit comments in ${Date.now() - timeStart}ms`
+						{
+							amount: leads.length,
+							duration: Date.now() - timeStart,
+						},
+						"Finished slurping reddit comments"
 					);
 				} catch (err) {
-					logger.error(err, "Reddit comment slurp failed");
+					logger.error(err, "Failed slurping reddit comments");
 				}
 			};
 

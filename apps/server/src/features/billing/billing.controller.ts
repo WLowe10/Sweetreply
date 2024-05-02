@@ -6,14 +6,16 @@ import { PriceBillingPlan } from "./constants";
 import { BillingPlanReplyCredits } from "@sweetreply/shared/features/billing/constants";
 import { logger } from "@lib/logger";
 import { sendDiscordNotification } from "@lib/discord-notifications";
+import { leadEngineService } from "@features/lead-engine/service";
 import type { Request, Response } from "express";
 import type Stripe from "stripe";
-import { leadEngineService } from "@features/lead-engine/service";
 
 async function handleInvoicePaid(event: Stripe.Event) {
 	const invoice = event.data.object as Stripe.Invoice;
 	const subscriptionId = invoice.subscription;
 	const customerId = invoice.customer;
+
+	console.log(invoice.total);
 
 	if (typeof subscriptionId !== "string" || typeof customerId !== "string") {
 		return;

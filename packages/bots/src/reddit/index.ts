@@ -2,12 +2,12 @@ import axios, { type Axios } from "axios";
 import { wrapper } from "axios-cookiejar-support";
 import { CookieJar } from "tough-cookie";
 import { UserAgents } from "../constants";
-import { RedditThing, type RedditThingType } from "@sweetreply/shared/features/reddit/constants";
-import type { IBot } from "../types";
-import type { Bot, Lead } from "@sweetreply/prisma";
+import { BotError } from "../errors";
 import { proxyIsDefined } from "../utils";
 import { createThing, extractIdFromThing } from "@sweetreply/shared/features/reddit/utils";
-import { BotError, FatalBotError, LockLead } from "../errors";
+import type { IBot } from "../types";
+import type { RedditThingType } from "@sweetreply/shared/features/reddit/constants";
+import type { Bot, Lead } from "@sweetreply/prisma";
 
 const redditBase = new URL("https://www.reddit.com/api");
 const oldRedditBase = new URL("https://old.reddit.com/api");
@@ -106,11 +106,11 @@ export class RedditBot implements IBot {
 		if (errors.length > 0) {
 			if (errors[0]) {
 				if (errors[0][0] === "INCORRECT_USERNAME_PASSWORD") {
-					throw new FatalBotError("Incorrect username or password");
+					throw new BotError("INVALID_CREDENTIALS");
 				}
 			}
 
-			throw new FatalBotError("Failed to authenticate");
+			throw new BotError("AUTHENTICATED_FAILED");
 		}
 
 		const modhash = data.json.data.modhash;
@@ -234,11 +234,11 @@ export class RedditBot implements IBot {
 			// console.log(jqueryText);
 
 			if (jqueryText.includes(".error.RATELIMIT.field-ratelimit")) {
-				throw new FatalBotError("Rate limited");
+				throw new BotError("RATE_LIMITED");
 			} else if (jqueryText.includes(".error.THREAD_LOCKED.field-parent")) {
-				throw new LockLead();
+				throw new BotError("REPLY_LOCKED");
 			} else {
-				throw new BotError("Failed to reply");
+				throw new Error("Failed to reply");
 			}
 		}
 
@@ -262,8 +262,8 @@ export class RedditBot implements IBot {
 		}
 
 		if (!result) {
-			// failed to reply, lead may be locked
-			throw new LockLead();
+			// failed to reply, we mark the lead as locked
+			throw new BotError("REPLY_LOCKED");
 		}
 
 		const remoteId = extractIdFromThing(result.id);

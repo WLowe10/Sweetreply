@@ -1,4 +1,5 @@
 import type { Project, Lead } from "@sweetreply/prisma";
+import { LeadPlatform } from "@sweetreply/shared/features/leads/constants";
 
 export type ReplyPromptData = {
 	project: Pick<
@@ -10,11 +11,14 @@ export type ReplyPromptData = {
 		| "description"
 		| "reply_custom_instructions"
 	>;
-	lead: Pick<Lead, "title" | "content">;
+	lead: Pick<Lead, "platform" | "title" | "content">;
 	characterLimit?: number;
 };
 
 export const replyPrompt = ({ project, lead, characterLimit }: ReplyPromptData) => {
+	const userTypeText = lead.platform === LeadPlatform.REDDIT ? `redditor` : `social media user`;
+	const platformText = lead.platform === LeadPlatform.REDDIT ? `Reddit` : `social media`;
+
 	const productURL =
 		project.website_url && project.reply_with_domain
 			? new URL(project.website_url).hostname
@@ -28,16 +32,16 @@ export const replyPrompt = ({ project, lead, characterLimit }: ReplyPromptData) 
 				: "name or url";
 
 	return {
-		system: `Given a social media post and information about a product, provide a reply to the post that takes the following into account:
-- You are an unbiased and helpful social media user with no affiliations to the product.
-- You have used the product and therefore can give a worthy shout out to it.
+		system: `You are a friendly and helpful ${userTypeText}
+Given a ${platformText} post and information about a product, provide a reply to the post that takes the following into account:
+- You have used the product and therefore can give a worthy shout out to it. You have no affiliations with the product.
 - Make sure to mention the product in some capacity, feel free to include a personal anecdote.
 - Prioritize a genuine interaction and attempt to fulfill what the post requests (if they ask questions, offer actionable advice)
 - This reply will be the only interaction, there will not be any further communication.
-- Keep your response formal, no emojis.
+- The reply should sound like the average helpul ${userTypeText} response.
 
 You will simply output a text response that represents the reply. ${typeof characterLimit === "number" ? `The reply must not be longer than ${characterLimit} characters.` : ""} Only reference the product by its ${mentionMode}.`,
-		user: `Social media post: 
+		user: `${platformText} post: 
 \`\`\`
 ${lead.title ? `${lead.title}. ` : ""}${lead.content}
 \`\`\`

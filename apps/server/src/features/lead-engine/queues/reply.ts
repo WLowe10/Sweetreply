@@ -6,7 +6,7 @@ import { sleepRange } from "@sweetreply/shared/lib/utils";
 import { botsService } from "@features/bots/service";
 import { ReplyStatus } from "@sweetreply/shared/features/leads/constants";
 import { ReplyResultData } from "@features/bots/types";
-import { Banned, BotError, FatalBotError, LockLead, createBot } from "@sweetreply/bots";
+import { BotError, createBot } from "@sweetreply/bots";
 import { BotStatus } from "@features/bots/constants";
 
 export type ReplyQueueJobData = {
@@ -129,16 +129,17 @@ replyQueue.process(async (job) => {
 			throw err;
 		}
 
-		if (err instanceof LockLead) {
-			logger.error(
-				{
-					bot_id: botAccount.id,
-					lead_id: lead.id,
-					message: err.message,
-				},
-				"Lead has been locked"
-			);
+		logger.error(
+			{
+				bot_id: botAccount.id,
+				lead_id: lead.id,
+				message: err.message,
+			},
+			"Bot error"
+		);
 
+		// this is not treated as a failure, it cancels the job and marks the lead as locked
+		if (err.code === "REPLY_LOCKED") {
 			await prisma.lead.update({
 				where: {
 					id: lead.id,
@@ -154,41 +155,30 @@ replyQueue.process(async (job) => {
 			return;
 		}
 
-		if (err instanceof FatalBotError) {
-			if (err instanceof Banned) {
-				logger.error(
-					{
-						bot_id: botAccount.id,
-						lead_id: lead.id,
-						message: err.message,
-					},
-					"Bot has been banned"
-				);
-
-				// this fatal bot error will instantly make the bot inactive
-				await prisma.bot.update({
-					where: {
-						id: botAccount.id,
-					},
-					data: {
-						active: false,
-						status: BotStatus.BANNED,
-					},
-				});
-			} else {
-				logger.error(
-					{
-						bot_id: botAccount.id,
-						lead_id: lead.id,
-						message: err.message,
-					},
-					"Fatal bot error"
-				);
-
-				// 3 fatal bot errors in 24 hours will make the bot inactive
-				await botsService.appendError(botAccount.id, err.message);
-			}
+		if (err.code === "INVALID_CREDENTIALS") {
+			await prisma.bot.update({
+				where: {
+					id: botAccount.id,
+				},
+				data: {
+					active: false,
+					status: BotStatus.INVALID_CREDENTIALS,
+				},
+			});
+		} else if (err.code === "BANNED") {
+			await prisma.bot.update({
+				where: {
+					id: botAccount.id,
+				},
+				data: {
+					active: false,
+					status: BotStatus.BANNED,
+				},
+			});
 		}
+
+		// 3 bot errors in 24 hours will make the bot inactive
+		await botsService.appendError(botAccount.id, err.message);
 
 		throw err;
 	}
@@ -259,7 +249,13 @@ replyQueue.on("completed", async (job) => {
 replyQueue.on("failed", async (job, err) => {
 	const jobData = job.data;
 
-	logger.error(`Reply job [lead:${jobData.lead_id}] failed with error: ${err.message}`);
+	logger.error(
+		{
+			lead_id: jobData.lead_id,
+			message: err.message,
+		},
+		`Reply job failed`
+	);
 
 	if (job.attemptsMade === job.opts.attempts) {
 		try {

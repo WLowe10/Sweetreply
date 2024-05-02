@@ -1,8 +1,6 @@
 import { prisma } from "@lib/db";
 import type { Project } from "@sweetreply/prisma";
 
-const replyCreditAlertLevel = 10;
-
 export class ProjectsService {
 	public getProject(projectId: string) {
 		return prisma.project.findUnique({
