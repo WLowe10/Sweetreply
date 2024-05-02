@@ -110,7 +110,7 @@ export class RedditBot implements IBot {
 				}
 			}
 
-			throw new BotError("AUTHENTICATED_FAILED");
+			throw new BotError("AUTHENTICATION_FAILED");
 		}
 
 		const modhash = data.json.data.modhash;

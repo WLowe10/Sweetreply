@@ -26,12 +26,12 @@ export const baseProjectSchema = projectModel.extend({
 		})
 		.nullish()
 		.or(z.literal("")),
-	description: z.string().trim().min(10).max(1024),
+	description: z.string().trim().min(10).max(512),
 	query: z
 		.string()
 		.trim()
 		.min(5)
-		.max(512)
+		.max(128)
 		.refine((query) => isValidLiqeString(query), { message: "Invalid query" }),
 
 	reply_mention_mode: z.enum(["name", "name_or_url", "url"]),
@@ -96,15 +96,5 @@ export const updateProjectInputSchema = z.object({
 		.partial(),
 });
 
-export const buyTokensInputSchema = z.object({
-	project_id: baseProjectSchema.shape.id,
-	amount: z
-		.number()
-		.int()
-		.positive()
-		.max(10000, { message: "You can't purchase more than 10000 tokens at a time" }),
-});
-
 export type CreateProjectInputType = z.infer<typeof createProjectInputSchema>;
 export type UpdateProjectInputType = z.infer<typeof updateProjectInputSchema>;
-export type BuyTokensInputType = z.infer<typeof buyTokensInputSchema>;

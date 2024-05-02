@@ -2,13 +2,13 @@ export type BotErrorCode =
 	| "INVALID_CREDENTIALS"
 	| "RATE_LIMITED"
 	| "REPLY_LOCKED"
-	| "AUTHENTICATED_FAILED"
+	| "AUTHENTICATION_FAILED"
 	| "UNKNOWN"
 	| "BANNED";
 
 export const BotErrorMessage: Record<BotErrorCode, string> = {
 	INVALID_CREDENTIALS: "Bot has invalid credentials",
-	AUTHENTICATED_FAILED: "Failed to authenticate",
+	AUTHENTICATION_FAILED: "Failed to authenticate",
 	RATE_LIMITED: "Bot has been ratelimited",
 	REPLY_LOCKED: "Lead has been locked",
 	UNKNOWN: "An unknown error occurred",

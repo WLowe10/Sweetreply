@@ -46,7 +46,7 @@ sendLeadWebhookQueue.process(async (job) => {
 	if (isDiscordWebhookURL(project.webhook_url)) {
 		await axios.post(project.webhook_url, {
 			username: "Sweetreply",
-			avatar_url: "https://media.tenor.com/ueHM2kR20QQAAAAM/high-cat.gif",
+			avatar_url: "https://sweetreply.io/icon.png",
 			content: null,
 			embeds: [
 				{

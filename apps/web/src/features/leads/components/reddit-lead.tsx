@@ -19,6 +19,7 @@ import {
 	Paper,
 	Tooltip,
 	Center,
+	Skeleton,
 } from "@mantine/core";
 import {
 	IconArrowBackUp,
@@ -259,7 +260,7 @@ export const RedditLead = () => {
 							</Stack>
 						</form>
 					) : lead.generateReplyMutation.isLoading ? (
-						<Loader size="sm" />
+						<Skeleton height={100} />
 					) : lead.data.reply_text ? (
 						<Spoiler maxHeight={120} showLabel="Show more" hideLabel="hide">
 							{lead.data.reply_text}
