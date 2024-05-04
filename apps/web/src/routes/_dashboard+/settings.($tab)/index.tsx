@@ -1,7 +1,7 @@
-import { useNavigate, useParams, type MetaFunction } from "@remix-run/react";
+import { Link, useNavigate, useParams, type MetaFunction } from "@remix-run/react";
 import { ResourceContainer } from "@components/resource-container";
 import { buildPageTitle } from "@lib/utils";
-import { Alert, List, Skeleton, Tabs } from "@mantine/core";
+import { Alert, Anchor, List, Skeleton, Tabs } from "@mantine/core";
 import { GeneralForm } from "./general-form";
 import { SitesForm } from "./sites-form";
 import { ReplyForm } from "./reply-form";
@@ -9,12 +9,14 @@ import { NotificationsForm } from "./notifications-form";
 import { useCurrentProjectQuery } from "@features/projects/hooks/use-current-project-query";
 import { IconAlertTriangle } from "@tabler/icons-react";
 import { useCurrentProjectIssues } from "@features/projects/hooks/use-current-project-issues";
+import { useMe } from "@features/auth/hooks/use-me";
 
 export const meta: MetaFunction = () => [{ title: buildPageTitle("Settings") }];
 
 export default function SettingsPage() {
 	const { tab } = useParams();
 	const { data } = useCurrentProjectQuery();
+	const { isSubscribed } = useMe();
 	const issues = useCurrentProjectIssues();
 	const navigate = useNavigate();
 
@@ -24,15 +26,23 @@ export default function SettingsPage() {
 				<Skeleton height={500} />
 			) : (
 				<>
-					{issues.length > 0 && (
+					{(issues.length > 0 || !isSubscribed) && (
 						<Alert
-							variant="outline"
+							variant="default"
 							color="red"
 							mb="lg"
 							title="Alert"
-							icon={<IconAlertTriangle />}
+							icon={<IconAlertTriangle color="var(--mantine-color-red-5)" />}
 						>
 							<List>
+								{!isSubscribed && (
+									<List.Item>
+										You cannot use replies until you{" "}
+										<Anchor component={Link} to="/billing">
+											subscribe
+										</Anchor>
+									</List.Item>
+								)}
 								{issues.map((issue, idx) => (
 									<List.Item key={idx}>{issue}</List.Item>
 								))}

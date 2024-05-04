@@ -23,7 +23,7 @@ export const ReplyCreditsDisplay = () => {
 					<Progress value={usage} />
 					{!isSubscribed && (
 						<Button component={Link} to="/billing" size="xs">
-							Get more
+							Subscribe
 						</Button>
 					)}
 				</Stack>

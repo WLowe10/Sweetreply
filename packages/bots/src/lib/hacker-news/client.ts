@@ -13,8 +13,8 @@ export class HackerNews {
 		this.baseUrl = new URL(`https://hacker-news.firebaseio.com/${this.version}`);
 	}
 
-	public async getUser(userId: string): Promise<HNUser> {
-		return this.getJsonResource(`user/${userId}`);
+	public async getUser(userID: string): Promise<HNUser> {
+		return this.getJsonResource(`user/${userID}`);
 	}
 
 	public async getMaxItem(): Promise<number> {

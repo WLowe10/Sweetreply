@@ -11,8 +11,8 @@ export const getStatsHandler = authenticatedProcedure
 	.input(getStatsInputSchema)
 	.query(async ({ input, ctx }) => {
 		const project = await ctx.projectsService.userOwnsProject({
-			userId: ctx.user.id,
-			projectId: input.projectId,
+			userID: ctx.user.id,
+			projectID: input.projectId,
 		});
 
 		if (!project) {

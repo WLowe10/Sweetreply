@@ -11,8 +11,8 @@ export const getProjectHandler = authenticatedProcedure
 	.input(getProjectInputSchema)
 	.query(async ({ input, ctx }) => {
 		const userOwnsProject = await ctx.projectsService.userOwnsProject({
-			userId: ctx.user.id,
-			projectId: input.id,
+			userID: ctx.user.id,
+			projectID: input.id,
 		});
 
 		if (!userOwnsProject) {

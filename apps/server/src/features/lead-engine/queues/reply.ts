@@ -1,9 +1,9 @@
 import Queue from "bull";
 import * as botsService from "@features/bots/service";
+import * as leadsService from "@features/leads/service";
 import { logger } from "@lib/logger";
 import { prisma } from "@lib/db";
 import { env } from "@env";
-import { sleepRange } from "@sweetreply/shared/lib/utils";
 import { ReplyStatus } from "@sweetreply/shared/features/leads/constants";
 import { ReplyResultData } from "@features/bots/types";
 import { BotError, createBot } from "@sweetreply/bots";
@@ -73,21 +73,6 @@ replyQueue.process(async (job) => {
 		return;
 	}
 
-	if (user.reply_credits <= 0) {
-		await prisma.lead.update({
-			where: {
-				id: lead.id,
-			},
-			data: {
-				reply_status: ReplyStatus.DRAFT,
-				reply_scheduled_at: null,
-				replied_at: null,
-			},
-		});
-
-		return;
-	}
-
 	// the bot service cycles through each bot
 	const botAccount = await botsService.dequeueBot(lead.platform);
 
@@ -97,75 +82,39 @@ replyQueue.process(async (job) => {
 
 	const bot = createBot(botAccount);
 
-	if (!bot) {
-		// ? a platform's lead should never try to reply if it isn't supported
-
-		await prisma.lead.update({
-			where: {
-				id: lead.id,
-			},
-			data: {
-				reply_status: ReplyStatus.DRAFT,
-				reply_scheduled_at: null,
-				replied_at: null,
-			},
-		});
+	if (user.reply_credits <= 0 || bot === null) {
+		await leadsService.draft(lead.id);
 
 		return;
 	}
 
+	// --- Automation ----
+
+	// load the session/login
+	try {
+		await botsService.loadSession(bot, botAccount);
+	} catch (err) {
+		if (err instanceof BotError) {
+			await botsService.handleBotError(botAccount.id, err);
+		}
+
+		throw err;
+	}
+
 	let replyResult: ReplyResultData;
 
+	// make the actual reply
 	try {
-		let sessionValid = false;
-
-		if (botAccount.session) {
-			try {
-				sessionValid = await bot.loadSession(botAccount.session as object);
-			} catch {
-				// noop, we will generate a new session by logging in
-			}
-		}
-
-		// if the session is not valid, generate a new one by logging in
-		if (!sessionValid) {
-			await bot.generateSession();
-
-			// generate random delay between 5000 and 10000 ms after logging in
-
-			await sleepRange(5000, 10000);
-		}
-
 		replyResult = await bot.reply(lead);
+	} catch (err) {
+		await botsService.saveSession(botAccount.id, bot);
 
-		const currentSession = await bot.dumpSession();
-
-		await prisma.bot.update({
-			where: {
-				id: botAccount.id,
-			},
-			data: {
-				session: currentSession,
-			},
-		});
-	} catch (err: any) {
 		if (!(err instanceof BotError)) {
 			throw err;
 		}
 
-		// this is not treated as a failure, it cancels the job and marks the lead as locked
 		if (err.code === "REPLY_LOCKED") {
-			await prisma.lead.update({
-				where: {
-					id: lead.id,
-				},
-				data: {
-					reply_status: ReplyStatus.DRAFT,
-					locked: true,
-					reply_scheduled_at: null,
-					replied_at: null,
-				},
-			});
+			await leadsService.lock(lead.id);
 
 			return;
 		}
@@ -174,6 +123,10 @@ replyQueue.process(async (job) => {
 
 		throw err;
 	}
+
+	await botsService.saveSession(botAccount.id, bot);
+
+	// --- End Automation ----
 
 	// update the lead with the reply details
 	await prisma.lead.update({

@@ -13,12 +13,12 @@ export function addReplyJob(leadId: string, opts?: { date: Date | undefined }) {
 	return replyQueue.add({ lead_id: leadId }, { jobId: leadId, delay });
 }
 
-export async function cancelUserScheduledReplies(userId: string) {
+export async function cancelUserScheduledReplies(userID: string) {
 	const scheduledLeads = await prisma.lead.findMany({
 		where: {
 			reply_status: ReplyStatus.SCHEDULED,
 			project: {
-				user_id: userId,
+				user_id: userID,
 			},
 		},
 	});
@@ -38,7 +38,7 @@ export async function cancelUserScheduledReplies(userId: string) {
 	await prisma.lead.updateMany({
 		where: {
 			project: {
-				user_id: userId,
+				user_id: userID,
 			},
 		},
 		data: {

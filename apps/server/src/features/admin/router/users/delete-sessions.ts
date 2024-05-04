@@ -2,11 +2,11 @@ import { adminProcedure } from "@features/admin/procedures";
 import { z } from "zod";
 
 const deleteSessionsInputSchema = z.object({
-	userId: z.string(),
+	userID: z.string(),
 });
 
 export const deleteSessionsHandler = adminProcedure
 	.input(deleteSessionsInputSchema)
 	.mutation(async ({ input, ctx }) => {
-		await ctx.authService.deleteUserSessions(input.userId);
+		await ctx.authService.deleteUserSessions(input.userID);
 	});

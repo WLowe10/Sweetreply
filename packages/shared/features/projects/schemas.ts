@@ -26,13 +26,15 @@ export const baseProjectSchema = projectModel.extend({
 		})
 		.nullish()
 		.or(z.literal("")),
-	description: z.string().trim().min(10).max(512),
+	description: z.string().trim().min(10).max(512).nullish().or(z.literal("")),
 	query: z
 		.string()
 		.trim()
 		.min(5)
 		.max(128)
-		.refine((query) => isValidLiqeString(query), { message: "Invalid query" }),
+		.refine((query) => isValidLiqeString(query), { message: "Invalid query" })
+		.nullish()
+		.or(z.literal("")),
 
 	reply_mention_mode: z.enum(["name", "name_or_url", "url"]),
 	reply_delay: z

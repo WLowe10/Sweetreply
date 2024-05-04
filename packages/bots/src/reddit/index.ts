@@ -203,7 +203,7 @@ export class RedditBot implements IBot {
 			const commentForm = document.querySelector(".usertext.cloneable.warn-on-unload");
 
 			if (!commentForm) {
-				throw new Error("Could not find comment form");
+				throw new BotError("REPLY_LOCKED");
 			}
 
 			const formId = commentForm.getAttribute("id");

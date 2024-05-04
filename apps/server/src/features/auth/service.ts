@@ -46,13 +46,13 @@ const cooldownDate = (cooldownMs: number) => subMilliseconds(new Date(), cooldow
 
 /**
  * Retrieve user by ID.
- * @param userId - The ID of the user.
+ * @param userID - The ID of the user.
  * @returns A Promise resolving to the user, or null if not found.
  */
-export function getUser(userId: string): Promise<User | null> {
+export function getUser(userID: string): Promise<User | null> {
 	return prisma.user.findUnique({
 		where: {
-			id: userId,
+			id: userID,
 		},
 	});
 }
@@ -176,15 +176,15 @@ export function getSession(sessionId: string): Promise<Session | null> {
 
 /**
  * Creates a new session for a user.
- * @param userId - The id of the user.
+ * @param userID - The id of the user.
  * @returns A Promise resolving to the new session
  */
-export function createSessionForUser(userId: string): Promise<Session> {
+export function createSessionForUser(userID: string): Promise<Session> {
 	const expiresAt = expirationDate(authConstants.SESSION_EXPIRATION);
 
 	return prisma.session.create({
 		data: {
-			user_id: userId,
+			user_id: userID,
 			expires_at: expiresAt,
 		},
 	});
@@ -219,12 +219,12 @@ export async function deleteSession(sessionId: string): Promise<void> {
 
 /**
  * Deletes all of a user's session
- * @param userId - The id of user.
+ * @param userID - The id of user.
  */
-export async function deleteUserSessions(userId: string): Promise<void> {
+export async function deleteUserSessions(userID: string): Promise<void> {
 	await prisma.session.deleteMany({
 		where: {
-			user_id: userId,
+			user_id: userID,
 		},
 	});
 }
@@ -281,14 +281,14 @@ export async function validateSession(
 
 /**
  * Sends a password reset email
- * @param userId The user to send the email to
+ * @param userID The user to send the email to
  * @param opts Options
  */
 export async function dispatchPasswordReset(
-	userId: string,
+	userID: string,
 	opts?: { ignoreRateLimit: boolean }
 ): Promise<void> {
-	const user = await getUser(userId);
+	const user = await getUser(userID);
 
 	if (!user) {
 		return;
@@ -312,7 +312,7 @@ export async function dispatchPasswordReset(
 
 	const resetCode = nanoid();
 
-	await updateUser(userId, {
+	await updateUser(userID, {
 		password_reset_code: resetCode,
 		password_reset_code_expires_at: expiresAt,
 		password_reset_requested_at: new Date(),
@@ -328,14 +328,14 @@ export async function dispatchPasswordReset(
 
 /**
  * Sends an account verification email
- * @param userId The user to send the email to
+ * @param userID The user to send the email to
  * @param opts Options
  */
 export async function dispatchVerification(
-	userId: string,
+	userID: string,
 	opts?: { ignoreRateLimit: boolean }
 ): Promise<void> {
-	const user = await getUser(userId);
+	const user = await getUser(userID);
 
 	if (!user) {
 		return;
@@ -352,9 +352,9 @@ export async function dispatchVerification(
 		}
 	}
 
-	const verificationToken = createEmailVerificationToken(userId);
+	const verificationToken = createEmailVerificationToken(userID);
 
-	await updateUser(userId, {
+	await updateUser(userID, {
 		verification_requested_at: new Date(),
 	});
 
@@ -425,23 +425,23 @@ export async function changePassword(code: string, newPassword: string): Promise
  * Verifies a user's account.
  *
  * This is a separate method to allow admins to verify accounts
- * @param userId The user to verify
+ * @param userID The user to verify
  * @returns The updated user
  */
-export function verifyUser(userId: string): Promise<User | null> {
-	return updateUser(userId, {
+export function verifyUser(userID: string): Promise<User | null> {
+	return updateUser(userID, {
 		verified_at: new Date(),
 	});
 }
 
 /**
  * Creates an email verification token
- * @param userId The user ID to create the token for
+ * @param userID The user ID to create the token for
  * @returns email verification JWT
  */
-export function createEmailVerificationToken(userId: string): string {
+export function createEmailVerificationToken(userID: string): string {
 	return jwt.sign(
-		{ user_id: userId } as EmailVerificationTokenPayloadType,
+		{ user_id: userID } as EmailVerificationTokenPayloadType,
 		env.EMAIL_VERIFICATION_SECRET,
 		{
 			expiresIn: authConstants.ACCOUNT_VERIFICATION_EXPIRATION,

@@ -15,6 +15,11 @@ async function handleInvoicePaid(event: Stripe.Event) {
 	const subscriptionId = invoice.subscription;
 	const customerId = invoice.customer;
 
+	// don't remove reply credits if a user downgrades
+	if (invoice.amount_paid <= 0) {
+		return;
+	}
+
 	if (typeof subscriptionId !== "string" || typeof customerId !== "string") {
 		return;
 	}

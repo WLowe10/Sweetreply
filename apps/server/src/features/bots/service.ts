@@ -1,6 +1,8 @@
 import { prisma } from "@lib/db";
 import { subDays } from "date-fns";
-import { BotError } from "@sweetreply/bots";
+import { BotError, type IBot } from "@sweetreply/bots";
+import { Prisma, Bot } from "@sweetreply/prisma";
+import { sleepRange } from "@sweetreply/shared/lib/utils";
 
 export async function getBot(id: string) {
 	return prisma.bot.findUniqueOrThrow({
@@ -80,4 +82,46 @@ export async function handleBotError(botID: string, err: BotError) {
 	} else {
 		await appendError(botID, err, 3);
 	}
+}
+
+export async function updateBotSession(botID: string, session: object | null) {
+	return prisma.bot.update({
+		where: {
+			id: botID,
+		},
+		data: {
+			session: session || Prisma.JsonNull,
+		},
+	});
+}
+
+export async function loadSession(bot: IBot, botAccount: Bot) {
+	let sessionIsValid = false;
+	let session = botAccount.session;
+
+	if (botAccount.session) {
+		sessionIsValid = await bot.loadSession(botAccount.session as object);
+	}
+
+	if (!sessionIsValid) {
+		// clear the session so it isn't used again
+		console.log("CLEARING OLD SESSION");
+		await updateBotSession(botAccount.id, null);
+
+		console.log("GENERATING SESSION");
+		session = await bot.generateSession();
+
+		await updateBotSession(botAccount.id, session);
+
+		// sleep for a random delay between 5000 and 10000 ms after logging in
+		await sleepRange(5000, 10000);
+	}
+
+	return session;
+}
+
+export async function saveSession(botID: string, bot: IBot) {
+	const finalSession = await bot.dumpSession();
+
+	await updateBotSession(botID, finalSession);
 }

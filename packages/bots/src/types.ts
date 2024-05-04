@@ -14,7 +14,7 @@ export type ReplyResultData = {
 
 export interface IBot {
 	loadSession(session: object): Promise<boolean>;
-	dumpSession(): object | Promise<string>;
+	dumpSession(): Promise<object>;
 	generateSession(): Promise<object>;
 	reply(lead: Lead): Promise<ReplyResultData>;
 	deleteReply(lead: Lead): Promise<void>;

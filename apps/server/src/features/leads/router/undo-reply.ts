@@ -1,12 +1,11 @@
-import { z } from "zod";
-import { handleBotError } from "@features/bots/service";
+import * as botsService from "@features/bots/service";
 import { failedToDeleteReply, failedToUndoReply, leadHasNoReply, leadNotFound } from "../errors";
-import { sleep, sleepRange } from "@sweetreply/shared/lib/utils";
 import { BotError, createBot } from "@sweetreply/bots";
 import { ReplyStatus } from "@sweetreply/shared/features/leads/constants";
 import { canUndoReply } from "@sweetreply/shared/features/leads/utils";
 import { subscribedProcedure } from "@features/billing/procedures";
 import { singleLeadQuerySelect } from "../constants";
+import { z } from "zod";
 
 const undoReplyInputSchema = z.object({
 	lead_id: z.string(),
@@ -49,14 +48,24 @@ export const undoReplyHandler = subscribedProcedure
 		}
 
 		try {
-			await bot.login();
-
-			await sleepRange(5000, 10000);
-
-			await bot.deleteReply(lead);
+			await botsService.loadSession(bot, botAccount);
 		} catch (err) {
 			if (err instanceof BotError) {
-				await handleBotError(botAccount.id, err);
+				await botsService.handleBotError(botAccount.id, err);
+			}
+
+			console.log(err);
+
+			throw failedToDeleteReply();
+		}
+
+		try {
+			await bot.deleteReply(lead);
+		} catch (err) {
+			await botsService.saveSession(botAccount.id, bot);
+
+			if (err instanceof BotError) {
+				await botsService.handleBotError(botAccount.id, err);
 			}
 
 			throw failedToDeleteReply();
@@ -71,6 +80,7 @@ export const undoReplyHandler = subscribedProcedure
 				reply_bot_id: null,
 				reply_remote_id: null,
 				reply_scheduled_at: null,
+				reply_remote_url: null,
 				reply_status: ReplyStatus.DRAFT,
 			},
 			select: singleLeadQuerySelect,
