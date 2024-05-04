@@ -7,7 +7,6 @@ import { sleepRange } from "@sweetreply/shared/lib/utils";
 import { ReplyStatus } from "@sweetreply/shared/features/leads/constants";
 import { ReplyResultData } from "@features/bots/types";
 import { BotError, createBot } from "@sweetreply/bots";
-import { BotStatus } from "@features/bots/constants";
 
 export type ReplyQueueJobData = {
 	lead_id: string;
@@ -118,12 +117,37 @@ replyQueue.process(async (job) => {
 	let replyResult: ReplyResultData;
 
 	try {
-		// generate random delay between 5000 and 10000 ms after logging in
-		await bot.login();
+		let sessionValid = false;
 
-		await sleepRange(5000, 10000);
+		if (botAccount.session) {
+			try {
+				sessionValid = await bot.loadSession(botAccount.session as object);
+			} catch {
+				// noop, we will generate a new session by logging in
+			}
+		}
+
+		// if the session is not valid, generate a new one by logging in
+		if (!sessionValid) {
+			await bot.generateSession();
+
+			// generate random delay between 5000 and 10000 ms after logging in
+
+			await sleepRange(5000, 10000);
+		}
 
 		replyResult = await bot.reply(lead);
+
+		const currentSession = await bot.dumpSession();
+
+		await prisma.bot.update({
+			where: {
+				id: botAccount.id,
+			},
+			data: {
+				session: currentSession,
+			},
+		});
 	} catch (err: any) {
 		if (!(err instanceof BotError)) {
 			throw err;
@@ -223,20 +247,13 @@ replyQueue.on("failed", async (job, err) => {
 		{
 			lead_id: jobData.lead_id,
 			message: err.message,
+			attempt: job.attemptsMade,
 		},
 		`Reply job failed`
 	);
 
 	if (job.attemptsMade === job.opts.attempts) {
 		try {
-			logger.info(
-				{
-					lead_id: jobData.lead_id,
-					message: err.message,
-				},
-				"Reply job failed"
-			);
-
 			await prisma.lead.update({
 				where: {
 					id: jobData.lead_id,

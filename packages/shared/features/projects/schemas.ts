@@ -46,15 +46,15 @@ export const baseProjectSchema = projectModel.extend({
 
 	reddit_included_subreddits: z
 		.array(subredditNameSchema)
-		.max(10, {
-			message: "You cannot include more than 10 subreddits",
+		.max(50, {
+			message: "You cannot include more than 50 subreddits",
 		})
 		.refine((items) => new Set(items).size === items.length, {
 			message: "A subreddit cannot be included more than once",
 		}),
 	reddit_excluded_subreddits: z
 		.array(subredditNameSchema)
-		.max(10, { message: "You cannot exclude more than 10 subreddits" })
+		.max(50, { message: "You cannot exclude more than 50 subreddits" })
 		.refine((items) => new Set(items).size === items.length, {
 			message: "A subreddit cannot be excluded more than once",
 		}),

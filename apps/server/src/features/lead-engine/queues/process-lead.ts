@@ -6,7 +6,7 @@ import { logger } from "@lib/logger";
 import { ReplyStatus } from "@sweetreply/shared/features/leads/constants";
 import { shouldReplyCompletion } from "../utils/completions/should-reply-completion";
 import { replyCompletion } from "../utils/completions/reply-completion";
-import { addReplyJob } from "../utils/add-reply-job";
+import { addReplyJob } from "../service";
 
 export type ProcessLeadQueueJobData = {
 	lead_id: string;

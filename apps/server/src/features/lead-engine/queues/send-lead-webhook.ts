@@ -65,7 +65,7 @@ sendLeadWebhookQueue.process(async (job) => {
 						},
 						{
 							name: "Subreddit",
-							value: lead.channel,
+							value: lead.group,
 							inline: true,
 						},
 						{
@@ -93,7 +93,7 @@ sendLeadWebhookQueue.process(async (job) => {
 				type: lead.type,
 				platform: lead.platform,
 				username: lead.username,
-				channel: lead.channel,
+				group: lead.group,
 				title: lead.title,
 				content: lead.content,
 				date: lead.date,

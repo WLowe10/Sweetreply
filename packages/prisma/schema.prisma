@@ -20,8 +20,6 @@ datasource db {
     url      = env("DB_URL")
 }
 
-// Auth
-
 model User {
     id                             String    @id @default(uuid())
     role                           String    @default("user")
@@ -61,8 +59,6 @@ model Session {
     @@map(name: "session")
 }
 
-// Social Accounts (These are the bots that will be used to reply to the leads)
-
 model Bot {
     id       String  @id @default(uuid())
     platform String
@@ -70,15 +66,13 @@ model Bot {
     password String
     status   String
     active   Boolean @default(true)
+    session  Json?   @db.JsonB
 
     // proxy
     proxy_host String?
     proxy_port Int?
     proxy_user String?
     proxy_pass String?
-
-    // it may make sense to serialize and store sessions this way
-    // session Json? @db.JsonB
 
     created_at   DateTime  @default(now()) @db.Timestamptz()
     last_used_at DateTime? @db.Timestamptz()
@@ -184,17 +178,18 @@ model Lead {
     locked     Boolean @default(false) // locked leads cannot be replied
 
     // social media post
-    username          String
-    name              String?
-    title             String?
-    content           String
-    remote_url        String?
-    date              DateTime @db.Timestamptz()
-    remote_id         String
-    remote_user_id    String
-    channel           String? // Ex: subreddit name for reddit
-    remote_channel_id String?
-    created_at        DateTime @default(now()) @db.Timestamptz()
+    username         String
+    name             String?
+    title            String?
+    content          String
+    date             DateTime @db.Timestamptz()
+    group            String? // Ex: subreddit name for reddit
+    remote_user_id   String
+    remote_url       String?
+    remote_id        String
+    remote_parent_id String?
+    remote_group_id  String?
+    created_at       DateTime @default(now()) @db.Timestamptz()
 
     // reply
     reply_status       String?

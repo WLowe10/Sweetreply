@@ -31,14 +31,14 @@ const executeSlurper = async (
 
 					if (
 						project.reddit_included_subreddits.length > 0 &&
-						!project.reddit_included_subreddits.includes(lead.channel)
+						!project.reddit_included_subreddits.includes(lead.group)
 					) {
 						return;
 					}
 
 					if (
 						project.reddit_excluded_subreddits.length > 0 &&
-						project.reddit_excluded_subreddits.includes(lead.channel)
+						project.reddit_excluded_subreddits.includes(lead.group)
 					) {
 						return;
 					}
@@ -72,10 +72,10 @@ const executeSlurper = async (
 								date: lead.date,
 								platform: lead.platform,
 								username: lead.username,
-								channel: lead.channel,
+								group: lead.group,
 								remote_id: lead.remote_id,
 								remote_user_id: lead.remote_user_id,
-								remote_channel_id: lead.remote_channel_id,
+								remote_group_id: lead.remote_group_id,
 								remote_url: lead.remote_url,
 							},
 						});

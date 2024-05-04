@@ -82,14 +82,14 @@ export class RedditCommentSlurper {
 			type: LeadType.COMMENT,
 			is_nsfw: redditComment.over_18,
 			title: null,
-			channel: redditComment.subreddit,
+			group: redditComment.subreddit,
 			username: redditComment.author,
 			content: redditComment.body,
 			date: new Date(redditComment.created_utc * 1000),
 			remote_id: redditComment.id,
 			remote_url: `https://www.reddit.com/r/${redditComment.subreddit}/comments/${extractIdFromThing(redditComment.link_id)}/comment/${redditComment.id}`,
 			remote_user_id: extractIdFromThing(redditComment.author_fullname),
-			remote_channel_id: extractIdFromThing(redditComment.subreddit_id),
+			remote_group_id: extractIdFromThing(redditComment.subreddit_id),
 		};
 	}
 

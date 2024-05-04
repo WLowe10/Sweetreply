@@ -1,16 +1,29 @@
 import axios, { type Axios } from "axios";
+import { sleepRange } from "@sweetreply/shared/lib/utils";
 import { wrapper } from "axios-cookiejar-support";
 import { CookieJar } from "tough-cookie";
+import { parse } from "node-html-parser";
 import { UserAgents } from "@sweetreply/shared/constants";
 import { BotError } from "../errors";
 import { proxyIsDefined } from "../utils";
 import { createThing, extractIdFromThing } from "@sweetreply/shared/features/reddit/utils";
+import { z } from "zod";
 import type { IBot } from "../types";
 import type { RedditThingType } from "@sweetreply/shared/features/reddit/constants";
 import type { Bot, Lead } from "@sweetreply/prisma";
 
-const redditBase = new URL("https://www.reddit.com/api");
-const oldRedditBase = new URL("https://old.reddit.com/api");
+const redditURL = "https://www.reddit.com";
+const oldRedditURL = "https://old.reddit.com";
+const redditAPIURL = redditURL + "/api";
+const oldRedditAPIURL = oldRedditURL + "/api";
+
+const redditSessionSchema = z.object({
+	cookies: z.array(z.string()),
+});
+
+// const modhashRegex = /"modhash"\s*:\s*"([^"]+)"/;
+
+export type RedditBotSession = z.infer<typeof redditSessionSchema>;
 
 export type TargetType = Extract<RedditThingType, "comment" | "link">;
 
@@ -27,19 +40,23 @@ export type RedditCommentData = {
 export class RedditBot implements IBot {
 	private username: string;
 	private password: string;
-	private modhash: string | null;
 	private client: Axios;
-	private cookieJar: CookieJar;
+	private jar: CookieJar;
 
-	constructor(bot: Bot) {
+	constructor(
+		bot: Pick<
+			Bot,
+			"username" | "password" | "proxy_host" | "proxy_port" | "proxy_user" | "proxy_pass"
+		>
+	) {
 		this.username = bot.username;
 		this.password = bot.password;
-		this.modhash = null;
+		// this.modhash = null;
 
-		this.cookieJar = new CookieJar();
+		this.jar = new CookieJar();
 		this.client = wrapper(
 			axios.create({
-				jar: this.cookieJar,
+				jar: this.jar,
 				proxy: proxyIsDefined(bot) && {
 					host: bot.proxy_host!,
 					port: bot.proxy_port!,
@@ -61,11 +78,7 @@ export class RedditBot implements IBot {
 		return response.data.includes('<span slot="title">This account has been suspended</span>');
 	}
 
-	public isAuthenticated() {
-		return this.modhash !== null;
-	}
-
-	public async login() {
+	public async generateSession(): Promise<RedditBotSession> {
 		const formData = new URLSearchParams({
 			op: "login",
 			rem: "yes",
@@ -76,7 +89,7 @@ export class RedditBot implements IBot {
 
 		// always returns 200, therefore if the request fails, we know it isnt the bot's fault
 		const postLoginResponse = await this.client.post(
-			`${redditBase}/login/${this.username}`,
+			`${redditAPIURL}/login/${this.username}`,
 			formData,
 			{
 				headers: {
@@ -113,97 +126,111 @@ export class RedditBot implements IBot {
 			throw new BotError("AUTHENTICATION_FAILED");
 		}
 
-		const modhash = data.json.data.modhash;
+		// const modhash = data.json.data.modhash;
 		// const cookie = data.json.data.cookie;
 
-		this.modhash = modhash;
+		// this.modhash = modhash;
+
+		return this.dumpSession();
+	}
+
+	public async loadSession(data: object) {
+		const session = redditSessionSchema.parse(data);
+
+		for (const cookieStr of session.cookies) {
+			await this.jar.setCookie(cookieStr, oldRedditURL.toString());
+		}
+
+		const response = await this.client.get(`${oldRedditURL}/u/me.json`, {
+			headers: {
+				"accept":
+					"text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+				"accept-language": "en-US,en;q=0.9",
+				"cache-control": "no-cache",
+				"pragma": "no-cache",
+				"priority": "u=0, i",
+				"sec-ch-ua": '"Chromium";v="124", "Brave";v="124", "Not-A.Brand";v="99"',
+				"sec-ch-ua-mobile": "?0",
+				"sec-ch-ua-platform": '"Windows"',
+				"sec-fetch-dest": "document",
+				"sec-fetch-mode": "navigate",
+				"sec-fetch-site": "none",
+				"sec-fetch-user": "?1",
+				"sec-gpc": "1",
+				"upgrade-insecure-requests": "1",
+			},
+		});
+
+		if (!response.data.data) {
+			return false;
+		}
+
+		return true;
+	}
+
+	public async dumpSession(): Promise<RedditBotSession> {
+		const cookieStrings = await this.jar.getSetCookieStrings(oldRedditURL.toString());
+
+		return {
+			cookies: cookieStrings,
+		};
 	}
 
 	public async reply(lead: Lead) {
-		if (!this.isAuthenticated()) {
-			throw new Error("Not authenticated");
+		if (!lead.group || !lead.reply_text) {
+			throw new BotError("REPLY_LOCKED");
 		}
 
-		if (!lead.reply_text || !lead.channel) {
-			throw new Error("Lead has no reply text or channel");
-		}
-
+		const subreddit = lead.group;
 		const targetType: TargetType = lead.type === "post" ? "link" : "comment";
 		const redditPrefixedId = createThing(targetType, lead.remote_id);
 
-		// it seems like the id is optional. I'm not sure if it would minimize the change of being banned, but i'm ignoring it for now
+		const getPostResponse = await this.getPost(lead);
 
-		// let commentData;
+		// sleep between 2.5 and 5 seconds
+		await sleepRange(2500, 5000);
 
-		// if (targetType === "post") {
-		// 	// get the page with the form id defined
-		// 	const getCommentResponse = await axios.get(
-		// 		`https://old.reddit.com/r/${subredditName}/comments/${postId}`,
-		// 		{
-		// 			maxRedirects: 1,
-		// 			headers: {
-		// 				"Accept":
-		// 					"text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
-		// 				"Accept-Language": "en-US,en;q=0.8",
-		// 				"Connection": "keep-alive",
-		// 				"Referer": `https://old.reddit.com/search?q=${subredditName}`,
-		// 				"Sec-Fetch-Dest": "document",
-		// 				"Sec-Fetch-Mode": "navigate",
-		// 				"Sec-Fetch-Site": "same-origin",
-		// 				"Sec-Fetch-User": "?1",
-		// 				"Sec-GPC": "1",
-		// 				"Upgrade-Insecure-Requests": "1",
-		// 				"sec-ch-ua": '"Brave";v="123", "Not:A-Brand";v="8", "Chromium";v="123"',
-		// 				"sec-ch-ua-mobile": "?0",
-		// 				"sec-ch-ua-platform": '"Windows"',
-		// 			},
-		// 		}
-		// 	);
+		const modhash = this.parseModhash(getPostResponse.data);
 
-		// 	const root = parse(getCommentResponse.data);
-		// 	const formElement = root.querySelector(".usertext.warn-on-unload");
+		if (!modhash) {
+			throw new Error("Failed to parse modhash");
+		}
 
-		// 	if (!formElement) {
-		// 		throw new Error("Could not parse form");
-		// 	}
+		let commentData: URLSearchParams | undefined;
 
-		// 	const formId = formElement.getAttribute("id");
+		if (lead.type === "post") {
+			const document = parse(getPostResponse.data);
+			const commentForm = document.querySelector(".usertext.cloneable.warn-on-unload");
 
-		// 	commentData = new URLSearchParams({
-		// 		thing_id: redditPrefixedId,
-		// 		r: subredditName,
-		// 		// id: `#${formId}`,
-		// 		text: content,
-		// 		uh: this.modhash as string,
-		// 		renderstyle: "html",
-		// 	});
-		// } else {
-		// 	commentData = new URLSearchParams({
-		// 		thing_id: redditPrefixedId,
-		// 		r: subredditName,
-		// 		id: `#commentreply_${redditPrefixedId}`,
-		// 		text: content,
-		// 		uh: this.modhash as string,
-		// 		renderstyle: "html",
-		// 	});
-		// }
+			if (!commentForm) {
+				throw new Error("Could not find comment form");
+			}
 
-		const commentData: any = {
-			thing_id: redditPrefixedId,
-			r: lead.channel,
-			text: lead.reply_text,
-			uh: this.modhash as string,
-			renderstyle: "html",
-		};
+			const formId = commentForm.getAttribute("id");
 
-		if (targetType === "comment") {
-			commentData.id = `#commentreply_${redditPrefixedId}`;
+			commentData = new URLSearchParams({
+				thing_id: redditPrefixedId,
+				r: subreddit,
+				id: `#${formId}`,
+				text: lead.reply_text,
+				uh: modhash,
+				renderstyle: "html",
+			});
+		} else {
+			commentData = new URLSearchParams({
+				thing_id: redditPrefixedId,
+				r: subreddit,
+				id: `#commentreply_${redditPrefixedId}`,
+				text: lead.reply_text,
+				uh: modhash,
+				renderstyle: "html",
+			});
 		}
 
 		// submit the actual comment
 		const postCommentResponse = await this.client.post(
-			`${oldRedditBase}/comment`,
-			new URLSearchParams(commentData),
+			`${oldRedditAPIURL}/comment`,
+			commentData,
 			{
 				headers: {
 					"Accept": "application/json, text/javascript, */*; q=0.01",
@@ -270,27 +297,34 @@ export class RedditBot implements IBot {
 
 		return {
 			reply_remote_id: remoteId,
-			reply_remote_url: `https://www.reddit.com/r/${lead.channel}/comments/${extractIdFromThing(result.link)}/comment/${remoteId}`,
+			reply_remote_url: `https://www.reddit.com/r/${lead.group}/comments/${extractIdFromThing(result.link)}/comment/${remoteId}`,
 		};
 	}
 
 	public async deleteReply(lead: Lead) {
-		if (!this.isAuthenticated()) {
-			throw new Error("Not authenticated");
-		}
-
-		if (!lead.reply_remote_id || !lead.channel) {
-			throw new Error("Lead has no reply remote id or channel");
+		if (!lead.reply_remote_id || !lead.group) {
+			throw new BotError("REPLY_LOCKED");
 		}
 
 		const thingId = createThing("comment", lead.reply_remote_id);
 
-		const response = await this.client.post(
-			`${oldRedditBase}/del`,
+		const getPostResponse = await this.getPost(lead);
+
+		// sleep between 2.5 and 5 seconds
+		await sleepRange(2500, 5000);
+
+		const modhash = this.parseModhash(getPostResponse.data);
+
+		if (!modhash) {
+			throw new Error("Failed to parse modhash");
+		}
+
+		const delResponse = await this.client.post(
+			`${oldRedditAPIURL}/del`,
 			new URLSearchParams({
 				id: thingId,
-				r: lead.channel,
-				uh: this.modhash!,
+				r: lead.group,
+				uh: modhash,
 				executed: "deleted",
 				renderstyle: "html",
 			}),
@@ -316,8 +350,35 @@ export class RedditBot implements IBot {
 			}
 		);
 
-		if (response.data.success === false) {
+		if (delResponse.data.success === false) {
 			throw new Error(`Failed to delete reply`);
 		}
+	}
+
+	private async getPost(lead: Lead) {
+		let postURL = `${oldRedditURL}/r/${lead.group}/comments/${lead.type === "post" ? lead.remote_id : lead.remote_parent_id}`;
+
+		return this.client.get(postURL);
+	}
+
+	private parseModhash(body: string): string | null {
+		// const matches = body.match(modhashRegex);
+
+		// if (!matches) {
+		// 	return null;
+		// }
+
+		// console.log(matches);
+
+		// return matches[1];
+
+		const document = parse(body);
+		const modhashInput = document.querySelector("input[name='uh'][type='hidden']");
+
+		if (!modhashInput) {
+			return null;
+		}
+
+		return modhashInput.getAttribute("value") || null;
 	}
 }

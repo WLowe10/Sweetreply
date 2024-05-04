@@ -2,7 +2,7 @@ import { sendReplyInputSchema } from "@sweetreply/shared/features/leads/schemas"
 import { failedToSendReply, leadNotFound, replyAlreadySent } from "../errors";
 import { ReplyStatus } from "@sweetreply/shared/features/leads/constants";
 import { canSendReply } from "@sweetreply/shared/features/leads/utils";
-import { addReplyJob } from "@features/lead-engine/utils/add-reply-job";
+import { addReplyJob } from "@features/lead-engine/service";
 import { subscribedProcedure } from "@features/billing/procedures";
 import { outOfReplyCredits } from "@features/billing/errors";
 import { singleLeadQuerySelect } from "../constants";
@@ -23,7 +23,7 @@ export const sendReplyHandler = subscribedProcedure
 			throw replyAlreadySent();
 		}
 
-		if (ctx.user.reply_credits === 0) {
+		if (ctx.user.reply_credits <= 0) {
 			throw outOfReplyCredits();
 		}
 

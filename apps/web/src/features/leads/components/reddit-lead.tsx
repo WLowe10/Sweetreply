@@ -76,10 +76,10 @@ export const RedditLead = () => {
 							<div>
 								<Text size="sm">
 									<Anchor
-										href={`https://reddit.com/r/${lead.data.channel}`}
+										href={`https://reddit.com/r/${lead.data.group}`}
 										target="_blank"
 										c="gray"
-									>{`r/${lead.data.channel}`}</Anchor>{" "}
+									>{`r/${lead.data.group}`}</Anchor>{" "}
 									<Text component="span" c="dimmed">
 										• <RelativeDate date={lead.data.date} />
 									</Text>
