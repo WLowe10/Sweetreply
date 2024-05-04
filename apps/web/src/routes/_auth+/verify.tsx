@@ -57,7 +57,9 @@ export default function VerifyPage() {
 					token,
 				},
 				{
-					onSuccess: ({ verified_at }) => {
+					onSuccess: () => {
+						trpcUtils.auth.getMe.invalidate();
+
 						notifications.show({
 							title: "Account verified",
 							message: "You can now continue to your dashboard",

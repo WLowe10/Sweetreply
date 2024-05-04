@@ -100,15 +100,17 @@ export async function loadSession(bot: IBot, botAccount: Bot) {
 	let session = botAccount.session;
 
 	if (botAccount.session) {
-		sessionIsValid = await bot.loadSession(botAccount.session as object);
+		try {
+			sessionIsValid = await bot.loadSession(botAccount.session as object);
+		} catch (err) {
+			// noop, will attempt to regenerate session
+		}
 	}
 
 	if (!sessionIsValid) {
 		// clear the session so it isn't used again
-		console.log("CLEARING OLD SESSION");
 		await updateBotSession(botAccount.id, null);
 
-		console.log("GENERATING SESSION");
 		session = await bot.generateSession();
 
 		await updateBotSession(botAccount.id, session);

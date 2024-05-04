@@ -37,7 +37,7 @@ export default function SettingsPage() {
 							<List>
 								{!isSubscribed && (
 									<List.Item>
-										You cannot use replies until you{" "}
+										You cannot make replies until you{" "}
 										<Anchor component={Link} to="/billing">
 											subscribe
 										</Anchor>
