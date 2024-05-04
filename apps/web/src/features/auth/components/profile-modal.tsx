@@ -25,7 +25,7 @@ export type ProfileModalProps = {
 
 export const ProfileModal = ({ modalProps }: ProfileModalProps) => {
 	const { me, updateMe, mutation: updateMeMutation } = useMe();
-	const { signOut } = useSignOut();
+	const { signOut, isLoading: signOutLoading } = useSignOut();
 
 	const requestPasswordResetMutation = trpc.auth.requestPasswordReset.useMutation();
 
@@ -93,6 +93,7 @@ export const ProfileModal = ({ modalProps }: ProfileModalProps) => {
 							type="submit"
 							color="gray"
 							variant="light"
+							loading={signOutLoading}
 							onClick={() =>
 								signOut({
 									all: false,

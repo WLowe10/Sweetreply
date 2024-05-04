@@ -4,6 +4,7 @@ import { generateDescendingRedditIds, generateBatchedRedditInfoUrls } from "../.
 import { RedditThing } from "@sweetreply/shared/features/reddit/constants";
 import { extractIdFromThing } from "@sweetreply/shared/features/reddit/utils";
 import { LeadPlatform, LeadType } from "@sweetreply/shared/features/leads/constants";
+import { getAxiosScrapingProxy } from "@lib/utils";
 
 export class RedditCommentSlurper {
 	private client: Axios;
@@ -11,6 +12,7 @@ export class RedditCommentSlurper {
 
 	constructor() {
 		this.client = axios.create({
+			proxy: getAxiosScrapingProxy(),
 			headers: {
 				"User-Agent": UserAgents.chrome,
 			},

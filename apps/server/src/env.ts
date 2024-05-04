@@ -19,6 +19,11 @@ export const envSchema = z.object({
 
 	// --- ADD CUSTOM ENV VARIABLES BELOW ---
 
+	SCRAPING_PROXY_HOST: z.string().optional(),
+	SCRAPING_PROXY_PORT: z.coerce.number().optional(),
+	SCRAPING_PROXY_USER: z.string().optional(),
+	SCRAPING_PROXY_PASS: z.string().optional(),
+
 	NOTIFICATION_WEBHOOK_URL: z.string(),
 	REDIS_URL: z.string(),
 	AWS_REGION: z.string(),

@@ -58,6 +58,7 @@ export class RedditBot implements IBot {
 			axios.create({
 				jar: this.jar,
 				proxy: proxyIsDefined(bot) && {
+					protocol: "http",
 					host: bot.proxy_host!,
 					port: bot.proxy_port!,
 					auth: {
