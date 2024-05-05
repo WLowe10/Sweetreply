@@ -2,6 +2,7 @@ import { authenticatedProcedure } from "@features/auth/procedures";
 import { z } from "zod";
 import { projectNotFound } from "../errors";
 import { subDays } from "date-fns";
+import { ReplyStatus } from "@sweetreply/shared/features/leads/constants";
 
 const getStatsInputSchema = z.object({
 	projectId: z.string(),
@@ -28,9 +29,7 @@ export const getStatsHandler = authenticatedProcedure
 		const replyCount = await ctx.prisma.lead.count({
 			where: {
 				project_id: input.projectId,
-				replied_at: {
-					not: null,
-				},
+				reply_status: ReplyStatus.REPLIED,
 			},
 		});
 
@@ -73,7 +72,7 @@ export const getStatsHandler = authenticatedProcedure
 		const repliesLast24Hours = await ctx.prisma.lead.count({
 			where: {
 				project_id: input.projectId,
-				reply_status: "replied",
+				reply_status: ReplyStatus.REPLIED,
 				replied_at: {
 					gte: subDays(new Date(), 1),
 				},

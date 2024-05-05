@@ -55,7 +55,7 @@ export const Playground = (boxProps: BoxProps) => {
 	return (
 		<Box component="section" id="playground" {...boxProps}>
 			<Title ta="center" mb="xl" fw={900}>
-				Try it out
+				Try it out!
 			</Title>
 			<form onSubmit={onSubmit}>
 				<SimpleGrid cols={{ base: 1, lg: 2 }} spacing="md">

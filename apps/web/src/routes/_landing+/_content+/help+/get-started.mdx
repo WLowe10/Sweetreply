@@ -1,0 +1,67 @@
+---
+title: Get Started
+published: 2024-05-04
+---
+
+import { buildPageTitle } from "@lib/utils";
+import { Box } from "@mantine/core";
+import { ElevatedImage } from "@features/content/components/elevated-image";
+import { SupportButton } from "@features/content/components/support-button";
+
+export const meta = () => [{ title: buildPageTitle(frontmatter.title) }];
+
+# {frontmatter.title}
+
+**Last updated: May 4, 2024**
+
+Welcome to Sweetreply! We've filled this article with everything you need to help you get started.
+
+---
+
+## Create your first project
+
+After verifying your account, you will now be able to create your first project! When creating your project, you will provide the information that is most representative of your product. You can create and switch between additional projects in the top left menu of the dashboard.
+
+<Box mb="sm">
+	<ElevatedImage src="/images/get-started/first-project.png" />
+</Box>
+
+## Subscribe to enable replies
+
+To use the most important feature of Sweetreply, you need to subscribe to a plan. You can do this by going to the billing section of the dashboard or by clicking [here](/billing). Being able to automatically reply to leads is awesome!
+
+## Create your query
+
+After creating your project, you can now control what posts we pull in for you by making a query. For more information about queries, check out our [Query Guide](/help/query). To find leads for Ping Parrot, we will setup this simple query to find any posts containing "ai" and either "chatbot" or "chat bot". This shows the power of our query system, as we can match multiple variations of the same word.
+
+**Note**: try to be as specific as possible with your query to avoid detecting irrelevant leads.
+
+<ElevatedImage src="/images/get-started/query.png" />
+
+## View your leads
+
+Once we start finding your leads, you can view them in the leads table. Clicking on the lead actions button on the right side of the lead will show extra actions. Clicking on the `View` button opens up the lead editor page where you can edit, send, schedule, and view replies.
+
+## Replies
+
+If you enable automatic replies, we will automatically dispatch your replies to new leads which match your project description and query. If you do not enable automatic replies, you can still generate replies and schedule/send replies at a time that works for you. Each succesful reply costs one reply credit.
+
+### Reply statuses
+
+-   **Draft**: The reply is saved as a draft and has not been sent.
+-   **Scheduled**: The reply is scheduled to be sent at a later time.
+-   **Pending**: The reply is actively being sent.
+-   **Replied**: The reply has been sent.
+-   **Failed**: The reply has failed to be sent. This is a rare occurrence. If you encounter this status, feel free to manually retry sending the reply or contact support.
+
+In the meantime, Ping Parrot has already found a lead and replied to it automatically!
+
+<ElevatedImage src="/images/get-started/first-reply.png" />
+
+---
+
+## Need help?
+
+Feel free to contact us to get help with any questions you may have!
+
+<SupportButton />

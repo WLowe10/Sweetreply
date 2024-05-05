@@ -3,12 +3,11 @@ import { parse, highlight, test } from "liqe";
 
 async function start() {
 	// const text = "I am looking for place to repair my lawn mower in California!";
-	const text = "I am looking for a lawn mowing gang in California!";
-	const query = parse(
-		`lawn AND mowing AND (service OR company OR crew) AND california NOT repair`
-	);
+	const text = "I am looking for an AI chat bot";
+	const query = parse(`AI AND (chatbot OR chat bot)`);
 
 	console.log("checking match");
+
 	const isMatch = test(query, {
 		text,
 	});

@@ -24,6 +24,7 @@ export const createProjectHandler = authenticatedProcedure
 				name: input.name,
 				description: input.description,
 				website_url: input.website_url,
+				reply_daily_limit: 5,
 			},
 		});
 	});

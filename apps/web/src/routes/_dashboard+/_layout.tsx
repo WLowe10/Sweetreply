@@ -3,6 +3,7 @@ import { UserMenu } from "@features/auth/components/user-menu";
 import { ProjectSelector } from "@features/projects/components/project-selector";
 import { Box, Center, Container, Divider, Flex, NavLink, Stack } from "@mantine/core";
 import {
+	IconBook,
 	IconCreditCard,
 	IconLayoutDashboard,
 	IconMessageReply,
@@ -80,7 +81,6 @@ export default function DashboardLayout() {
 								<IconSettings size={18} color="var(--mantine-color-gray-6)" />
 							}
 						/>
-						<Divider />
 						<NavLink
 							active={location.pathname.includes("billing")}
 							component={Link}
@@ -90,6 +90,14 @@ export default function DashboardLayout() {
 							leftSection={
 								<IconCreditCard size={18} color="var(--mantine-color-gray-6)" />
 							}
+						/>
+						<Divider />
+						<NavLink
+							component={Link}
+							label="Guide"
+							color="gray"
+							to="/help/get-started"
+							leftSection={<IconBook size={18} color="var(--mantine-color-gray-6)" />}
 						/>
 					</Box>
 				</Stack>

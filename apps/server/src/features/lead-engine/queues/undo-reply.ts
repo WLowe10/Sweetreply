@@ -6,7 +6,7 @@ export type UndoReplyQueueJobData = {
 	lead_id: string;
 };
 
-const replyQueue = new Queue<UndoReplyQueueJobData>("reply", {
+const replyQueue = new Queue<UndoReplyQueueJobData>("undo-reply", {
 	redis: env.REDIS_URL,
 	limiter: {
 		max: 1,
