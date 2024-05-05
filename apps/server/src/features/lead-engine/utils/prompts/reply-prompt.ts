@@ -1,5 +1,5 @@
-import type { Project, Lead } from "@sweetreply/prisma";
 import { LeadPlatform } from "@sweetreply/shared/features/leads/constants";
+import type { Project, Lead } from "@sweetreply/prisma";
 
 export type ReplyPromptData = {
 	project: Pick<
@@ -16,7 +16,6 @@ export type ReplyPromptData = {
 };
 
 export const replyPrompt = ({ project, lead, characterLimit }: ReplyPromptData) => {
-	const userTypeText = lead.platform === LeadPlatform.REDDIT ? `redditor` : `social media user`;
 	const platformText = lead.platform === LeadPlatform.REDDIT ? `Reddit` : `social media`;
 
 	const productURL =
@@ -24,25 +23,8 @@ export const replyPrompt = ({ project, lead, characterLimit }: ReplyPromptData) 
 			? new URL(project.website_url).hostname
 			: project.website_url;
 
-	const mentionMode =
-		project.reply_mention_mode === "name" || !productURL
-			? "name"
-			: project.reply_mention_mode === "url"
-				? "url"
-				: "name or url";
-
 	return {
-		system: `You are a friendly and helpful ${userTypeText}
-Given a ${platformText} post and information about a product, provide a reply to the post that takes the following into account:
-- Match the tone of the post
-- Provide a formal reply without emojis
-- You have used the product and therefore can give a worthy shout out to it. You have no affiliations with the product.
-- Make sure to mention the product in some capacity, feel free to include a personal anecdote.
-- Prioritize a genuine interaction and attempt to fulfill what the post requests (if they ask questions, offer valuable advice)
-- This reply will be the only interaction, there will not be any further communication.
-- The reply should sound like the average helpul ${userTypeText} response.
-
-You will simply output a text response that represents the reply. ${typeof characterLimit === "number" ? `The reply must not be longer than ${characterLimit} characters.` : ""} Only reference the product by its ${mentionMode}.`,
+		system: `Craft concise and genuine replies promoting dynamically specified products in response to relevant social media posts on Reddit. Prioritize genuine interaction by directly addressing the questions or issues raised by the original poster. Offer valuable advice related to their inquiry while keeping the response brief and to the point. Share personal anecdotes and experiences highlighting aspects of the product that are explicitly mentioned in the product description or specifications and could help address the poster's concerns. Keep the response within a character limit of 4096, avoiding unrealistically enthusiastic language, emojis, hashtags, and mentioning the original poster. The tone should be helpful and authentic, focusing on providing practical assistance within the bounds of the product's description. There will be no further communication with the user.`,
 		user: `${project.reply_custom_instructions ? `${project.reply_custom_instructions}\n\n` : ""}${platformText} post: 
 \`\`\`
 ${lead.title ? `${lead.title}. ` : ""}${lead.content}
@@ -52,22 +34,3 @@ ${project.reply_mention_mode === "name" || !productURL ? `Product name: ${projec
 Product description: ${project.description}`,
 	};
 };
-
-// console.log(
-// 	replyPrompt({
-// 		lead: {
-// 			platform: "test",
-// 			title: null,
-// 			content: "I am looking for a lawn mowing service in Olathe, KS. Any recommendations?",
-// 		},
-// 		project: {
-// 			name: "Olathe Mowing CO",
-// 			website_url: "https://olathemowingco.com",
-// 			// website_url: null,
-// 			reply_mention_mode: "name_or_url",
-// 			description: "Olathe mowing co mows your lawn for cheap",
-// 			reply_with_domain: true,
-// 			reply_custom_instructions: null,
-// 		},
-// 	})
-// );

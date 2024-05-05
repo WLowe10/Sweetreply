@@ -59,7 +59,7 @@ export const NotificationsForm = () => {
 									<Text size="sm">
 										Webhooks allow you to receive HTTP POST requests to a URL
 										whenever we find a new lead.{" "}
-										<Anchor component={Link} to="/help/webhook">
+										<Anchor component={Link} to="/help/webhooks">
 											Learn about webhooks
 										</Anchor>
 									</Text>

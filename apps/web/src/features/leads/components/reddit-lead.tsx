@@ -195,7 +195,7 @@ export const RedditLead = () => {
 									<Menu.Item
 										onClick={open}
 										leftSection={<IconSend size={18} />}
-										disabled={!isSubscribed || me?.reply_credits === 0}
+										disabled={!isSubscribed || (me && me.reply_credits <= 0)}
 									>
 										Send reply
 									</Menu.Item>
