@@ -84,6 +84,7 @@ const executeSlurper = async (
 							addSendLeadWebhookJob(newLead.id);
 						}
 
+						// maybe check if user has replies here too
 						if (project.reddit_replies_enabled) {
 							addProcessLeadJob(newLead.id);
 						}

@@ -127,11 +127,6 @@ export class RedditBot implements IBot {
 			throw new BotError("AUTHENTICATION_FAILED");
 		}
 
-		// const modhash = data.json.data.modhash;
-		// const cookie = data.json.data.cookie;
-
-		// this.modhash = modhash;
-
 		return this.dumpSession();
 	}
 
@@ -142,7 +137,7 @@ export class RedditBot implements IBot {
 			await this.jar.setCookie(cookieStr, oldRedditURL.toString());
 		}
 
-		const response = await this.client.get(`${oldRedditURL}/u/me.json`, {
+		const response = await this.client.get(oldRedditURL, {
 			headers: {
 				"accept":
 					"text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
@@ -162,7 +157,10 @@ export class RedditBot implements IBot {
 			},
 		});
 
-		if (!response.data.data) {
+		const document = parse(response.data);
+		const logoutForm = document.querySelector("form.logout");
+
+		if (!logoutForm) {
 			return false;
 		}
 
