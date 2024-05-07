@@ -19,9 +19,9 @@ export const replyCompletion = async ({
 	// openai
 
 	const completion = await openAI.chat.completions.create({
-		// model: "gpt-4-turbo", // replies seem to be a lot better
+		// model: "gpt-4-turbo", // replies seem to be a lot better, but not worth the insance price
 		model: "gpt-3.5-turbo",
-		temperature: 1,
+		temperature: 0.85,
 		max_tokens: maxTokens,
 		messages: [
 			{

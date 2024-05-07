@@ -1,6 +1,6 @@
 import { LeadPlatform } from "@sweetreply/shared/features/leads/constants";
-import type { Bot } from "@sweetreply/prisma";
 import { RedditBot } from "./reddit";
+import type { Bot } from "@sweetreply/prisma";
 
 export const proxyIsDefined = (
 	bot: Pick<Bot, "proxy_host" | "proxy_port" | "proxy_user" | "proxy_pass">

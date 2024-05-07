@@ -1,13 +1,14 @@
-import axios, { type Axios } from "axios";
-import { sleepRange } from "@sweetreply/shared/lib/utils";
-import { wrapper } from "axios-cookiejar-support";
+import got, { type Got } from "got";
 import { CookieJar } from "tough-cookie";
+import { HttpProxyAgent } from "http-proxy-agent";
+import { HttpsProxyAgent } from "https-proxy-agent";
 import { parse } from "node-html-parser";
+import { z } from "zod";
 import { UserAgents } from "@sweetreply/shared/constants";
+import { createThing, extractIdFromThing } from "@sweetreply/shared/features/reddit/utils";
+import { buildProxyURL, sleepRange } from "@sweetreply/shared/lib/utils";
 import { BotError } from "../errors";
 import { proxyIsDefined } from "../utils";
-import { createThing, extractIdFromThing } from "@sweetreply/shared/features/reddit/utils";
-import { z } from "zod";
 import type { IBot } from "../types";
 import type { RedditThingType } from "@sweetreply/shared/features/reddit/constants";
 import type { Bot, Lead } from "@sweetreply/prisma";
@@ -20,8 +21,6 @@ const oldRedditAPIURL = oldRedditURL + "/api";
 const redditSessionSchema = z.object({
 	cookies: z.array(z.string()),
 });
-
-// const modhashRegex = /"modhash"\s*:\s*"([^"]+)"/;
 
 export type RedditBotSession = z.infer<typeof redditSessionSchema>;
 
@@ -40,7 +39,7 @@ export type RedditCommentData = {
 export class RedditBot implements IBot {
 	private username: string;
 	private password: string;
-	private client: Axios;
+	private client: Got;
 	private jar: CookieJar;
 
 	constructor(
@@ -51,71 +50,75 @@ export class RedditBot implements IBot {
 	) {
 		this.username = bot.username;
 		this.password = bot.password;
-		// this.modhash = null;
 
 		this.jar = new CookieJar();
-		this.client = wrapper(
-			axios.create({
-				jar: this.jar,
-				proxy: proxyIsDefined(bot) && {
-					protocol: "http",
+
+		const proxy = proxyIsDefined(bot)
+			? buildProxyURL({
 					host: bot.proxy_host!,
 					port: bot.proxy_port!,
-					auth: {
-						username: bot.proxy_user!,
-						password: bot.proxy_pass!,
-					},
-				},
-				headers: {
-					"User-Agent": UserAgents.chrome,
-				},
-			})
-		);
+					user: bot.proxy_user!,
+					pass: bot.proxy_pass!,
+				})
+			: undefined;
+
+		const agents = proxy
+			? {
+					http: new HttpProxyAgent(proxy),
+					https: new HttpsProxyAgent(proxy),
+				}
+			: undefined;
+
+		this.client = got.extend({
+			timeout: 10000,
+			cookieJar: this.jar,
+			agent: agents,
+			headers: {
+				"User-Agent": UserAgents.chrome,
+			},
+		});
 	}
 
 	static async isBanned(username: string) {
-		const response = await axios.get(`https://www.reddit.com/user/${username}`);
+		const response = await got.get(`https://www.reddit.com/user/${username}`);
 
-		return response.data.includes('<span slot="title">This account has been suspended</span>');
+		return response.body.includes('<span slot="title">This account has been suspended</span>');
 	}
 
 	public async generateSession(): Promise<RedditBotSession> {
-		const formData = new URLSearchParams({
+		const formData = {
 			op: "login",
 			rem: "yes",
 			api_type: "json",
 			user: this.username,
 			passwd: this.password,
-		});
+		};
 
 		// always returns 200, therefore if the request fails, we know it isnt the bot's fault
-		const postLoginResponse = await this.client.post(
-			`${redditAPIURL}/login/${this.username}`,
-			formData,
-			{
-				headers: {
-					"Host": "old.reddit.com",
-					"Connection": "keep-alive",
-					"sec-ch-ua": '"Brave";v="123", "Not:A-Brand";v="8", "Chromium";v="123"',
-					"Accept": "application/json, text/javascript, */*; q=0.01",
-					"Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-					"X-Requested-With": "XMLHttpRequest",
-					"sec-ch-ua-mobile": "?0",
-					"sec-ch-ua-platform": '"Windows"',
-					"Sec-GPC": "1",
-					"Accept-Language": "en-US,en;q=0.8",
-					"Origin": "https://old.reddit.com",
-					"Sec-Fetch-Site": "same-origin",
-					"Sec-Fetch-Mode": "cors",
-					"Sec-Fetch-Dest": "empty",
-					"Referer": "https://old.reddit.com/",
-					"Accept-Encoding": "gzip, deflate, br, zstd",
-				},
-			}
-		);
+		const response = await this.client.post(`${redditAPIURL}/login/${this.username}`, {
+			form: formData,
+			headers: {
+				"Host": "old.reddit.com",
+				"Connection": "keep-alive",
+				"sec-ch-ua": '"Brave";v="123", "Not:A-Brand";v="8", "Chromium";v="123"',
+				"Accept": "application/json, text/javascript, */*; q=0.01",
+				"Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+				"X-Requested-With": "XMLHttpRequest",
+				"sec-ch-ua-mobile": "?0",
+				"sec-ch-ua-platform": '"Windows"',
+				"Sec-GPC": "1",
+				"Accept-Language": "en-US,en;q=0.8",
+				"Origin": "https://old.reddit.com",
+				"Sec-Fetch-Site": "same-origin",
+				"Sec-Fetch-Mode": "cors",
+				"Sec-Fetch-Dest": "empty",
+				"Referer": "https://old.reddit.com/",
+				"Accept-Encoding": "gzip, deflate, br, zstd",
+			},
+		});
 
-		const { data } = postLoginResponse;
-		const errors = data.json.errors;
+		const body = JSON.parse(response.body);
+		const errors = body.json.errors;
 
 		if (errors.length > 0) {
 			if (errors[0]) {
@@ -157,7 +160,7 @@ export class RedditBot implements IBot {
 			},
 		});
 
-		const document = parse(response.data);
+		const document = parse(response.body);
 		const logoutForm = document.querySelector("form.logout");
 
 		if (!logoutForm) {
@@ -189,16 +192,16 @@ export class RedditBot implements IBot {
 		// sleep between 2.5 and 5 seconds
 		await sleepRange(2500, 5000);
 
-		const modhash = this.parseModhash(getPostResponse.data);
+		const modhash = this.parseModhash(getPostResponse.body);
 
 		if (!modhash) {
 			throw new Error("Failed to parse modhash");
 		}
 
-		let commentData: URLSearchParams | undefined;
+		let commentData: object | undefined;
 
 		if (lead.type === "post") {
-			const document = parse(getPostResponse.data);
+			const document = parse(getPostResponse.body);
 			const commentForm = document.querySelector(".usertext.cloneable.warn-on-unload");
 
 			if (!commentForm) {
@@ -207,54 +210,50 @@ export class RedditBot implements IBot {
 
 			const formId = commentForm.getAttribute("id");
 
-			commentData = new URLSearchParams({
+			commentData = {
 				thing_id: redditPrefixedId,
 				r: subreddit,
 				id: `#${formId}`,
 				text: lead.reply_text,
 				uh: modhash,
 				renderstyle: "html",
-			});
+			};
 		} else {
-			commentData = new URLSearchParams({
+			commentData = {
 				thing_id: redditPrefixedId,
 				r: subreddit,
 				id: `#commentreply_${redditPrefixedId}`,
 				text: lead.reply_text,
 				uh: modhash,
 				renderstyle: "html",
-			});
+			};
 		}
 
 		// submit the actual comment
-		const postCommentResponse = await this.client.post(
-			`${oldRedditAPIURL}/comment`,
-			commentData,
-			{
-				headers: {
-					"Accept": "application/json, text/javascript, */*; q=0.01",
-					"Accept-Language": "en-US,en;q=0.8",
-					"Connection": "keep-alive",
-					"Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-					"Origin": "https://old.reddit.com",
-					// "Referer": "https://old.reddit.com/r/replyon/comments/1bx1v9d/test_replyon/",
-					"Sec-Fetch-Dest": "empty",
-					"Sec-Fetch-Mode": "cors",
-					"Sec-Fetch-Site": "same-origin",
-					"Sec-GPC": "1",
-					"X-Requested-With": "XMLHttpRequest",
-					"sec-ch-ua": '"Brave";v="123", "Not:A-Brand";v="8", "Chromium";v="123"',
-					"sec-ch-ua-mobile": "?0",
-					"sec-ch-ua-platform": '"Windows"',
-				},
-			}
-		);
+		const postCommentResponse = await this.client.post(`${oldRedditAPIURL}/comment`, {
+			form: commentData,
+			headers: {
+				"Accept": "application/json, text/javascript, */*; q=0.01",
+				"Accept-Language": "en-US,en;q=0.8",
+				"Connection": "keep-alive",
+				"Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+				"Origin": "https://old.reddit.com",
+				// "Referer": "https://old.reddit.com/r/replyon/comments/1bx1v9d/test_replyon/",
+				"Sec-Fetch-Dest": "empty",
+				"Sec-Fetch-Mode": "cors",
+				"Sec-Fetch-Site": "same-origin",
+				"Sec-GPC": "1",
+				"X-Requested-With": "XMLHttpRequest",
+				"sec-ch-ua": '"Brave";v="123", "Not:A-Brand";v="8", "Chromium";v="123"',
+				"sec-ch-ua-mobile": "?0",
+				"sec-ch-ua-platform": '"Windows"',
+			},
+		});
 
-		const { data } = postCommentResponse;
+		const body = JSON.parse(postCommentResponse.body);
+		const jquery = body.jquery;
 
-		const jquery = data.jquery;
-
-		if (postCommentResponse.data.success === false) {
+		if (body.success === false) {
 			const jqueryText = JSON.stringify(jquery);
 
 			// console.log(jqueryText);
@@ -312,65 +311,56 @@ export class RedditBot implements IBot {
 		// sleep between 2.5 and 5 seconds
 		await sleepRange(2500, 5000);
 
-		const modhash = this.parseModhash(getPostResponse.data);
+		const modhash = this.parseModhash(getPostResponse.body);
 
 		if (!modhash) {
 			throw new Error("Failed to parse modhash");
 		}
 
-		const delResponse = await this.client.post(
-			`${oldRedditAPIURL}/del`,
-			new URLSearchParams({
-				id: thingId,
-				r: lead.group,
-				uh: modhash,
-				executed: "deleted",
-				renderstyle: "html",
-			}),
-			{
-				headers: {
-					"accept": "application/json, text/javascript, */*; q=0.01",
-					"accept-language": "en-US,en;q=0.5",
-					"cache-control": "no-cache",
-					"content-type": "application/x-www-form-urlencoded; charset=UTF-8",
-					"origin": "https://old.reddit.com",
-					"pragma": "no-cache",
-					"priority": "u=1, i",
-					// "referer": "https://old.reddit.com/r/replyon/comments/1blgh0s/hello_world/",
-					"sec-ch-ua": '"Chromium";v="124", "Brave";v="124", "Not-A.Brand";v="99"',
-					"sec-ch-ua-mobile": "?0",
-					"sec-ch-ua-platform": '"Windows"',
-					"sec-fetch-dest": "empty",
-					"sec-fetch-mode": "cors",
-					"sec-fetch-site": "same-origin",
-					"sec-gpc": "1",
-					"x-requested-with": "XMLHttpRequest",
-				},
-			}
-		);
+		const data = {
+			id: thingId,
+			r: lead.group,
+			uh: modhash,
+			executed: "deleted",
+			renderstyle: "html",
+		};
 
-		if (delResponse.data.success === false) {
+		const delResponse = await this.client.post(`${oldRedditAPIURL}/del`, {
+			form: data,
+			headers: {
+				"accept": "application/json, text/javascript, */*; q=0.01",
+				"accept-language": "en-US,en;q=0.5",
+				"cache-control": "no-cache",
+				"content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+				"origin": "https://old.reddit.com",
+				"pragma": "no-cache",
+				"priority": "u=1, i",
+				// "referer": "https://old.reddit.com/r/replyon/comments/1blgh0s/hello_world/",
+				"sec-ch-ua": '"Chromium";v="124", "Brave";v="124", "Not-A.Brand";v="99"',
+				"sec-ch-ua-mobile": "?0",
+				"sec-ch-ua-platform": '"Windows"',
+				"sec-fetch-dest": "empty",
+				"sec-fetch-mode": "cors",
+				"sec-fetch-site": "same-origin",
+				"sec-gpc": "1",
+				"x-requested-with": "XMLHttpRequest",
+			},
+		});
+
+		const body = JSON.parse(delResponse.body);
+
+		if (body.success === false) {
 			throw new Error(`Failed to delete reply`);
 		}
 	}
 
 	private async getPost(lead: Lead) {
-		let postURL = `${oldRedditURL}/r/${lead.group}/comments/${lead.type === "post" ? lead.remote_id : lead.remote_parent_id}`;
+		const postURL = `${oldRedditURL}/r/${lead.group}/comments/${lead.type === "post" ? lead.remote_id : lead.remote_parent_id}`;
 
 		return this.client.get(postURL);
 	}
 
 	private parseModhash(body: string): string | null {
-		// const matches = body.match(modhashRegex);
-
-		// if (!matches) {
-		// 	return null;
-		// }
-
-		// console.log(matches);
-
-		// return matches[1];
-
 		const document = parse(body);
 		const modhashInput = document.querySelector("input[name='uh'][type='hidden']");
 

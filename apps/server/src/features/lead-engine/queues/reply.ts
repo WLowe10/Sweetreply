@@ -82,7 +82,7 @@ replyQueue.process(async (job) => {
 
 	const bot = createBot(botAccount);
 
-	if (user.reply_credits <= 0 || bot === null) {
+	if (bot === null || user.reply_credits <= 0) {
 		await leadsService.draft(lead.id);
 
 		return;

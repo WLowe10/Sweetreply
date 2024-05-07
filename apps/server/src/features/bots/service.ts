@@ -109,7 +109,10 @@ export async function loadSession(bot: IBot, botAccount: Bot) {
 
 	if (!sessionIsValid) {
 		// clear the session so it isn't used again
-		await updateBotSession(botAccount.id, null);
+
+		if (botAccount.session !== null) {
+			await updateBotSession(botAccount.id, null);
+		}
 
 		session = await bot.generateSession();
 

@@ -4,52 +4,55 @@ import { sleepRange } from "@sweetreply/shared/lib/utils";
 
 const session = {
 	cookies: [
-		"loid=000000000yixu3u4ao.2.1713394883176.Z0FBQUFBQm1OUjhsR3VDTzFFV3R1a0ZkMW54dTN6QXhUUzVNNmlta0lSR0lnZ1FjTFFIMjAzeVNELTB1cnhUSS1ZaXc2Z1R5LVEtN2RESHp4VnpISG1SaXNlVTdyZEdRT29pQzRGT2tTZWpHSTFsYkJUb1RTOUpuQ092SGVTaDZ5amliQ2t3V3Z6WkY; Expires=Sun, 03 May 2026 17:30:13 GMT; Max-Age=63071999; Domain=reddit.com; Path=/; Secure",
-		"session_tracker=mbffolcfrkpfpnbemr.0.1714757413931.Z0FBQUFBQm1OUjhtVm5iLXhoUjBRTk9sZ2dHZVNjUjg1VDZrR1hYUFFuUjg2cFR4aFFXOUJhSlFDek0xeV90ZEtzaFl6cWVrU3pfN01WdjZyVU9abnNpV0dybm40bFY1cFdyTGlZX3lVSmJFelROWmpNYlhVRmctTGdRTTlQWWRSbm9DUjVTczM4TG4; Expires=Fri, 03 May 2024 19:30:14 GMT; Max-Age=7199; Domain=reddit.com; Path=/; Secure",
-		"reddit_session=97401946053696%2C2024-05-03T16%3A46%3A24%2Cbb36222cef20d138213010f7a7bdb5c3dfe461c9; Expires=Thu, 31 Dec 2037 23:59:59 GMT; Max-Age=431162014; Domain=reddit.com; Path=/; Secure; HttpOnly",
-		"edgebucket=r2AVD8ETK9WoKCKleZ; Max-Age=63071999; Domain=reddit.com; Path=/; Secure",
-		"csv=2; Max-Age=63072000; Domain=reddit.com; Path=/; Secure",
+		"loid=000000000zvjlde6cx.2.1715097571894.Z0FBQUFBQm1Pa19rOWZtc01SMXdQQlRkQXBjZlhPRVBiUTMtNDNxUExOWjlOeGJ5Nmx3emVuV01EZXRFQ09wSUhYQXpNUVJTa3Q4TG92YTBaS1dKa3hjenI4Um8xc3J3ZVI2Ulg2R052TFkwNHkzTGpyN1Q0MWs0LWYwdjB1aU1tbTkwZGYtWkZyX3k; Expires=Thu, 07 May 2026 15:59:32 GMT; Max-Age=63071999; Domain=reddit.com; Path=/; Secure",
+		"session_tracker=hiommcmpdlhbrilojb.0.1715097571902.Z0FBQUFBQm1Pa19rYmNpUDNWXzh5MzQ2WGdYd1p6aHJDa0J5bFpieU1uWGFxYnMwZDUyOVkzUFVHb2FIYkVCQVdtZ0JEVDhaTlJzc2hNaXRuTXY2MTZKbVRENjlDMWFiN0FRVU1qY3RITmYxdWNFYTBCcXFOVzZUeUFjb0xhMkFsdHZld2VWZU4yd3I; Expires=Tue, 07 May 2024 17:59:32 GMT; Max-Age=7199; Domain=reddit.com; Path=/; Secure",
+		"reddit_session=100912551618637%2C2024-05-07T15%3A59%3A32%2C16be8cb54337a45313c615d7a2563b08efc63c40; Expires=Thu, 31 Dec 2037 23:59:59 GMT; Max-Age=430819226; Domain=reddit.com; Path=/; Secure; HttpOnly",
+		"edgebucket=YdUid2f5eXa0CHM1S7; Max-Age=63071999; Domain=reddit.com; Path=/; Secure",
 	],
 };
 
 async function test() {
 	const bot = new RedditBot({
 		username: redditInfo.username,
-		password: redditInfo.password,
-		proxy_host: null,
-		proxy_port: null,
-		proxy_user: null,
-		proxy_pass: null,
+		password: "test",
+		proxy_host: redditInfo.proxy_host,
+		proxy_port: redditInfo.proxy_port,
+		proxy_user: redditInfo.proxy_user,
+		proxy_pass: redditInfo.proxy_pass,
 	});
+
+	// const newSession = await bot.generateSession();
+
+	// console.log(newSession);
 
 	const loaded = await bot.loadSession(session);
 
 	if (!loaded) {
-		const newSession = await bot.generateSession();
+		await bot.generateSession();
 
 		console.log("generated new session, sleeping");
 
 		await sleepRange(5000, 10000);
 	}
 
-	// console.log("commenting");
-
-	// const result = await bot.comment({
-	// 	postId: "1blgh0d",
-	// 	targetType: "link",
-	// 	content: `hello world post test ${Date.now()}`,
-	// 	subredditName: "replyon",
+	// const result = await bot.reply({
+	// 	remote_id: "1cl15rl",
+	// 	type: "post",
+	// 	reply_text: `hello world post test ${Date.now()}`,
+	// 	group: "replyon",
 	// });
 
-	// console.log(result.contentText);
+	// console.log(result);
 
 	// --- Delete Comment ---
 
 	// console.log("deleting comment");
 
-	// await bot.deleteComment({
-	// 	commentId: "l0gg",
-	// 	subredditName: "replyon",
+	// await bot.deleteReply({
+	// 	type: "comment",
+	// 	group: "replyon",
+	// 	remote_parent_id: "1cl15rl",
+	// 	reply_remote_id: "l300qap",
 	// });
 
 	console.log("done");

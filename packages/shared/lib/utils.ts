@@ -20,3 +20,13 @@ export function isValidLiqeString(str: string) {
 
 	return isValid;
 }
+
+export type ProxyURLConfig = {
+	user: string;
+	pass: string;
+	host: string;
+	port: string | number;
+};
+
+export const buildProxyURL = (opts: ProxyURLConfig) =>
+	`http://${opts.user}:${opts.pass}@${opts.host}:${opts.port}`;
