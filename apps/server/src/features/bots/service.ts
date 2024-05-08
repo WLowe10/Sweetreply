@@ -21,7 +21,10 @@ export async function dequeueBot(platform: string) {
 			active: true,
 		},
 		orderBy: {
-			last_used_at: "asc",
+			last_used_at: {
+				sort: "asc",
+				nulls: "first",
+			},
 		},
 	});
 
