@@ -3,6 +3,7 @@ import { subDays } from "date-fns";
 import { BotError, type IBot } from "@sweetreply/bots";
 import { Prisma, Bot } from "@sweetreply/prisma";
 import { sleepRange } from "@sweetreply/shared/lib/utils";
+import { HTTPError, RequestError } from "got";
 
 export async function getBot(id: string) {
 	return prisma.bot.findUniqueOrThrow({
@@ -74,13 +75,17 @@ export async function appendError(botId: string, err: BotError, limit?: number) 
 	return newError;
 }
 
-export async function handleBotError(botID: string, err: BotError) {
-	const errIsFatal = err.code === "BANNED" || err.code === "INVALID_CREDENTIALS";
+export async function handleBotError(botID: string, err: Error) {
+	if (err instanceof BotError) {
+		const errIsFatal = err.code === "BANNED" || err.code === "INVALID_CREDENTIALS";
 
-	if (errIsFatal) {
-		await appendError(botID, err, 1);
-	} else {
-		await appendError(botID, err, 3);
+		if (errIsFatal) {
+			await appendError(botID, err, 1);
+		} else {
+			await appendError(botID, err, 3);
+		}
+	} else if (err instanceof RequestError) {
+		await appendError(botID, new BotError("REQUEST_FAILED", err.message), 10);
 	}
 }
 
@@ -100,16 +105,11 @@ export async function loadSession(bot: IBot, botAccount: Bot) {
 	let session = botAccount.session;
 
 	if (botAccount.session) {
-		try {
-			sessionIsValid = await bot.loadSession(botAccount.session as object);
-		} catch (err) {
-			// noop, will attempt to regenerate session
-		}
+		sessionIsValid = await bot.loadSession(botAccount.session as object);
 	}
 
 	if (!sessionIsValid) {
 		// clear the session so it isn't used again
-
 		if (botAccount.session !== null) {
 			await updateBotSession(botAccount.id, null);
 		}

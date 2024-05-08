@@ -50,11 +50,9 @@ export const undoReplyHandler = subscribedProcedure
 		try {
 			await botsService.loadSession(bot, botAccount);
 		} catch (err) {
-			if (err instanceof BotError) {
+			if (err instanceof Error) {
 				await botsService.handleBotError(botAccount.id, err);
 			}
-
-			console.log(err);
 
 			throw failedToDeleteReply();
 		}

@@ -94,8 +94,8 @@ replyQueue.process(async (job) => {
 	try {
 		await botsService.loadSession(bot, botAccount);
 	} catch (err) {
-		if (err instanceof BotError) {
-			await botsService.handleBotError(botAccount.id, err);
+		if (err instanceof Error) {
+			botsService.handleBotError(botAccount.id, err);
 		}
 
 		throw err;
@@ -109,11 +109,11 @@ replyQueue.process(async (job) => {
 	} catch (err) {
 		await botsService.saveSession(botAccount.id, bot);
 
-		if (!(err instanceof BotError)) {
-			throw err;
+		if (!(err instanceof Error)) {
+			return;
 		}
 
-		if (err.code === "REPLY_LOCKED") {
+		if (err instanceof BotError && err.code === "REPLY_LOCKED") {
 			await leadsService.lock(lead.id);
 
 			return;

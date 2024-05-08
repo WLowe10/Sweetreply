@@ -134,7 +134,13 @@ export class RedditBot implements IBot {
 	}
 
 	public async loadSession(data: object) {
-		const session = redditSessionSchema.parse(data);
+		const parseResult = redditSessionSchema.safeParse(data);
+
+		if (!parseResult.success) {
+			return false;
+		}
+
+		const session = parseResult.data;
 
 		for (const cookieStr of session.cookies) {
 			await this.jar.setCookie(cookieStr, oldRedditURL.toString());
