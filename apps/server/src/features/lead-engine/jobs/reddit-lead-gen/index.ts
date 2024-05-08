@@ -9,7 +9,7 @@ import { RedditCommentSlurper } from "./comment-slurper";
 import * as leadEngineService from "../../service";
 
 const postSlurper = new RedditPostSlurper();
-const commentSlurper = new RedditCommentSlurper();
+// const commentSlurper = new RedditCommentSlurper();
 
 const executeSlurper = async (
 	slurper: RedditPostSlurper | RedditCommentSlurper,
@@ -21,6 +21,8 @@ const executeSlurper = async (
 		const searchDocument = postSlurper.getSearchDocument(lead);
 		const limit = pLimit(20);
 
+		const groupLowerCase = lead.group.toLowerCase();
+
 		await Promise.allSettled(
 			projects.map((project) =>
 				limit(async () => {
@@ -30,14 +32,14 @@ const executeSlurper = async (
 
 					if (
 						project.reddit_included_subreddits.length > 0 &&
-						!project.reddit_included_subreddits.includes(lead.group)
+						!project.reddit_included_subreddits.includes(groupLowerCase)
 					) {
 						return;
 					}
 
 					if (
 						project.reddit_excluded_subreddits.length > 0 &&
-						project.reddit_excluded_subreddits.includes(lead.group)
+						project.reddit_excluded_subreddits.includes(groupLowerCase)
 					) {
 						return;
 					}
@@ -120,10 +122,30 @@ export const redditLeadGenJob = CronJob.from({
 			// 5 is the min length for a query, even though we santize user queries, we will be safe here too
 			const filteredProjects = projects.filter((project) => project.query!.trim().length > 5);
 
+			// we transform the subreddits to be lowercase before we use them
+			const projectsWithSanitizedSubreddits = filteredProjects.map((project) => {
+				const includedSubreddits = project.reddit_included_subreddits.map((subreddit) =>
+					subreddit.toLowerCase()
+				);
+
+				const excludedSubreddits = project.reddit_excluded_subreddits.map((subreddit) =>
+					subreddit.toLowerCase()
+				);
+
+				return {
+					...project,
+					reddit_included_subreddits: includedSubreddits,
+					reddit_excluded_subreddits: excludedSubreddits,
+				};
+			});
+
 			const slurpPosts = async () => {
 				try {
 					const timeStart = Date.now();
-					const leads = await executeSlurper(postSlurper, filteredProjects);
+					const leads = await executeSlurper(
+						postSlurper,
+						projectsWithSanitizedSubreddits
+					);
 
 					logger.info(
 						{
@@ -137,22 +159,25 @@ export const redditLeadGenJob = CronJob.from({
 				}
 			};
 
-			const slurpComments = async () => {
-				try {
-					const timeStart = Date.now();
-					const leads = await executeSlurper(commentSlurper, filteredProjects);
+			// const slurpComments = async () => {
+			// 	try {
+			// 		const timeStart = Date.now();
+			// 		const leads = await executeSlurper(
+			// 			commentSlurper,
+			// 			projectsWithSanitizedSubreddits
+			// 		);
 
-					logger.info(
-						{
-							amount: leads.length,
-							duration: Date.now() - timeStart,
-						},
-						"Finished slurping reddit comments"
-					);
-				} catch (err) {
-					logger.error(err, "Failed slurping reddit comments");
-				}
-			};
+			// 		logger.info(
+			// 			{
+			// 				amount: leads.length,
+			// 				duration: Date.now() - timeStart,
+			// 			},
+			// 			"Finished slurping reddit comments"
+			// 		);
+			// 	} catch (err) {
+			// 		logger.error(err, "Failed slurping reddit comments");
+			// 	}
+			// };
 
 			// comments slurping is disabled for now due to the possibility of an infinite loop of bot replies,
 			// since the bot replies will be picked up by the comment slurper
