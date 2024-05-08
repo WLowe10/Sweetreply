@@ -15,7 +15,7 @@ export const subscribeHandler = authenticatedProcedure
 	.mutation(async ({ input, ctx }) => {
 		if (env.NEW_SUBSCRIPTIONS_DISABLED) {
 			throw new TRPCError({
-				code: "NOT_IMPLEMENTED",
+				code: "FORBIDDEN",
 				message: "New subscriptions are currently disabled",
 			});
 		}
