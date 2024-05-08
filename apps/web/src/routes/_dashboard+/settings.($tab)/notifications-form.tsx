@@ -55,15 +55,7 @@ export const NotificationsForm = () => {
 						render={({ field, fieldState }) => (
 							<TextInput
 								label="Webhook"
-								description={
-									<Text size="sm">
-										Webhooks allow you to receive HTTP POST requests to a URL
-										whenever we find a new lead.{" "}
-										<Anchor component={Link} to="/help/webhooks">
-											Learn about webhooks
-										</Anchor>
-									</Text>
-								}
+								description="Webhooks allow you to receive HTTP POST requests to a URL whenever we find a new lead"
 								value={field.value ?? ""}
 								onChange={field.onChange}
 								error={fieldState.error?.message}
