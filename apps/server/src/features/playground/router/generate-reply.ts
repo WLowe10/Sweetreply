@@ -29,6 +29,7 @@ export const generatePlaygroundReplyHandler = ratelimitedPublicProcedure
 				reply_custom_instructions: null,
 				reply_mention_mode: "name",
 				website_url: null,
+				reply_with_domain: true,
 			},
 		});
 

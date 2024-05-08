@@ -10,10 +10,11 @@ export const checkBannedHandler = adminProcedure
 	.input(checkBannedInputSchema)
 	.query(async ({ input, ctx }) => {
 		try {
-			const isBanned = await ctx.botsService.checkBanned(input.id);
+			// const isBanned = await ctx.botsService.checkBanned(input.id);
 
 			return {
-				isBanned: isBanned,
+				// isBanned: isBanned,
+				isBanned: false,
 			};
 		} catch (err) {
 			throw new TRPCError({

@@ -2,6 +2,8 @@ import { differenceInMilliseconds, isFuture } from "date-fns";
 import { prisma } from "@lib/db";
 import { ReplyStatus } from "@sweetreply/shared/features/leads/constants";
 import { replyQueue } from "./queues/reply";
+import { sendLeadWebhookQueue } from "./queues/send-lead-webhook";
+import { processLeadQueue } from "./queues/process-lead";
 
 export function addReplyJob(leadId: string, opts?: { date: Date | undefined }) {
 	let delay;
@@ -11,6 +13,14 @@ export function addReplyJob(leadId: string, opts?: { date: Date | undefined }) {
 	}
 
 	return replyQueue.add({ lead_id: leadId }, { jobId: leadId, delay });
+}
+
+export function addSendLeadWebhookJob(leadId: string) {
+	return sendLeadWebhookQueue.add({ lead_id: leadId }, { jobId: leadId });
+}
+
+export function addProcessLeadJob(leadId: string) {
+	return processLeadQueue.add({ lead_id: leadId }, { jobId: leadId });
 }
 
 export async function cancelUserScheduledReplies(userID: string) {

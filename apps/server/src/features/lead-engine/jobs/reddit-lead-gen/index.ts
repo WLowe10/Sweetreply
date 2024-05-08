@@ -6,8 +6,7 @@ import { RedditPostSlurper } from "./post-slurper";
 import { Project } from "@sweetreply/prisma";
 import { parse, test } from "liqe";
 import { RedditCommentSlurper } from "./comment-slurper";
-import { addProcessLeadJob } from "../../utils/add-process-lead-job";
-import { addSendLeadWebhookJob } from "../../utils/add-send-lead-webhook-job";
+import * as leadEngineService from "../../service";
 
 const postSlurper = new RedditPostSlurper();
 const commentSlurper = new RedditCommentSlurper();
@@ -81,12 +80,12 @@ const executeSlurper = async (
 						});
 
 						if (project.webhook_url) {
-							addSendLeadWebhookJob(newLead.id);
+							leadEngineService.addSendLeadWebhookJob(newLead.id);
 						}
 
 						// maybe check if user has replies here too
 						if (project.reddit_replies_enabled) {
-							addProcessLeadJob(newLead.id);
+							leadEngineService.addProcessLeadJob(newLead.id);
 						}
 					}
 				})

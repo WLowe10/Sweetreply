@@ -4,6 +4,7 @@ import { BotError, type IBot } from "@sweetreply/bots";
 import { Prisma, Bot } from "@sweetreply/prisma";
 import { sleepRange } from "@sweetreply/shared/lib/utils";
 import { HTTPError, RequestError } from "got";
+import { logger } from "@lib/logger";
 
 export async function getBot(id: string) {
 	return prisma.bot.findUniqueOrThrow({
@@ -113,6 +114,10 @@ export async function loadSession(bot: IBot, botAccount: Bot) {
 		if (botAccount.session !== null) {
 			await updateBotSession(botAccount.id, null);
 		}
+
+		logger.debug("Generating new bot session", {
+			id: botAccount.id,
+		});
 
 		session = await bot.generateSession();
 
