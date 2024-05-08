@@ -3,12 +3,14 @@ import { isDiscordWebhookURL } from "@lib/regex";
 import { buildFrontendUrl } from "@lib/utils";
 import axios from "axios";
 import Queue from "bull";
+import { env } from "@env";
 
 export type SendLeadWebhookJobData = {
 	lead_id: string;
 };
 
 export const sendLeadWebhookQueue = new Queue<SendLeadWebhookJobData>("send-lead-webhook", {
+	redis: env.REDIS_URL,
 	defaultJobOptions: {
 		attempts: 1,
 		removeOnComplete: true,
