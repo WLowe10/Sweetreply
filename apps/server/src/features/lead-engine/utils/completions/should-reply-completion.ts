@@ -10,15 +10,19 @@ export const shouldReplyCompletion = async ({
 	lead,
 	project,
 }: ShouldReplyPromptData): Promise<ShouldReplyOutputType> => {
-	const prompt = shouldReplyPrompt({ lead, project });
+	const { system, user } = shouldReplyPrompt({ lead, project });
 
 	const completion = await openAI.chat.completions.create({
 		model: "gpt-3.5-turbo",
 		temperature: 0.5,
 		messages: [
 			{
+				role: "system",
+				content: system,
+			},
+			{
 				role: "user",
-				content: prompt,
+				content: user,
 			},
 		],
 	});
