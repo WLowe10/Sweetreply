@@ -145,7 +145,11 @@ export const ReplyForm = () => {
 						error={form.formState.errors.reply_custom_instructions?.message}
 						{...form.register("reply_custom_instructions")}
 					/>
-					<Button type="submit" disabled={!form.formState.isDirty}>
+					<Button
+						type="submit"
+						disabled={!form.formState.isDirty}
+						loading={updateProjectMutation.isLoading}
+					>
 						Save
 					</Button>
 				</Stack>
