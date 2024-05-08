@@ -4,6 +4,7 @@ import { TRPCError } from "@trpc/server";
 import { billingPlanSchema } from "@sweetreply/shared/features/billing/schemas";
 import { BillingPlanPrice } from "../constants";
 import { z } from "zod";
+import { env } from "@env";
 
 const subscribeInputSchema = z.object({
 	plan: billingPlanSchema,
@@ -12,6 +13,13 @@ const subscribeInputSchema = z.object({
 export const subscribeHandler = authenticatedProcedure
 	.input(subscribeInputSchema)
 	.mutation(async ({ input, ctx }) => {
+		if (env.NEW_SUBSCRIPTIONS_DISABLED) {
+			throw new TRPCError({
+				code: "NOT_IMPLEMENTED",
+				message: "New subscriptions are currently disabled",
+			});
+		}
+
 		if (ctx.user.plan) {
 			throw new TRPCError({
 				code: "FORBIDDEN",
