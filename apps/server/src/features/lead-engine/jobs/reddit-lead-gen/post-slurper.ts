@@ -54,7 +54,7 @@ export class RedditPostSlurper {
 					!postData.subreddit_id ||
 					!postData.author_fullname ||
 					postData.title === "[removed]" ||
-					postData.content === "[removed]"
+					postData.selftext === "[removed]"
 				) {
 					continue;
 				}
