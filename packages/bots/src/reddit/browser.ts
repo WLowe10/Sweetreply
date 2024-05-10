@@ -77,7 +77,6 @@ export class RedditBrowserBot implements IBot {
 			throw new Error("Browser is not initialized");
 		}
 
-		console.log("closing browser");
 		await this.browser.close();
 	}
 

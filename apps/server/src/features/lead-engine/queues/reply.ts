@@ -14,11 +14,6 @@ export type ReplyQueueJobData = {
 
 const replyQueue = new Queue<ReplyQueueJobData>("reply", {
 	redis: env.REDIS_URL,
-	// ? this may not be the best rate limit
-	limiter: {
-		max: 1,
-		duration: 1000,
-	},
 	defaultJobOptions: {
 		attempts: 3,
 		removeOnComplete: true,
@@ -30,7 +25,7 @@ const replyQueue = new Queue<ReplyQueueJobData>("reply", {
 	},
 });
 
-replyQueue.process(async (job) => {
+replyQueue.process(3, async (job) => {
 	const jobData = job.data;
 
 	const lead = await prisma.lead.findUnique({
