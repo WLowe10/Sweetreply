@@ -17,6 +17,7 @@ export type ReplyInputData = Pick<Lead, "type" | "remote_id" | "group"> & { repl
 export type DeleteReplyInputData = Pick<Lead, "reply_remote_id" | "remote_id" | "group" | "type">;
 
 export interface IBot {
+	parseSessionDump(dump: object): object;
 	loadSession(session: object): Promise<boolean>;
 	dumpSession(): Promise<object>;
 	generateSession(): Promise<object>;

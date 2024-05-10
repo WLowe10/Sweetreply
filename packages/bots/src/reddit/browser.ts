@@ -77,12 +77,15 @@ export class RedditBrowserBot implements IBot {
 			throw new Error("Browser is not initialized");
 		}
 
+		console.log("closing browser");
 		await this.browser.close();
 	}
 
-	public async loadSession(data: object) {
-		const session = redditSessionSchema.parse(data);
+	public parseSessionDump(data: object): RedditSessionType {
+		return redditSessionSchema.parse(data);
+	}
 
+	public async loadSession(session: RedditSessionType) {
 		if (!this.browser || !this.page) {
 			throw new Error("Browser is not initialized");
 		}
@@ -108,7 +111,7 @@ export class RedditBrowserBot implements IBot {
 		return userLoggedIn === "true";
 	}
 
-	public async dumpSession() {
+	public async dumpSession(): Promise<RedditSessionType> {
 		if (!this.page) {
 			throw new Error("Browser is not initialized");
 		}
@@ -121,7 +124,7 @@ export class RedditBrowserBot implements IBot {
 		};
 	}
 
-	public async generateSession() {
+	public async generateSession(): Promise<RedditSessionType> {
 		if (!this.browser || !this.page) {
 			throw new Error("Browser is not initialized");
 		}

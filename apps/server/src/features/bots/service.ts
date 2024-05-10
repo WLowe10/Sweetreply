@@ -1,9 +1,9 @@
 import { prisma } from "@lib/db";
 import { subDays } from "date-fns";
-import { BotError, type IBot } from "@sweetreply/bots";
+import { BotError, createBot, type IBot } from "@sweetreply/bots";
 import { Prisma, Bot } from "@sweetreply/prisma";
 import { sleepRange } from "@sweetreply/shared/lib/utils";
-import { HTTPError, RequestError } from "got";
+import { RequestError } from "got";
 import { logger } from "@lib/logger";
 
 export async function getBot(id: string) {
@@ -104,37 +104,70 @@ export async function updateBotSession(botID: string, session: object | null) {
 	});
 }
 
-export async function loadSession(bot: IBot, botAccount: Bot) {
-	let sessionIsValid = false;
-	let session = botAccount.session;
+export async function executeBot(botAccount: Bot, execFn: (bot: IBot) => void): Promise<void> {
+	const bot = await createBot(botAccount);
 
-	if (botAccount.session) {
-		sessionIsValid = await bot.loadSession(botAccount.session as object);
+	if (!bot) {
+		throw new Error("Failed to create bot instance, not supported");
 	}
 
-	if (!sessionIsValid) {
-		// clear the session so it isn't used again
-		if (botAccount.session !== null) {
-			await updateBotSession(botAccount.id, null);
+	if (bot.setup) {
+		await bot.setup();
+	}
+
+	try {
+		let sessionIsValid = false;
+
+		if (botAccount.session) {
+			let parsedDump: object | undefined;
+
+			try {
+				parsedDump = await bot.parseSessionDump(botAccount.session as object);
+			} catch {
+				// noop
+			}
+
+			if (parsedDump) {
+				sessionIsValid = await bot.loadSession(parsedDump as any);
+			}
 		}
 
-		logger.debug("Generating new bot session", {
-			id: botAccount.id,
+		if (!sessionIsValid) {
+			// clear the session so it isn't used again
+			// if (botAccount.session !== null) {
+			// 	await updateBotSession(botAccount.id, null);
+			// }
+
+			logger.debug("Generating new bot session", {
+				bot_id: botAccount.id,
+			});
+
+			await bot.generateSession();
+
+			// await updateBotSession(botAccount.id, session);
+
+			// sleep for a random delay between 5000 and 7500 ms after logging in
+			await sleepRange(5000, 7500);
+		}
+
+		await execFn(bot);
+	} catch (err) {
+		if (err instanceof Error) {
+			handleBotError(botAccount.id, err);
+		}
+
+		throw err;
+	} finally {
+		const finalSession = await bot.dumpSession();
+
+		logger.debug("Updating bot session", {
+			bot_id: botAccount.id,
 		});
 
-		session = await bot.generateSession();
+		await updateBotSession(botAccount.id, finalSession);
 
-		await updateBotSession(botAccount.id, session);
-
-		// sleep for a random delay between 5000 and 10000 ms after logging in
-		await sleepRange(5000, 10000);
+		if (bot.teardown) {
+			await bot.teardown();
+		}
 	}
-
-	return session;
-}
-
-export async function saveSession(botID: string, bot: IBot) {
-	const finalSession = await bot.dumpSession();
-
-	await updateBotSession(botID, finalSession);
 }

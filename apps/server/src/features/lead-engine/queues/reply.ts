@@ -6,7 +6,7 @@ import { prisma } from "@lib/db";
 import { env } from "@env";
 import { ReplyStatus } from "@sweetreply/shared/features/leads/constants";
 import { ReplyResultData } from "@features/bots/types";
-import { BotError, createBot } from "@sweetreply/bots";
+import { BotError } from "@sweetreply/bots";
 
 export type ReplyQueueJobData = {
 	lead_id: string;
@@ -47,7 +47,7 @@ replyQueue.process(async (job) => {
 		return;
 	}
 
-	if (!lead.reply_text || lead.reply_text.trim().length === 0) {
+	if (lead.reply_text === null) {
 		job.opts.attempts = job.attemptsMade + 1;
 
 		throw new Error(`Lead ${jobData.lead_id} has insufficient reply text`);
@@ -80,9 +80,7 @@ replyQueue.process(async (job) => {
 		throw new Error(`Lead ${jobData.lead_id} could not find an account to reply with`);
 	}
 
-	const bot = createBot(botAccount);
-
-	if (bot === null || user.reply_credits <= 0) {
+	if (user.reply_credits <= 0) {
 		await leadsService.draft(lead.id);
 
 		return;
@@ -90,45 +88,65 @@ replyQueue.process(async (job) => {
 
 	// --- Automation ----
 
-	// load the session/login
+	let replyResult: ReplyResultData | undefined;
+
 	try {
-		await botsService.loadSession(bot, botAccount);
+		await botsService.executeBot(botAccount, async (bot) => {
+			replyResult = await bot.reply(lead as any);
+		});
 	} catch (err) {
-		if (err instanceof Error) {
-			botsService.handleBotError(botAccount.id, err);
-		}
-
-		throw err;
-	}
-
-	let replyResult: ReplyResultData;
-
-	// make the actual reply
-	try {
-		replyResult = await bot.reply(lead);
-	} catch (err) {
-		await botsService.saveSession(botAccount.id, bot);
-
-		if (!(err instanceof Error)) {
-			return;
-		}
-
 		if (err instanceof BotError && err.code === "REPLY_LOCKED") {
 			await leadsService.lock(lead.id);
-
-			return;
 		}
-
-		await botsService.handleBotError(botAccount.id, err);
 
 		throw err;
 	}
 
-	await botsService.saveSession(botAccount.id, bot);
+	if (!replyResult) {
+		throw new Error("Failed to reply");
+	}
+
+	// load the session/login
+
+	// try {
+	// 	await botsService.loadSession(bot, botAccount);
+	// } catch (err) {
+	// 	if (err instanceof Error) {
+	// 		botsService.handleBotError(botAccount.id, err);
+	// 	}
+
+	// 	throw err;
+	// }
+
+	// let replyResult: ReplyResultData;
+
+	// make the actual reply
+	// try {
+	// 	replyResult = await bot.reply(lead);
+	// } catch (err) {
+	// 	await botsService.saveSession(botAccount.id, bot);
+
+	// 	if (!(err instanceof Error)) {
+	// 		return;
+	// 	}
+
+	// 	if (err instanceof BotError && err.code === "REPLY_LOCKED") {
+	// 		await leadsService.lock(lead.id);
+
+	// 		return;
+	// 	}
+
+	// 	await botsService.handleBotError(botAccount.id, err);
+
+	// 	throw err;
+	// }
+
+	// await botsService.saveSession(botAccount.id, bot);
 
 	// --- End Automation ----
 
 	// update the lead with the reply details
+
 	await prisma.lead.update({
 		where: {
 			id: lead.id,

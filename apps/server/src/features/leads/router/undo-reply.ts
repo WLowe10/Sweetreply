@@ -1,6 +1,5 @@
 import * as botsService from "@features/bots/service";
 import { failedToDeleteReply, failedToUndoReply, leadHasNoReply, leadNotFound } from "../errors";
-import { BotError, createBot } from "@sweetreply/bots";
 import { ReplyStatus } from "@sweetreply/shared/features/leads/constants";
 import { canUndoReply } from "@sweetreply/shared/features/leads/utils";
 import { subscribedProcedure } from "@features/billing/procedures";
@@ -41,31 +40,11 @@ export const undoReplyHandler = subscribedProcedure
 			throw failedToUndoReply();
 		}
 
-		const bot = createBot(botAccount);
-
-		if (!bot) {
-			throw failedToUndoReply();
-		}
-
 		try {
-			await botsService.loadSession(bot, botAccount);
+			await botsService.executeBot(botAccount, async (bot) => {
+				await bot.deleteReply(lead);
+			});
 		} catch (err) {
-			if (err instanceof Error) {
-				await botsService.handleBotError(botAccount.id, err);
-			}
-
-			throw failedToDeleteReply();
-		}
-
-		try {
-			await bot.deleteReply(lead);
-		} catch (err) {
-			await botsService.saveSession(botAccount.id, bot);
-
-			if (err instanceof BotError) {
-				await botsService.handleBotError(botAccount.id, err);
-			}
-
 			throw failedToDeleteReply();
 		}
 

@@ -1,5 +1,5 @@
 import { LeadPlatform } from "@sweetreply/shared/features/leads/constants";
-import { RedditBot } from "./reddit";
+import { RedditBrowserBot } from "./reddit/browser";
 import type { Bot } from "@sweetreply/prisma";
 
 export const proxyIsDefined = (
@@ -7,4 +7,4 @@ export const proxyIsDefined = (
 ): Boolean => !!bot.proxy_host && !!bot.proxy_port && !!bot.proxy_user && !!bot.proxy_pass;
 
 export const createBot = (bot: Bot) =>
-	bot.platform === LeadPlatform.REDDIT ? new RedditBot(bot) : null;
+	bot.platform === LeadPlatform.REDDIT ? new RedditBrowserBot(bot) : null;

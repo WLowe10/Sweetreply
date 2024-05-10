@@ -36,7 +36,7 @@ export type RedditCommentData = {
 	replies: string;
 };
 
-export class RedditBot implements IBot {
+export class RedditRequestBot implements IBot {
 	private username: string;
 	private password: string;
 	private client: Got;
