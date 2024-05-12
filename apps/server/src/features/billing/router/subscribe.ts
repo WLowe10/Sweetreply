@@ -13,7 +13,7 @@ const subscribeInputSchema = z.object({
 export const subscribeHandler = authenticatedProcedure
 	.input(subscribeInputSchema)
 	.mutation(async ({ input, ctx }) => {
-		if (env.NEW_SUBSCRIPTIONS_DISABLED) {
+		if (env.CHECKOUT_DISABLED) {
 			throw new TRPCError({
 				code: "FORBIDDEN",
 				message: "New subscriptions are currently disabled",

@@ -15,7 +15,7 @@ export const envSchema = z.object({
 	COOKIE_SECRET: z.string(),
 	EMAIL_VERIFICATION_SECRET: z.string(),
 	JOBS_DISABLED: envBool.optional(),
-	NEW_SUBSCRIPTIONS_DISABLED: envBool.optional(),
+	CHECKOUT_DISABLED: envBool.optional(),
 	AUTH_REGISTRATION_DISABLED: envBool.optional(),
 
 	// --- ADD CUSTOM ENV VARIABLES BELOW ---
