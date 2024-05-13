@@ -14,7 +14,7 @@ export const shouldReplyCompletion = async ({
 
 	const completion = await openAI.chat.completions.create({
 		model: "gpt-3.5-turbo",
-		temperature: 0.5,
+		temperature: 0.1,
 		messages: [
 			{
 				role: "system",

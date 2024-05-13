@@ -17,7 +17,8 @@ export const replyCompletion = async ({
 
 	const completion = await openAI.chat.completions.create({
 		model: "gpt-3.5-turbo",
-		temperature: 0.45,
+		// model: "gpt-4-turbo",
+		temperature: 0.25,
 		max_tokens: maxTokens,
 		messages: [
 			{
@@ -38,7 +39,7 @@ export const replyCompletion = async ({
 	// const response = await ollama.chat({
 	// 	model: "llama3",
 	// 	options: {
-	// 		temperature: 1,
+	// 		temperature: 0.25,
 	// 	},
 	// 	messages: [
 	// 		{
