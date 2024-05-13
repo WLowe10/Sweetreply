@@ -1,4 +1,3 @@
-import { LeadPlatform } from "@sweetreply/shared/features/leads/constants";
 import type { Project, Lead } from "@sweetreply/prisma";
 
 export type ReplyPromptData = {

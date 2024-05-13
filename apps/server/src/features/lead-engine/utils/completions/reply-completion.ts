@@ -17,7 +17,7 @@ export const replyCompletion = async ({
 
 	const completion = await openAI.chat.completions.create({
 		model: "gpt-3.5-turbo",
-		temperature: 0.85,
+		temperature: 0.45,
 		max_tokens: maxTokens,
 		messages: [
 			{
@@ -59,20 +59,17 @@ export const replyCompletion = async ({
 	// replicate
 
 	// const replicate = new Replicate({
-	// 	auth: "api key",
+	// 	auth: "",
 	// });
 
-	// const result = await replicate.run("meta/llama-2-70b-chat", {
+	// const result = await replicate.run("mistralai/mixtral-8x7b-instruct-v0.1", {
 	// 	input: {
-	// 		top_k: 0,
-	// 		top_p: 1,
-	// 		temperature: 1,
 	// 		system_prompt: system,
 	// 		prompt: user,
+	// 		temperature: 0.6,
 	// 		length_penalty: 1,
-	// 		max_new_tokens: 500,
-	// 		min_new_tokens: -1,
-	// 		prompt_template: "<s>[INST] <<SYS>>\n{system_prompt}\n<</SYS>>\n\n{prompt} [/INST]",
+	// 		max_new_tokens: 1024,
+	// 		prompt_template: "<s>[INST] {prompt} [/INST] ",
 	// 		presence_penalty: 0,
 	// 	},
 	// });
