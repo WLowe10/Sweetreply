@@ -47,6 +47,7 @@ export async function cancelUserScheduledReplies(userID: string) {
 
 	await prisma.lead.updateMany({
 		where: {
+			reply_status: ReplyStatus.SCHEDULED,
 			project: {
 				user_id: userID,
 			},
