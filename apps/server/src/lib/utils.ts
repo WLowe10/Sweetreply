@@ -54,3 +54,26 @@ export const getAxiosScrapingProxy = (): AxiosProxyConfig | undefined =>
 				},
 			}
 		: undefined;
+
+export const testKeywords = (
+	target: string,
+	{ keywords, negativeKeywords }: { keywords: string[]; negativeKeywords: string[] }
+) => {
+	let isMatch = false;
+
+	for (const keyword of keywords) {
+		if (target.includes(keyword)) {
+			isMatch = true;
+			break;
+		}
+	}
+
+	for (const negativeKeyword of negativeKeywords) {
+		if (target.includes(negativeKeyword)) {
+			isMatch = false;
+			break;
+		}
+	}
+
+	return isMatch;
+};

@@ -6,6 +6,7 @@ import { RedditPostSlurper } from "./post-slurper";
 import { Project } from "@sweetreply/prisma";
 import { parse, test } from "liqe";
 import * as leadEngineService from "../../service";
+import { testKeywords } from "@lib/utils";
 
 // comments slurping is disabled for now due to the possibility of an infinite loop of bot replies,
 // since the bot replies will be picked up by the comment slurper
@@ -30,8 +31,8 @@ export const redditLeadGenJob = CronJob.from({
 			const projects = await prisma.project.findMany({
 				where: {
 					reddit_monitor_enabled: true,
-					query: {
-						not: null,
+					keywords: {
+						isEmpty: false,
 					},
 				},
 				include: {
@@ -39,23 +40,27 @@ export const redditLeadGenJob = CronJob.from({
 				},
 			});
 
-			// 5 is the min length for a query, even though we santize user queries, we will be safe here too
-			const filteredProjects = projects.filter((project) => project.query!.trim().length > 5);
+			const normalizedProjects = projects.map((project) => {
+				const normalizedKeywords = project.keywords.map((keyword) => keyword.toLowerCase());
 
-			// we transform the subreddits to be lowercase before we use them
-			const projectsWithSanitizedSubreddits = filteredProjects.map((project) => {
-				const includedSubreddits = project.reddit_included_subreddits.map((subreddit) =>
-					subreddit.toLowerCase()
+				const normalizedNegativeKeywords = project.negative_keywords.map((keyword) =>
+					keyword.toLowerCase()
 				);
 
-				const excludedSubreddits = project.reddit_excluded_subreddits.map((subreddit) =>
-					subreddit.toLowerCase()
+				const normalizedIncludedSubreddits = project.reddit_included_subreddits.map(
+					(subreddit) => subreddit.toLowerCase()
+				);
+
+				const normalizedExcludedSubreddits = project.reddit_excluded_subreddits.map(
+					(subreddit) => subreddit.toLowerCase()
 				);
 
 				return {
 					...project,
-					reddit_included_subreddits: includedSubreddits,
-					reddit_excluded_subreddits: excludedSubreddits,
+					keywords: normalizedKeywords,
+					negative_keywords: normalizedNegativeKeywords,
+					reddit_included_subreddits: normalizedIncludedSubreddits,
+					reddit_excluded_subreddits: normalizedExcludedSubreddits,
 				};
 			});
 
@@ -69,15 +74,13 @@ export const redditLeadGenJob = CronJob.from({
 					continue;
 				}
 
+				const normalizedLeadTitle = lead.title.toLowerCase();
+				const normalizedLeadContent = lead.content.toLowerCase();
+
 				const limit = pLimit(20);
 
-				const searchDocument = {
-					title: lead.title,
-					content: lead.content,
-				};
-
 				await Promise.allSettled(
-					projectsWithSanitizedSubreddits.map((project) =>
+					normalizedProjects.map((project) =>
 						limit(async () => {
 							if (lead.is_nsfw && !project.reddit_allow_nsfw) {
 								return;
@@ -97,13 +100,14 @@ export const redditLeadGenJob = CronJob.from({
 								return;
 							}
 
-							let isMatch = false;
+							const keywords = {
+								keywords: project.keywords,
+								negativeKeywords: project.negative_keywords,
+							};
 
-							try {
-								isMatch = test(parse(project.query as string), searchDocument);
-							} catch {
-								// noop
-							}
+							const isMatch =
+								testKeywords(normalizedLeadTitle, keywords) ||
+								testKeywords(normalizedLeadContent, keywords);
 
 							if (!isMatch) {
 								return;

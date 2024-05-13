@@ -1,13 +1,23 @@
 import { useCurrentProjectQuery } from "@features/projects/hooks/use-current-project-query";
 import { trpc } from "@lib/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Anchor, Box, Button, Stack, Tabs, Text, TextInput, Textarea } from "@mantine/core";
+import {
+	Anchor,
+	Box,
+	Button,
+	Stack,
+	Tabs,
+	TagsInput,
+	Text,
+	TextInput,
+	Textarea,
+} from "@mantine/core";
 import { Link } from "@remix-run/react";
 import {
 	UpdateProjectInputType,
 	updateProjectInputSchema,
 } from "@sweetreply/shared/features/projects/schemas";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 
 export const GeneralForm = () => {
 	const { data: project } = useCurrentProjectQuery();
@@ -20,7 +30,8 @@ export const GeneralForm = () => {
 			name: project?.name ?? "",
 			description: project?.description ?? "",
 			website_url: project?.website_url ?? "",
-			query: project?.query ?? "",
+			keywords: project?.keywords ?? [],
+			negative_keywords: project?.negative_keywords ?? [],
 		},
 	});
 
@@ -83,7 +94,33 @@ export const GeneralForm = () => {
 						error={form.formState.errors.description?.message}
 						{...form.register("description")}
 					/>
-					<Textarea
+					<Controller
+						name="keywords"
+						control={form.control}
+						render={({ field, fieldState }) => (
+							<TagsInput
+								label="Keywords"
+								clearable={true}
+								error={fieldState.error?.message}
+								value={field.value}
+								onChange={field.onChange}
+							/>
+						)}
+					/>
+					<Controller
+						name="negative_keywords"
+						control={form.control}
+						render={({ field, fieldState }) => (
+							<TagsInput
+								label="Negative keywords"
+								clearable={true}
+								error={fieldState.error?.message}
+								value={field.value}
+								onChange={field.onChange}
+							/>
+						)}
+					/>
+					{/* <Textarea
 						label="Query"
 						autoCorrect="off"
 						autoComplete="off"
@@ -100,7 +137,7 @@ export const GeneralForm = () => {
 							</Text>
 						}
 						{...form.register("query")}
-					/>
+					/> */}
 					<Button
 						type="submit"
 						disabled={!form.formState.isDirty}

@@ -2,7 +2,6 @@ import { openAI } from "@lib/client/openai";
 import { replyPrompt } from "../prompts/reply-prompt";
 import { LeadPlatformType, ReplyCharacterLimit } from "@sweetreply/shared/features/leads/constants";
 import type { ReplyPromptData } from "../prompts/reply-prompt";
-import type { Lead, Project } from "@sweetreply/prisma";
 
 export const replyCompletion = async ({
 	lead,

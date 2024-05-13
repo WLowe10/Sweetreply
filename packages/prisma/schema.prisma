@@ -136,12 +136,13 @@ model BotError {
 // Project
 
 model Project {
-    id          String  @id @default(uuid())
-    user_id     String
-    name        String
-    description String?
-    website_url String?
-    query       String?
+    id                String   @id @default(uuid())
+    user_id           String
+    name              String
+    description       String?
+    website_url       String?
+    keywords          String[]
+    negative_keywords String[]
 
     reply_mention_mode        String  @default("name")
     reply_with_domain         Boolean @default(true)

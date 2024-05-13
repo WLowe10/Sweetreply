@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { projectModel } from "@sweetreply/prisma/zod";
 import { subredditNameSchema } from "../reddit/schemas";
-import { isValidLiqeString } from "../../lib/utils";
 
 const isValidURLString = (str: string) => {
 	let url;
@@ -15,6 +14,8 @@ const isValidURLString = (str: string) => {
 	return url.protocol === "http:" || url.protocol === "https:";
 };
 
+const keywordSchema = z.string().min(2).max(32);
+
 export const baseProjectSchema = projectModel.extend({
 	id: z.string().uuid(),
 	name: projectModel.shape.name.min(3).max(32),
@@ -27,14 +28,8 @@ export const baseProjectSchema = projectModel.extend({
 		.nullish()
 		.or(z.literal("")),
 	description: z.string().trim().min(10).max(512).nullish().or(z.literal("")),
-	query: z
-		.string()
-		.trim()
-		.min(5)
-		.max(128)
-		.refine((query) => isValidLiqeString(query), { message: "Invalid query" })
-		.nullish()
-		.or(z.literal("")),
+	keywords: z.array(keywordSchema).max(50),
+	negative_keywords: z.array(keywordSchema).max(50),
 
 	reply_mention_mode: z.enum(["name", "name_or_url", "url"]),
 	reply_delay: z
@@ -80,7 +75,8 @@ export const updateProjectInputSchema = z.object({
 			name: true,
 			website_url: true,
 			description: true,
-			query: true,
+			keywords: true,
+			negative_keywords: true,
 
 			reply_mention_mode: true,
 			reply_with_domain: true,

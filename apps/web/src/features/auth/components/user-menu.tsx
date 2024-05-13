@@ -23,9 +23,7 @@ export const UserMenu = () => {
 
 	return (
 		<>
-			<ProfileModal
-				modalProps={{ opened: isOpen || (me && !me.verified_at), onClose: close }}
-			/>
+			<ProfileModal modalProps={{ opened: isOpen, onClose: close }} />
 			<Menu width="target">
 				<Menu.Target>
 					{me ? (

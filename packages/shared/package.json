@@ -16,7 +16,6 @@
 	"dependencies": {
 		"@sweetreply/prisma": "workspace:*",
 		"date-fns": "^3.6.0",
-		"liqe": "^3.8.0",
 		"zod": "^3.22.4"
 	}
 }

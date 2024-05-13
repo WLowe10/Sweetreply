@@ -54,7 +54,7 @@ export class RedditBrowserBot implements IBot {
 		}
 
 		this.browser = await puppeteer.launch({
-			// headless: false, // ? false during dev testing
+			// headless: false, // ? important that headless: true is not on in prod
 			timeout: 5000,
 			ignoreDefaultArgs: ["--disable-extensions"],
 			args,
@@ -62,7 +62,9 @@ export class RedditBrowserBot implements IBot {
 
 		this.page = await this.browser.newPage();
 
-		this.page.setDefaultTimeout(5000);
+		await this.page.setViewport({ width: 1280, height: 720 });
+
+		await this.page.setDefaultTimeout(5000);
 
 		if (botUsesProxy) {
 			await this.page.authenticate({
@@ -223,7 +225,6 @@ export class RedditBrowserBot implements IBot {
 		);
 
 		const body = await response.text();
-
 		const resDoc = parse(body);
 
 		const shredditComment = resDoc.querySelector("shreddit-comment");
@@ -256,6 +257,8 @@ export class RedditBrowserBot implements IBot {
 		await this.page.goto(
 			`${redditURL}/r/${lead.group}/comments/${lead.remote_id}/comment/${lead.reply_remote_id}`
 		);
+
+		// todo check if it is collapsed first because downvoted
 
 		const menuButton = await this.page.waitForSelector("shreddit-overflow-menu >>> button");
 

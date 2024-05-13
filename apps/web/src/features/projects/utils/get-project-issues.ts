@@ -1,10 +1,10 @@
 import type { Project } from "@sweetreply/prisma";
 
-export const getProjectIssues = (project: Pick<Project, "query" | "description">) => {
+export const getProjectIssues = (project: Pick<Project, "keywords" | "description">) => {
 	const issues: string[] = [];
 
-	if (!project.query) {
-		issues.push("You cannot monitor posts until you have configured a query");
+	if (project.keywords.length === 0) {
+		issues.push("Add a keyword to start finding leads.");
 	}
 
 	if (!project.description) {
