@@ -1,5 +1,6 @@
 import { useLocation } from "@remix-run/react";
 import { useEffect } from "react";
+import * as gtag from "@lib/gtag";
 
 export type GoogleAnalyticsProps = {
 	gaTrackingID: string;
@@ -9,8 +10,7 @@ export const GoogleAnalyics = ({ gaTrackingID }: GoogleAnalyticsProps) => {
 	const location = useLocation();
 
 	useEffect(() => {
-		// @ts-ignore
-		gtag.pageview(location.pathname, gaTrackingId);
+		gtag.pageview(location.pathname, gaTrackingID);
 	}, [location, gaTrackingID]);
 
 	return (

@@ -34,7 +34,7 @@ declare global {
 export const loader: LoaderFunction = () =>
 	json({
 		env: getPublicEnv(),
-		gaTrackingID: env.GA_TRACKING_ID,
+		gaTrackingID: !isDev() && env.GA_TRACKING_ID,
 	});
 
 export const links: LinksFunction = () => [
@@ -142,7 +142,7 @@ function Document({
 			</head>
 			<body>
 				{children}
-				{/* {gaTrackingID && <GoogleAnalyics gaTrackingID={gaTrackingID} />} */}
+				{gaTrackingID && <GoogleAnalyics gaTrackingID={gaTrackingID} />}
 				{windowEnv && (
 					<script
 						dangerouslySetInnerHTML={{
