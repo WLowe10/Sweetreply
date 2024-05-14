@@ -7,12 +7,14 @@ import { env } from "@env";
 import { TRPCProvider } from "@lib/trpc";
 import { theme } from "@lib/theme";
 import { buildPageTitle } from "@lib/utils";
+import { isDev } from "@sweetreply/shared/lib/utils";
 import type { PropsWithChildren } from "react";
 
 import "@mantine/core/styles.css";
 import "@mantine/charts/styles.css";
 import "@mantine/dates/styles.css";
 import "@mantine/notifications/styles.css";
+import { GoogleAnalyics } from "@components/google-analytics";
 
 const TITLE = buildPageTitle("A friendly AI that mentions your product online");
 const DESCRIPTION = "Boost your online presence with Sweetreply's automatic AI shout-outs";
@@ -32,6 +34,7 @@ declare global {
 export const loader: LoaderFunction = () =>
 	json({
 		env: getPublicEnv(),
+		gaTrackingID: env.GA_TRACKING_ID,
 	});
 
 export const links: LinksFunction = () => [
@@ -121,10 +124,12 @@ export const meta: MetaFunction = () => [
 ];
 
 function Document({
-	env,
+	windowEnv,
+	gaTrackingID,
 	children,
 }: PropsWithChildren<{
-	env?: Record<string, string>;
+	gaTrackingID?: string;
+	windowEnv?: Record<string, string>;
 }>) {
 	return (
 		<html lang="en">
@@ -137,10 +142,11 @@ function Document({
 			</head>
 			<body>
 				{children}
-				{env && (
+				{/* {gaTrackingID && <GoogleAnalyics gaTrackingID={gaTrackingID} />} */}
+				{windowEnv && (
 					<script
 						dangerouslySetInnerHTML={{
-							__html: `window.ENV = ${JSON.stringify(env)};`,
+							__html: `window.ENV = ${JSON.stringify(windowEnv)};`,
 						}}
 					/>
 				)}
@@ -160,13 +166,11 @@ function RootProviders({ children }: PropsWithChildren) {
 	);
 }
 
-// todo error boundary
-
 export default function App() {
 	const data = useLoaderData<typeof loader>();
 
 	return (
-		<Document env={data.env}>
+		<Document gaTrackingID={data.gaTrackingID} windowEnv={data.env}>
 			<RootProviders>
 				<Outlet />
 				<ReactQueryDevtools position="bottom-right" />

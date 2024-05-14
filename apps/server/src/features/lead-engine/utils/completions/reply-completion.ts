@@ -1,7 +1,7 @@
 import { openAI } from "@lib/client/openai";
-import { replyPrompt } from "../prompts/reply-prompt";
+import { replyPrompt } from "../prompts/reply-prompt-v2.5";
 import { LeadPlatformType, ReplyCharacterLimit } from "@sweetreply/shared/features/leads/constants";
-import type { ReplyPromptData } from "../prompts/reply-prompt";
+import type { ReplyPromptData } from "../prompts/reply-prompt-v2";
 
 export const replyCompletion = async ({
 	lead,
@@ -11,7 +11,7 @@ export const replyCompletion = async ({
 	const maxTokens =
 		typeof replyCharacterLimit === "number" ? Math.ceil(replyCharacterLimit / 4) : 1250;
 
-	const { system, user } = replyPrompt({ project, lead, characterLimit: replyCharacterLimit });
+	const prompt = replyPrompt({ project, lead, characterLimit: replyCharacterLimit });
 
 	// openai
 
@@ -22,12 +22,8 @@ export const replyCompletion = async ({
 		max_tokens: maxTokens,
 		messages: [
 			{
-				role: "system",
-				content: system,
-			},
-			{
 				role: "user",
-				content: user,
+				content: prompt,
 			},
 		],
 	});

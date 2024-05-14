@@ -15,7 +15,6 @@ import { emailAlreadyRegistered } from "./errors";
 import { env } from "@env";
 import { stripe } from "@lib/client/stripe";
 import { TRPCError } from "@trpc/server";
-import { isDev } from "@lib/utils";
 import { logger } from "@lib/logger";
 import { sendDiscordNotification } from "@lib/discord-notification";
 import {
@@ -27,6 +26,7 @@ import {
 	hoursToMilliseconds,
 	millisecondsToMinutes,
 } from "date-fns";
+import { isDev } from "@sweetreply/shared/lib/utils";
 import type { SignUpInputType, SignInInputType } from "@sweetreply/shared/features/auth/schemas";
 import type { Session, User } from "@sweetreply/prisma";
 import type { Request, Response } from "express";

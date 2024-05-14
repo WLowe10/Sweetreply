@@ -1,10 +1,6 @@
 import { env } from "@env";
 import { AxiosProxyConfig } from "axios";
 
-export function isDev(): boolean {
-	return env.NODE_ENV !== "production";
-}
-
 export function buildAPIUrl(path: string, query?: Record<string, string>): string {
 	const url = new URL(env.FRONTEND_URL + path);
 

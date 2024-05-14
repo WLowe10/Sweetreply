@@ -13,7 +13,7 @@ import { createContext } from "./lib/trpc";
 import { startJobs } from "./jobs";
 import { appRouter } from "./router";
 import { logger } from "./lib/logger";
-import { isDev } from "./lib/utils";
+import { isDev } from "@sweetreply/shared/lib/utils";
 
 // REST controllers
 import { CommonController } from "./features/common/controllers/common";

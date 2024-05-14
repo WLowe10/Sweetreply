@@ -1,5 +1,5 @@
 import pino from "pino";
-import { isDev } from "./utils";
+import { isDev } from "@sweetreply/shared/lib/utils";
 
 export const logger = pino(
 	isDev()

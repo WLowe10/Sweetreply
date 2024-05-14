@@ -15,3 +15,7 @@ export type ProxyURLConfig = {
 
 export const buildProxyURL = (opts: ProxyURLConfig) =>
 	`http://${opts.user}:${opts.pass}@${opts.host}:${opts.port}`;
+
+export const isDev = (): boolean => {
+	return process.env.NODE_ENV === "development";
+};
