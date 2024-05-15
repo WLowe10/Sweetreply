@@ -20,13 +20,13 @@ export class RedditPostsSlurper {
 	}
 
 	public async slurp() {
-		const newLatestPostId = await this.getLatestItemId();
+		const { id: newLatestPostId, cookies } = await this.getLatestItemId();
 
 		// should set max
 		const slurpAmount = this.prevSuccessfulBatchStartId
 			? Math.min(
 					parseInt(newLatestPostId, 36) - parseInt(this.prevSuccessfulBatchStartId, 36),
-					10000
+					9500 // 95 requests is the most we can make on a single reddit rate-limiting session
 				)
 			: 2000;
 
@@ -35,7 +35,12 @@ export class RedditPostsSlurper {
 
 		const newPostsResults = await Promise.all(
 			urls.map(async (url) => {
-				const response = await this.client.get(url, { timeout: 10000 });
+				const response = await this.client.get(url, {
+					timeout: 10000,
+					headers: {
+						Cookie: cookies,
+					},
+				});
 
 				return response.data;
 			})
@@ -69,10 +74,26 @@ export class RedditPostsSlurper {
 		return leads;
 	}
 
-	public async getLatestItemId(): Promise<string> {
+	public async getLatestItemId() {
 		const response = await this.client.get("https://www.reddit.com/r/all/new/.json");
+		const cookies = response.headers["set-cookie"];
 
-		return response.data["data"]["children"][0]["data"]["id"];
+		const latestId = response.data["data"]["children"][0]["data"]["id"];
+
+		if (!cookies || cookies.length === 0) {
+			throw new Error("Failed to load rate limiting cookie");
+		}
+
+		const loid = cookies.find((c) => c.startsWith("loid="));
+
+		if (!loid) {
+			throw new Error("Failed to load rate limiting cookie");
+		}
+
+		return {
+			id: latestId,
+			cookies,
+		};
 	}
 
 	public getLead(redditPost: any) {
@@ -89,13 +110,6 @@ export class RedditPostsSlurper {
 			content: redditPost.selftext,
 			remote_url: `https://www.reddit.com/r/${redditPost.subreddit}/comments/${redditPost.id}`,
 			date: new Date(redditPost.created_utc * 1000),
-		};
-	}
-
-	public getSearchDocument(lead: any) {
-		return {
-			title: lead.title,
-			content: lead.content,
 		};
 	}
 }
