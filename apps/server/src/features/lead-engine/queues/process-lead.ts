@@ -7,6 +7,7 @@ import { ReplyStatus } from "@sweetreply/shared/features/leads/constants";
 import { shouldReplyCompletion } from "../utils/completions/should-reply-completion";
 import { replyCompletion } from "../utils/completions/reply-completion";
 import { addReplyJob } from "../service";
+import * as leadsService from "@features/leads/service";
 
 export type ProcessLeadQueueJobData = {
 	lead_id: string;
@@ -37,38 +38,28 @@ processLeadQueue.process(async (job) => {
 		where: {
 			id: jobData.lead_id,
 		},
+		include: {
+			project: {
+				include: {
+					user: true,
+				},
+			},
+		},
 	});
 
 	if (!lead) {
 		return;
 	}
 
-	const project = await prisma.project.findUnique({
-		where: {
-			id: lead.project_id,
-		},
-	});
+	const project = lead.project;
+	const user = project.user;
 
-	if (!project) {
-		return;
-	}
-
-	if (!project.description || project.description.length < 10) {
-		return;
-	}
-
-	const user = await prisma.user.findUnique({
-		where: {
-			id: project.user_id,
-		},
-	});
-
-	if (!user) {
-		return;
-	}
-
-	// the account does not have an active subscription, or does not have any reply credits. Do not proceed in auto replies
-	if (user.reply_credits <= 0) {
+	if (
+		!project ||
+		!project.description ||
+		project.description.length < 10 ||
+		user.reply_credits <= 0
+	) {
 		return;
 	}
 
@@ -80,32 +71,55 @@ processLeadQueue.process(async (job) => {
 		return;
 	}
 
-	// if the daily limit is zero, it means that the project does not have a reply limit
-	// add more checks here once other platforms are supported
+	const outstandingReplies = await leadsService.countOutstandingRepliesForUser(user.id);
 
-	// counts all of the replies within the last 24 hours
-	const repliesLast24Hours = await prisma.lead.count({
-		where: {
-			reply_status: ReplyStatus.REPLIED,
-			replied_at: {
-				gte: subDays(new Date(), 1),
-			},
-		},
-	});
-
-	if (project.reply_daily_limit && repliesLast24Hours >= project.reply_daily_limit) {
-		// daily limit reached, don't generate a reply
-		logger.info(`${project.name} has reached the daily reply limit`);
+	if (outstandingReplies >= user.reply_credits) {
+		logger.info(`${user.email} has reached the reply limit in outstanding replies`);
 
 		return;
 	}
 
+	// if the daily limit is zero, it means that the project does not have a reply limit
+	if (project.reply_daily_limit >= 0) {
+		// counts all of the scheduled and sent replies within the last 24 hours
+
+		const repliesLast24Hours = await prisma.lead.count({
+			where: {
+				project_id: project.id,
+				reply_status: {
+					in: [ReplyStatus.SCHEDULED, ReplyStatus.REPLIED],
+				},
+				OR: [
+					{
+						replied_at: {
+							gte: subDays(new Date(), 1),
+						},
+					},
+					{
+						reply_scheduled_at: {
+							gte: subDays(new Date(), 1),
+						},
+					},
+				],
+			},
+		});
+
+		if (repliesLast24Hours >= project.reply_daily_limit) {
+			// daily limit reached, don't generate a reply
+			logger.info(`${project.name} has reached the daily reply limit`);
+
+			return;
+		}
+	}
+
+	// check if we should reply to this lead using AI
 	const shouldReply = await shouldReplyCompletion({ lead, project });
 
 	if (!shouldReply) {
 		return;
 	}
 
+	// generate the reply using AI
 	const generatedReply = await replyCompletion({ lead, project });
 
 	let scheduledAt: Date | undefined;
@@ -118,6 +132,7 @@ processLeadQueue.process(async (job) => {
 		}
 	}
 
+	// send the lead to the reply queue
 	addReplyJob(lead.id, {
 		date: scheduledAt,
 	});

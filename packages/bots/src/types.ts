@@ -12,17 +12,14 @@ export type ReplyResultData = {
 	reply_remote_url: string | null;
 };
 
-export type ReplyInputData = Pick<Lead, "type" | "remote_id" | "group"> & { reply_text: string };
-
-export type DeleteReplyInputData = Pick<Lead, "reply_remote_id" | "remote_id" | "group" | "type">;
-
 export interface IBot {
+	setup?(): Promise<void>;
+	teardown?(): Promise<void>;
 	parseSessionDump(dump: object): object;
 	loadSession(session: object): Promise<boolean>;
 	dumpSession(): Promise<object>;
 	generateSession(): Promise<object>;
-	reply(lead: ReplyInputData): Promise<ReplyResultData>;
-	deleteReply(lead: DeleteReplyInputData): Promise<void>;
-	setup?(): Promise<void>;
-	teardown?(): Promise<void>;
+
+	reply(lead: Lead): Promise<ReplyResultData>;
+	deleteReply(lead: Lead): Promise<void>;
 }

@@ -29,7 +29,7 @@ export async function dequeueBot(platform: string) {
 	});
 
 	if (!topBot) {
-		return null;
+		throw new Error("Could not find an active bot");
 	}
 
 	const updatedBot = prisma.bot.update({
@@ -133,20 +133,12 @@ export async function executeBot(botAccount: Bot, execFn: (bot: IBot) => void): 
 		}
 
 		if (!sessionIsValid) {
-			// clear the session so it isn't used again
-			// if (botAccount.session !== null) {
-			// 	await updateBotSession(botAccount.id, null);
-			// }
-
 			logger.debug("Generating new bot session", {
 				bot_id: botAccount.id,
 			});
 
 			await bot.generateSession();
 
-			// await updateBotSession(botAccount.id, session);
-
-			// sleep for a random delay between 5000 and 7500 ms after logging in
 			await sleepRange(5000, 7500);
 		}
 

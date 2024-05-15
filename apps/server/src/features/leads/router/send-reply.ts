@@ -2,10 +2,10 @@ import { sendReplyInputSchema } from "@sweetreply/shared/features/leads/schemas"
 import { failedToSendReply, leadNotFound, replyAlreadySent } from "../errors";
 import { ReplyStatus } from "@sweetreply/shared/features/leads/constants";
 import { canSendReply } from "@sweetreply/shared/features/leads/utils";
-import { addReplyJob } from "@features/lead-engine/service";
 import { subscribedProcedure } from "@features/billing/procedures";
 import { outOfReplyCredits } from "@features/billing/errors";
 import { singleLeadQuerySelect } from "../constants";
+import { TRPCError } from "@trpc/server";
 
 export const sendReplyHandler = subscribedProcedure
 	.input(sendReplyInputSchema)
@@ -31,7 +31,19 @@ export const sendReplyHandler = subscribedProcedure
 			throw failedToSendReply();
 		}
 
-		addReplyJob(lead.id, {
+		const outstandingReplies = await ctx.leadsService.countOutstandingRepliesForUser(
+			ctx.user.id
+		);
+
+		if (outstandingReplies >= ctx.user.reply_credits) {
+			throw new TRPCError({
+				code: "FORBIDDEN",
+				message:
+					"You have reached your reply limit. Please upgrade your plan or cancel some scheduled replies.",
+			});
+		}
+
+		ctx.leadEngineService.addReplyJob(lead.id, {
 			date: input.data?.date ?? undefined,
 		});
 

@@ -14,13 +14,14 @@ export type ReplyPromptData = {
 	characterLimit?: number;
 };
 
+// removed concise from the promot
 export const replyPrompt = ({ project, lead, characterLimit }: ReplyPromptData) => {
 	const productURL =
 		project.website_url && project.reply_with_domain
 			? new URL(project.website_url).hostname
 			: project.website_url;
 
-	return `Reply to a social media post with a helpful response relevant to the poster's query or situation. The response must integrate a subtle mention of the specified product provided in a natural and non-affiliated manner, without expanding its description. Ensure the reply sounds human, maintaining a formal and concise tone without resembling a sales pitch. The response should be less than ${characterLimit} characters and should not contain emojis, hashtags, or symbols.
+	return `Reply to a social media post with a helpful response relevant to the poster's query or situation. The response must integrate a subtle mention of the specified product provided in a natural and non-affiliated manner, without expanding its description. Ensure the reply sounds human, maintaining a formal tone without resembling a sales pitch. The response should be less than ${characterLimit} characters and should not contain emojis, hashtags, or symbols.
 	
 Examples:
 

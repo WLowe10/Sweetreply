@@ -42,3 +42,29 @@ export async function draft(leadId: string) {
 		},
 	});
 }
+
+export async function countOutstandingRepliesForUser(userID: string) {
+	return prisma.lead.count({
+		where: {
+			reply_status: ReplyStatus.SCHEDULED,
+			project: {
+				user: {
+					id: userID,
+				},
+			},
+		},
+	});
+}
+
+export function deductReplyCreditFromUser(userID: string) {
+	return prisma.user.update({
+		where: {
+			id: userID,
+		},
+		data: {
+			reply_credits: {
+				decrement: 1,
+			},
+		},
+	});
+}

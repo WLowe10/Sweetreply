@@ -10,6 +10,7 @@ import { Controller, useForm } from "react-hook-form";
 import { trpc } from "@lib/trpc";
 import { formatRelative } from "date-fns";
 import { getMaxFutureReplyDate } from "@sweetreply/shared/features/leads/utils";
+import { notifications } from "@mantine/notifications";
 
 export type SendReplyModalProps = {
 	leadId: string;
@@ -36,6 +37,13 @@ export const SendReplyModal = ({ leadId, modalProps }: SendReplyModalProps) => {
 				onSuccess: (updatedLead) => {
 					trpcUtils.leads.get.setData({ id: updatedLead.id }, updatedLead);
 					modalProps.onClose();
+				},
+				onError: (err) => {
+					notifications.show({
+						title: "Failed to send reply",
+						message: err.message,
+						color: "red",
+					});
 				},
 			}
 		);

@@ -8,7 +8,7 @@ import { UserAgents } from "@sweetreply/shared/constants";
 import { createThing, extractIdFromThing } from "@sweetreply/shared/features/reddit/utils";
 import { buildProxyURL, sleepRange } from "@sweetreply/shared/lib/utils";
 import { BotError } from "../errors";
-import { proxyIsDefined } from "../utils";
+import { botHasProxy } from "../utils";
 import type { IBot } from "../types";
 import type { RedditThingType } from "@sweetreply/shared/features/reddit/constants";
 import type { Bot, Lead } from "@sweetreply/prisma";
@@ -53,7 +53,7 @@ export class RedditRequestBot implements IBot {
 
 		this.jar = new CookieJar();
 
-		const proxy = proxyIsDefined(bot)
+		const proxy = botHasProxy(bot)
 			? buildProxyURL({
 					host: bot.proxy_host!,
 					port: bot.proxy_port!,
@@ -133,15 +133,11 @@ export class RedditRequestBot implements IBot {
 		return this.dumpSession();
 	}
 
-	public async loadSession(data: object) {
-		const parseResult = redditSessionSchema.safeParse(data);
+	public async parseSessionDump(dump: object): Promise<RedditBotSession> {
+		return redditSessionSchema.parse(dump);
+	}
 
-		if (!parseResult.success) {
-			return false;
-		}
-
-		const session = parseResult.data;
-
+	public async loadSession(session: RedditBotSession) {
 		for (const cookieStr of session.cookies) {
 			await this.jar.setCookie(cookieStr, oldRedditURL.toString());
 		}
@@ -360,7 +356,7 @@ export class RedditRequestBot implements IBot {
 		}
 	}
 
-	private async getPost(lead: Lead) {
+	private async getPost(lead: Pick<Lead, "group" | "type" | "remote_id" | "remote_parent_id">) {
 		const postURL = `${oldRedditURL}/r/${lead.group}/comments/${lead.type === "post" ? lead.remote_id : lead.remote_parent_id}`;
 
 		return this.client.get(postURL);

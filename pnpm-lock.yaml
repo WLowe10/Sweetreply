@@ -337,6 +337,9 @@ importers:
       puppeteer-extra-plugin-adblocker:
         specifier: ^2.13.6
         version: 2.13.6(puppeteer-extra@3.3.6)(puppeteer@22.8.0)
+      puppeteer-extra-plugin-block-resources:
+        specifier: ^2.4.3
+        version: 2.4.3(puppeteer-extra@3.3.6)
       puppeteer-extra-plugin-stealth:
         specifier: ^2.11.2
         version: 2.11.2(puppeteer-extra@3.3.6)
@@ -11068,6 +11071,23 @@ packages:
       puppeteer-extra-plugin: 3.2.3(puppeteer-extra@3.3.6)
     transitivePeerDependencies:
       - encoding
+      - playwright-extra
+      - supports-color
+    dev: false
+
+  /puppeteer-extra-plugin-block-resources@2.4.3(puppeteer-extra@3.3.6):
+    resolution: {integrity: sha512-WLxkytm3Nn6D+3N8lFMIi9lL9lLA1mTRHZAflR+zDs9/d1oOYVy52pWPaiQaetOObgfHDpPlHBmzHE2Yhr3ZnQ==}
+    engines: {node: '>=8'}
+    peerDependencies:
+      puppeteer-extra: '*'
+    peerDependenciesMeta:
+      puppeteer-extra:
+        optional: true
+    dependencies:
+      debug: 4.3.4
+      puppeteer-extra: 3.3.6(puppeteer@22.8.0)
+      puppeteer-extra-plugin: 3.2.3(puppeteer-extra@3.3.6)
+    transitivePeerDependencies:
       - playwright-extra
       - supports-color
     dev: false

@@ -22,12 +22,12 @@ export const undoReplyHandler = subscribedProcedure
 			throw leadNotFound();
 		}
 
-		if (lead.reply_bot_id === null) {
+		if (lead.reply_bot_id === null || lead.reply_remote_id === null) {
 			throw leadHasNoReply();
 		}
 
 		if (!canUndoReply(lead)) {
-			throw leadHasNoReply();
+			throw failedToUndoReply();
 		}
 
 		const botAccount = await ctx.prisma.bot.findUnique({
@@ -42,6 +42,7 @@ export const undoReplyHandler = subscribedProcedure
 
 		try {
 			await botsService.executeBot(botAccount, async (bot) => {
+				// @ts-ignore
 				await bot.deleteReply(lead);
 			});
 		} catch (err) {

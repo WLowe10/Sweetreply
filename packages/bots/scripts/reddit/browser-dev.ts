@@ -1,4 +1,3 @@
-import { sleepRange } from "@sweetreply/shared/lib/utils";
 import { RedditBrowserBot, type RedditSessionType } from "../../src/reddit/browser";
 import type { Bot } from "@sweetreply/prisma";
 
@@ -93,11 +92,9 @@ async function start() {
 
 	await bot.setup();
 
-	// const loaded = await bot.loadSession(session);
+	const loaded = await bot.loadSession(session);
 
-	const session = await bot.generateSession();
-
-	console.log(session);
+	// const session = await bot.generateSession();
 
 	// const reply = await bot.reply({
 	// 	type: "post",
@@ -111,11 +108,11 @@ async function start() {
 	await bot.deleteReply({
 		type: "post",
 		group: "replyon",
-		remote_id: "1cnh1b9",
-		reply_remote_id: "l38oy7t",
+		remote_id: "1cab5bp",
+		reply_remote_id: "l41ms5t",
 	});
 
-	await bot.teardown();
+	// await bot.teardown();
 }
 
 start();

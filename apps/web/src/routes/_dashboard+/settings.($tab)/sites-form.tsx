@@ -91,7 +91,7 @@ export const SitesForm = () => {
 										render={({ field }) => (
 											<Switch
 												label="Allow NSFW"
-												description="Allows the monitor to find NSFW posts"
+												description="Allows the monitor to find leads marked as NSFW"
 												checked={field.value}
 												onChange={field.onChange}
 											/>
@@ -103,7 +103,7 @@ export const SitesForm = () => {
 										render={({ field }) => (
 											<Switch
 												label="Enable replies"
-												description="Automatically reply to mentions on Reddit"
+												description="Automatically reply to leads on Reddit"
 												checked={field.value}
 												onChange={field.onChange}
 											/>

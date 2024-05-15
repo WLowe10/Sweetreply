@@ -32,13 +32,29 @@ replyQueue.process(3, async (job) => {
 		where: {
 			id: jobData.lead_id,
 		},
+		include: {
+			project: {
+				include: {
+					user: true,
+				},
+			},
+		},
 	});
 
 	if (!lead) {
 		return;
 	}
 
+	const project = lead.project;
+	const user = project.user;
+
 	if (lead.reply_status === ReplyStatus.REPLIED) {
+		return;
+	}
+
+	if (user.reply_credits <= 0) {
+		await leadsService.draft(lead.id);
+
 		return;
 	}
 
@@ -48,38 +64,8 @@ replyQueue.process(3, async (job) => {
 		throw new Error(`Lead ${jobData.lead_id} has insufficient reply text`);
 	}
 
-	const project = await prisma.project.findUnique({
-		where: {
-			id: lead.project_id,
-		},
-	});
-
-	if (!project) {
-		return;
-	}
-
-	const user = await prisma.user.findUnique({
-		where: {
-			id: project.user_id,
-		},
-	});
-
-	if (!user) {
-		return;
-	}
-
 	// the bot service cycles through each bot
 	const botAccount = await botsService.dequeueBot(lead.platform);
-
-	if (!botAccount) {
-		throw new Error(`Lead ${jobData.lead_id} could not find an account to reply with`);
-	}
-
-	if (user.reply_credits <= 0) {
-		await leadsService.draft(lead.id);
-
-		return;
-	}
 
 	// --- Automation ----
 
@@ -101,47 +87,6 @@ replyQueue.process(3, async (job) => {
 		throw new Error("Failed to reply");
 	}
 
-	// load the session/login
-
-	// try {
-	// 	await botsService.loadSession(bot, botAccount);
-	// } catch (err) {
-	// 	if (err instanceof Error) {
-	// 		botsService.handleBotError(botAccount.id, err);
-	// 	}
-
-	// 	throw err;
-	// }
-
-	// let replyResult: ReplyResultData;
-
-	// make the actual reply
-	// try {
-	// 	replyResult = await bot.reply(lead);
-	// } catch (err) {
-	// 	await botsService.saveSession(botAccount.id, bot);
-
-	// 	if (!(err instanceof Error)) {
-	// 		return;
-	// 	}
-
-	// 	if (err instanceof BotError && err.code === "REPLY_LOCKED") {
-	// 		await leadsService.lock(lead.id);
-
-	// 		return;
-	// 	}
-
-	// 	await botsService.handleBotError(botAccount.id, err);
-
-	// 	throw err;
-	// }
-
-	// await botsService.saveSession(botAccount.id, bot);
-
-	// --- End Automation ----
-
-	// update the lead with the reply details
-
 	await prisma.lead.update({
 		where: {
 			id: lead.id,
@@ -156,18 +101,9 @@ replyQueue.process(3, async (job) => {
 		},
 	});
 
-	// deduct the reply credit from the user
 	try {
-		await prisma.user.update({
-			where: {
-				id: project.user_id,
-			},
-			data: {
-				reply_credits: {
-					decrement: 1,
-				},
-			},
-		});
+		// deduct the reply credit from the user
+		await leadsService.deductReplyCreditFromUser(user.id);
 	} catch {
 		// noop, we won't redo a reply just because the deduction fails for some reason
 	}

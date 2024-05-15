@@ -17,7 +17,6 @@ export const replyCompletion = async ({
 
 	const completion = await openAI.chat.completions.create({
 		model: "gpt-3.5-turbo",
-		// model: "gpt-4-turbo",
 		temperature: 0.25,
 		max_tokens: maxTokens,
 		messages: [
@@ -39,12 +38,8 @@ export const replyCompletion = async ({
 	// 	},
 	// 	messages: [
 	// 		{
-	// 			role: "system",
-	// 			content: system,
-	// 		},
-	// 		{
 	// 			role: "user",
-	// 			content: user,
+	// 			content: prompt,
 	// 		},
 	// 	],
 	// });

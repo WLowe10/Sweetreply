@@ -109,7 +109,7 @@ export const ReplyForm = () => {
 						render={({ field, fieldState }) => (
 							<NumberInput
 								label="Reply delay"
-								description="The minimum amount of minutes between a lead and an automatic reply. Default is 10 minutes."
+								description="The minimum amount of minutes between a lead and an auto reply. Default is 480 minutes (8 hours)."
 								value={field.value}
 								onChange={field.onChange}
 								error={fieldState.error?.message}

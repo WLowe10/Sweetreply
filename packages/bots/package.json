@@ -25,6 +25,7 @@
 		"puppeteer": "^22.8.0",
 		"puppeteer-extra": "^3.3.6",
 		"puppeteer-extra-plugin-adblocker": "^2.13.6",
+		"puppeteer-extra-plugin-block-resources": "^2.4.3",
 		"puppeteer-extra-plugin-stealth": "^2.11.2",
 		"snoowrap": "^1.23.0",
 		"tough-cookie": "^4.1.3",

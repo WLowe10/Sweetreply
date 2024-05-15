@@ -1,12 +1,13 @@
 import puppeteer from "../lib/puppeteer";
 import parse from "node-html-parser";
-import { Browser, Page, Cookie } from "puppeteer";
+import { Browser, Page } from "puppeteer";
 import { BotError } from "../errors";
-import { extractIdFromThing } from "@sweetreply/shared/features/reddit/utils";
-import { proxyIsDefined } from "../utils";
+import { createThing, extractIdFromThing } from "@sweetreply/shared/features/reddit/utils";
+import { botHasProxy } from "../utils";
 import { z } from "zod";
-import type { Bot } from "@sweetreply/prisma";
-import type { DeleteReplyInputData, IBot, ReplyInputData } from "../types";
+import { isDev, sleepRange } from "@sweetreply/shared/lib/utils";
+import type { Bot, Lead } from "@sweetreply/prisma";
+import type { IBot } from "../types";
 
 const redditURL = "https://www.reddit.com";
 
@@ -43,9 +44,8 @@ export class RedditBrowserBot implements IBot {
 		this.botAccount = botAccount;
 	}
 
-	// todo make proxy optional
 	public async setup() {
-		const botUsesProxy = proxyIsDefined(this.botAccount);
+		const botUsesProxy = botHasProxy(this.botAccount);
 
 		const args: string[] = [];
 
@@ -54,7 +54,7 @@ export class RedditBrowserBot implements IBot {
 		}
 
 		this.browser = await puppeteer.launch({
-			// headless: false, // ? important that headless: true is not on in prod
+			headless: !isDev(), // during development, the bot will not be headless
 			timeout: 5000,
 			ignoreDefaultArgs: ["--disable-extensions"],
 			args,
@@ -63,7 +63,6 @@ export class RedditBrowserBot implements IBot {
 		this.page = await this.browser.newPage();
 
 		await this.page.setViewport({ width: 1280, height: 720 });
-
 		await this.page.setDefaultTimeout(5000);
 
 		if (botUsesProxy) {
@@ -91,9 +90,7 @@ export class RedditBrowserBot implements IBot {
 			throw new Error("Browser is not initialized");
 		}
 
-		for (const cookie of session.cookies) {
-			this.page.setCookie(cookie);
-		}
+		this.page.setCookie(...session.cookies);
 
 		await this.page.goto(redditURL, {
 			waitUntil: "domcontentloaded",
@@ -139,17 +136,16 @@ export class RedditBrowserBot implements IBot {
 			throw new Error("Failed to find auth inputs");
 		}
 
-		await usernameInput.type(this.botAccount.username);
-		await passwordInput.type(this.botAccount.password);
+		await usernameInput.type(this.botAccount.username, { delay: 100 });
+		await passwordInput.type(this.botAccount.password, { delay: 100 });
+
+		await sleepRange(500, 1000);
 
 		const loginButton = await this.page.waitForSelector(">>> button.login:not([disabled])");
 
 		if (!loginButton) {
 			throw new Error("Failed to find login button");
 		}
-
-		// try to figure out how to not need this
-		// await sleepRange(750, 1000);
 
 		await loginButton.click();
 
@@ -175,13 +171,17 @@ export class RedditBrowserBot implements IBot {
 	}
 
 	// ? doesn't work for replying to comments yet, only posts
-	public async reply(lead: ReplyInputData) {
+	public async reply(lead: Lead) {
 		if (!this.browser || !this.page) {
 			throw new Error("Browser is not initialized");
 		}
 
+		if (!lead.reply_text) {
+			throw new Error("Lead does not have reply text");
+		}
+
 		await this.page.goto(`${redditURL}/r/${lead.group}/comments/${lead.remote_id}`, {
-			waitUntil: "networkidle2",
+			waitUntil: "networkidle0",
 		});
 
 		const triggerButton = await this.page.waitForSelector(
@@ -205,7 +205,10 @@ export class RedditBrowserBot implements IBot {
 			throw new Error("Failed to find comment textarea");
 		}
 
-		await textarea.type(lead.reply_text);
+		// i would like to add a randomized more human-like delay here
+		await textarea.type(lead.reply_text, {
+			delay: 100,
+		});
 
 		const submitButton = await this.page.waitForSelector(
 			"shreddit-composer > button[type='submit'][slot='submit-button']"
@@ -249,24 +252,54 @@ export class RedditBrowserBot implements IBot {
 		}
 	}
 
-	public async deleteReply(lead: DeleteReplyInputData) {
+	public async deleteReply(lead: Lead) {
 		if (!this.browser || !this.page) {
 			throw new Error("Browser is not initialized");
 		}
 
+		if (!lead.reply_remote_id) {
+			throw new Error("Lead does not have a reply remote id");
+		}
+
+		const redditThing = createThing("comment", lead.reply_remote_id);
+
 		await this.page.goto(
-			`${redditURL}/r/${lead.group}/comments/${lead.remote_id}/comment/${lead.reply_remote_id}`
+			`${redditURL}/r/${lead.group}/comments/${lead.remote_id}/comment/${lead.reply_remote_id}`,
+			{
+				waitUntil: "networkidle0",
+			}
 		);
 
-		// todo check if it is collapsed first because downvoted
+		await sleepRange(1000, 1500);
 
-		const menuButton = await this.page.waitForSelector("shreddit-overflow-menu >>> button");
+		const shredditComment = await this.page.waitForSelector(
+			`shreddit-comment[thingid='${redditThing}']`
+		);
+
+		if (!shredditComment) {
+			throw new Error("Failed to find comment");
+		}
+
+		// it is possible that reddit renders the comment collapsed, we must uncollapse it in order to access the menu
+		const isCollapsed = await shredditComment.evaluate(
+			(el) => el.getAttribute("collapsed")?.trim() === ""
+		);
+
+		if (isCollapsed) {
+			shredditComment.evaluate((el) => el.removeAttribute("collapsed"));
+		}
+
+		const menuButton = await shredditComment.waitForSelector(
+			"shreddit-overflow-menu >>> button"
+		);
 
 		if (!menuButton) {
 			throw new Error("Failed to find menu button");
 		}
 
 		await menuButton.click();
+
+		await sleepRange(1000, 1500);
 
 		const initDeleteButton = await this.page.waitForSelector(
 			">>> li.delete-comment-menu-button",
@@ -278,6 +311,8 @@ export class RedditBrowserBot implements IBot {
 		if (!initDeleteButton) {
 			throw new Error("Failed to delete button");
 		}
+
+		await sleepRange(1000, 1500);
 
 		await initDeleteButton.click();
 
@@ -291,6 +326,8 @@ export class RedditBrowserBot implements IBot {
 		if (!confirmDeleteButton) {
 			throw new Error("Failed to delete button");
 		}
+
+		await sleepRange(1000, 1500);
 
 		await confirmDeleteButton.click();
 
