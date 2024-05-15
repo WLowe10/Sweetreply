@@ -1,12 +1,14 @@
 import axios, { type Axios } from "axios";
 import { UserAgents } from "@sweetreply/shared/constants";
-import { generateDescendingRedditIds, generateBatchedRedditInfoUrls } from "../../utils/reddit";
+import { generateDescendingRedditIds, generateBatchedRedditInfoUrls } from "../../../utils/reddit";
 import { RedditThing } from "@sweetreply/shared/features/reddit/constants";
 import { extractIdFromThing } from "@sweetreply/shared/features/reddit/utils";
 import { LeadPlatform, LeadType } from "@sweetreply/shared/features/leads/constants";
 import { getAxiosScrapingProxy } from "@lib/utils";
 
-export class RedditCommentSlurper {
+// ? make sure to adject to meet the standards of post slurper before continuing this implementation
+
+export class RedditCommentsSlurper {
 	private client: Axios;
 	private prevSuccessfulBatchStartId: string | undefined;
 

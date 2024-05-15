@@ -1,12 +1,12 @@
 import axios, { type Axios } from "axios";
 import { UserAgents } from "@sweetreply/shared/constants";
-import { generateDescendingRedditIds, generateBatchedRedditInfoUrls } from "../../utils/reddit";
+import { generateDescendingRedditIds, generateBatchedRedditInfoUrls } from "../../../utils/reddit";
 import { RedditThing } from "@sweetreply/shared/features/reddit/constants";
 import { extractIdFromThing } from "@sweetreply/shared/features/reddit/utils";
 import { LeadPlatform, LeadType } from "@sweetreply/shared/features/leads/constants";
 import { getAxiosScrapingProxy } from "@lib/utils";
 
-export class RedditPostSlurper {
+export class RedditPostsSlurper {
 	private client: Axios;
 	private prevSuccessfulBatchStartId: string | undefined;
 
@@ -49,12 +49,14 @@ export class RedditPostSlurper {
 			for (const post of newPosts) {
 				const postData = post.data;
 
-				// users can be deleted after they send a post, make sure that we dont try to turn it into a lead
 				if (
 					!postData.subreddit_id ||
 					!postData.author_fullname ||
 					postData.title === "[removed]" ||
-					postData.selftext === "[removed]"
+					postData.selftext === "[removed]" ||
+					postData.is_self === true || // don't include user posts
+					postData.media_only === true || // don't include media only posts
+					typeof postData.crosspost_parent === "string" // don't include cross posts
 				) {
 					continue;
 				}

@@ -2,16 +2,14 @@ import pLimit from "p-limit";
 import { CronJob } from "cron";
 import { prisma } from "@lib/db";
 import { logger } from "@lib/logger";
-import { RedditPostSlurper } from "./post-slurper";
-import { Project } from "@sweetreply/prisma";
-import { parse, test } from "liqe";
+import { RedditPostsSlurper } from "./slurpers/posts";
 import * as leadEngineService from "../../service";
 import { testKeywords } from "@lib/utils";
 
 // comments slurping is disabled for now due to the possibility of an infinite loop of bot replies,
 // since the bot replies will be picked up by the comment slurper
 
-const postSlurper = new RedditPostSlurper();
+const postsSlurper = new RedditPostsSlurper();
 
 // these are the recommended subreddits to blacklist in the reddit botiquette
 const blacklistedSubreddits = ["suicidewatch", "depression"];
@@ -65,7 +63,7 @@ export const redditLeadGenJob = CronJob.from({
 			});
 
 			const timeStart = Date.now();
-			const leads = await postSlurper.slurp();
+			const leads = await postsSlurper.slurp();
 
 			for (const lead of leads) {
 				const groupLowerCase = lead.group.toLowerCase();
@@ -113,10 +111,18 @@ export const redditLeadGenJob = CronJob.from({
 								return;
 							}
 
+							// this prevents the same lead being picked up twice, or a reddit user cross posting between multiple subreddits
 							const existingLead = await prisma.lead.findFirst({
 								where: {
 									project_id: project.id,
-									remote_id: lead.remote_id,
+									OR: [
+										{
+											remote_id: lead.remote_id,
+										},
+										{
+											content: lead.content,
+										},
+									],
 								},
 							});
 
@@ -142,7 +148,6 @@ export const redditLeadGenJob = CronJob.from({
 									leadEngineService.addSendLeadWebhookJob(newLead.id);
 								}
 
-								// maybe check if user has replies here too
 								if (
 									project.reddit_replies_enabled &&
 									project.user.reply_credits > 0
