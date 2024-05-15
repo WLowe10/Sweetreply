@@ -136,8 +136,8 @@ export class RedditBrowserBot implements IBot {
 			throw new Error("Failed to find auth inputs");
 		}
 
-		await usernameInput.type(this.botAccount.username, { delay: 100 });
-		await passwordInput.type(this.botAccount.password, { delay: 100 });
+		await usernameInput.type(this.botAccount.username, { delay: 50 });
+		await passwordInput.type(this.botAccount.password, { delay: 50 });
 
 		await sleepRange(500, 1000);
 
@@ -184,6 +184,14 @@ export class RedditBrowserBot implements IBot {
 			waitUntil: "networkidle0",
 		});
 
+		// this element exists if the post has been deleted
+		const postRemovedBanner = await this.page.$("div[slot='post-removed-banner']");
+		const postLockedBanner = await this.page.$("div[slot='post-locked-banner']");
+
+		if (postRemovedBanner || postLockedBanner) {
+			throw new BotError("REPLY_LOCKED");
+		}
+
 		const triggerButton = await this.page.waitForSelector(
 			"comment-composer-host > faceplate-tracker > button[data-testid='trigger-button']"
 		);
@@ -205,9 +213,9 @@ export class RedditBrowserBot implements IBot {
 			throw new Error("Failed to find comment textarea");
 		}
 
-		// i would like to add a randomized more human-like delay here
+		// i would like to add a randomized more human-like delay here, but I am pretty sure reddit doesn't track typing
 		await textarea.type(lead.reply_text, {
-			delay: 100,
+			delay: 50,
 		});
 
 		const submitButton = await this.page.waitForSelector(
@@ -226,6 +234,8 @@ export class RedditBrowserBot implements IBot {
 				timeout: 5000,
 			}
 		);
+
+		await this.waitForTrackingEvents();
 
 		const body = await response.text();
 		const resDoc = parse(body);
@@ -335,6 +345,8 @@ export class RedditBrowserBot implements IBot {
 			timeout: 5000,
 		});
 
+		await this.waitForTrackingEvents();
+
 		const body = await response.json();
 		const data = body.data;
 
@@ -344,6 +356,23 @@ export class RedditBrowserBot implements IBot {
 			if (deleteComment && deleteComment.ok !== true) {
 				throw new Error("Failed to delete reply");
 			}
+		}
+	}
+
+	private async waitForTrackingEvents(): Promise<boolean> {
+		if (!this.page) {
+			throw new Error("Browser is not initialized");
+		}
+
+		try {
+			await this.page.waitForResponse(`${redditURL}/svc/shreddit/events`, {
+				timeout: 5000,
+			});
+
+			return true;
+		} catch {
+			// noop, this is not a fatal error
+			return false;
 		}
 	}
 }

@@ -70,17 +70,24 @@ replyQueue.process(3, async (job) => {
 	// --- Automation ----
 
 	let replyResult: ReplyResultData | undefined;
+	let shouldLock = false;
 
-	try {
-		await botsService.executeBot(botAccount, async (bot) => {
+	await botsService.executeBot(botAccount, async (bot) => {
+		try {
 			replyResult = await bot.reply(lead as any);
-		});
-	} catch (err) {
-		if (err instanceof BotError && err.code === "REPLY_LOCKED") {
-			await leadsService.lock(lead.id);
+		} catch (err) {
+			if (err instanceof BotError && err.code === "REPLY_LOCKED") {
+				shouldLock = true;
+			} else {
+				throw err;
+			}
 		}
+	});
 
-		throw err;
+	if (shouldLock) {
+		await leadsService.lock(lead.id);
+
+		return;
 	}
 
 	if (!replyResult) {

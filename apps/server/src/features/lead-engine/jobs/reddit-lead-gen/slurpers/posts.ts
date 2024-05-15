@@ -54,7 +54,6 @@ export class RedditPostsSlurper {
 					!postData.author_fullname ||
 					postData.title === "[removed]" ||
 					postData.selftext === "[removed]" ||
-					postData.is_self === true || // don't include user posts
 					postData.media_only === true || // don't include media only posts
 					typeof postData.crosspost_parent === "string" // don't include cross posts
 				) {

@@ -62,7 +62,7 @@ export const RedditLead = () => {
 			{lead.data.locked && (
 				<Center>
 					<Tooltip
-						label={`This lead is locked. This could be because the post is locked on ${lead.data.platform}.`}
+						label={`This lead is locked. This could be because the post is locked or deleted on ${lead.data.platform}.`}
 					>
 						<IconLockSquareRounded color="var(--mantine-color-red-5)" />
 					</Tooltip>
