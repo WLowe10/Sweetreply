@@ -1,8 +1,8 @@
+import axios from "axios";
+import Queue from "bull";
 import { prisma } from "@lib/db";
 import { isDiscordWebhookURL } from "@lib/regex";
 import { buildFrontendUrl } from "@lib/utils";
-import axios from "axios";
-import Queue from "bull";
 import { env } from "@env";
 
 export type SendLeadWebhookJobData = {
@@ -25,21 +25,16 @@ sendLeadWebhookQueue.process(async (job) => {
 		where: {
 			id: jobData.lead_id,
 		},
+		include: {
+			project: true,
+		},
 	});
 
 	if (!lead) {
 		return;
 	}
 
-	const project = await prisma.project.findUnique({
-		where: {
-			id: lead.project_id,
-		},
-	});
-
-	if (!project) {
-		return;
-	}
+	const project = lead.project;
 
 	if (!project.webhook_url) {
 		return;
@@ -48,7 +43,7 @@ sendLeadWebhookQueue.process(async (job) => {
 	if (isDiscordWebhookURL(project.webhook_url)) {
 		await axios.post(project.webhook_url, {
 			username: "Sweetreply",
-			avatar_url: "https://sweetreply.io/icon.png",
+			avatar_url: "https://www.sweetreply.io/icon.png",
 			content: null,
 			embeds: [
 				{
@@ -92,14 +87,20 @@ sendLeadWebhookQueue.process(async (job) => {
 			project: project.id,
 			data: {
 				id: lead.id,
-				type: lead.type,
 				platform: lead.platform,
-				username: lead.username,
+				type: lead.type,
 				group: lead.group,
+				username: lead.username,
+				name: lead.name,
 				title: lead.title,
 				content: lead.content,
 				date: lead.date,
 				created_at: lead.created_at,
+				remote_url: lead.remote_url,
+				remote_user_id: lead.remote_user_id,
+				remote_id: lead.remote_id,
+				remote_parent_id: lead.remote_parent_id,
+				remote_group_id: lead.remote_group_id,
 			},
 		});
 	}
