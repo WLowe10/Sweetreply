@@ -93,7 +93,7 @@ export class RedditBrowserBot implements IBot {
 		this.page.setCookie(...session.cookies);
 
 		await this.page.goto(redditURL, {
-			waitUntil: "domcontentloaded",
+			waitUntil: "networkidle0",
 		});
 
 		const shredditApp = await this.page.waitForSelector("shreddit-app");
