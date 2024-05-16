@@ -15,8 +15,6 @@ import {
 	Button,
 	ButtonGroup,
 	Divider,
-	Loader,
-	Paper,
 	Tooltip,
 	Center,
 	Skeleton,
@@ -24,7 +22,6 @@ import {
 import {
 	IconArrowBackUp,
 	IconDots,
-	IconLock,
 	IconLockSquareRounded,
 	IconPencil,
 	IconPlayerStop,
@@ -137,8 +134,6 @@ export const RedditLead = () => {
 					</Stack>
 				</Stack>
 			</Card>
-
-			{/* <Divider /> */}
 
 			<Card ml="4rem" withBorder>
 				<Stack>

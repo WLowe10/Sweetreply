@@ -83,7 +83,7 @@ export const ReplyForm = () => {
 								onChange={field.onChange}
 							>
 								<Group mt="xs">
-									<Radio value="name" label="Name only (Default)" />
+									<Radio value="name" label="Name only (Recommended)" />
 									<Radio value="name_or_url" label="Name or URL" />
 									<Radio value="url" label="URL only" />
 								</Group>

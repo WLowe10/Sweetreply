@@ -1,4 +1,5 @@
 import { openAI } from "@lib/client/openai";
+import Replicate from "replicate";
 import { replyPrompt } from "../prompts/reply-prompt-v2.5";
 import { LeadPlatformType, ReplyCharacterLimit } from "@sweetreply/shared/features/leads/constants";
 import type { ReplyPromptData } from "../prompts/reply-prompt-v2";
@@ -50,19 +51,27 @@ export const replyCompletion = async ({
 
 	// replicate
 
+	// this model is generating good replies after a couple tests
+
 	// const replicate = new Replicate({
 	// 	auth: "",
 	// });
 
-	// const result = await replicate.run("mistralai/mixtral-8x7b-instruct-v0.1", {
+	// const result = await replicate.run("meta/meta-llama-3-70b-instruct", {
 	// 	input: {
-	// 		system_prompt: system,
-	// 		prompt: user,
-	// 		temperature: 0.6,
+	// 		top_k: 0,
+	// 		top_p: 0.9,
+	// 		prompt,
+	// 		max_tokens: 512,
+	// 		min_tokens: 0,
+	// 		temperature: 0.25,
+	// 		system_prompt: "You are a helpful assistant",
 	// 		length_penalty: 1,
-	// 		max_new_tokens: 1024,
-	// 		prompt_template: "<s>[INST] {prompt} [/INST] ",
-	// 		presence_penalty: 0,
+	// 		stop_sequences: "<|end_of_text|>,<|eot_id|>",
+	// 		prompt_template:
+	// 			"<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a helpful assistant<|eot_id|><|start_header_id|>user<|end_header_id|>\n\n{prompt}<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n",
+	// 		presence_penalty: 1.15,
+	// 		log_performance_metrics: false,
 	// 	},
 	// });
 
