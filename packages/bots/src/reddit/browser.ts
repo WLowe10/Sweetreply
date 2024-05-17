@@ -62,7 +62,7 @@ export class RedditBrowserBot implements IBot {
 		this.page = await this.browser.newPage();
 
 		await this.page.setViewport({ width: 1280, height: 720 });
-		await this.page.setDefaultTimeout(5000);
+		// await this.page.setDefaultTimeout(5000);
 
 		if (botUsesProxy) {
 			await this.page.authenticate({
@@ -93,7 +93,6 @@ export class RedditBrowserBot implements IBot {
 
 		await this.page.goto(redditURL, {
 			waitUntil: "networkidle2",
-			timeout: 10000,
 		});
 
 		const shredditApp = await this.page.waitForSelector("shreddit-app");
@@ -129,7 +128,6 @@ export class RedditBrowserBot implements IBot {
 
 		await this.page.goto(`${redditURL}/login`, {
 			waitUntil: "networkidle2",
-			timeout: 10000,
 		});
 
 		const usernameInput = await this.page.waitForSelector('input[name="username"]');
@@ -185,7 +183,6 @@ export class RedditBrowserBot implements IBot {
 
 		await this.page.goto(`${redditURL}/r/${lead.group}/comments/${lead.remote_id}`, {
 			waitUntil: "networkidle2",
-			timeout: 10000,
 		});
 
 		// this element exists if the post has been deleted
@@ -235,7 +232,7 @@ export class RedditBrowserBot implements IBot {
 		const response = await this.page.waitForResponse(
 			`${redditURL}/svc/shreddit/t3_${lead.remote_id}/create-comment`,
 			{
-				timeout: 5000,
+				timeout: 10000,
 			}
 		);
 
@@ -281,7 +278,6 @@ export class RedditBrowserBot implements IBot {
 			`${redditURL}/r/${lead.group}/comments/${lead.remote_id}/comment/${lead.reply_remote_id}`,
 			{
 				waitUntil: "networkidle2",
-				timeout: 10000,
 			}
 		);
 
@@ -347,7 +343,7 @@ export class RedditBrowserBot implements IBot {
 		await confirmDeleteButton.click();
 
 		const response = await this.page.waitForResponse(`${redditURL}/svc/shreddit/graphql`, {
-			timeout: 5000,
+			timeout: 10000,
 		});
 
 		await this.waitForTrackingEvents();
@@ -371,7 +367,7 @@ export class RedditBrowserBot implements IBot {
 
 		try {
 			await this.page.waitForResponse(`${redditURL}/svc/shreddit/events`, {
-				timeout: 5000,
+				timeout: 10000,
 			});
 
 			return true;
