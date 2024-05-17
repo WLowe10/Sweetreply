@@ -150,13 +150,17 @@ export async function executeBot(botAccount: Bot, execFn: (bot: IBot) => void): 
 
 		throw err;
 	} finally {
-		const finalSession = await bot.dumpSession();
+		try {
+			const finalSession = await bot.dumpSession();
 
-		logger.debug("Updating bot session", {
-			bot_id: botAccount.id,
-		});
+			logger.debug("Updating bot session", {
+				bot_id: botAccount.id,
+			});
 
-		await updateBotSession(botAccount.id, finalSession);
+			await updateBotSession(botAccount.id, finalSession);
+		} catch {
+			// noop
+		}
 
 		if (bot.teardown) {
 			await bot.teardown();

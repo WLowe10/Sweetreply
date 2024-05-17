@@ -47,7 +47,7 @@ export class RedditBrowserBot implements IBot {
 	public async setup() {
 		const botUsesProxy = botHasProxy(this.botAccount);
 
-		const args: string[] = ["--no-sandbox"];
+		const args: string[] = ["--no-sandbox", "--disable-setuid-sandbox"];
 
 		if (botUsesProxy) {
 			args.push(`--proxy-server=${this.botAccount.proxy_host}:${this.botAccount.proxy_port}`);
@@ -56,11 +56,8 @@ export class RedditBrowserBot implements IBot {
 		this.browser = await puppeteer.launch({
 			headless: !isDev(), // during development, the bot will not be headless
 			timeout: 5000,
-			ignoreDefaultArgs: ["--disable-extensions"],
 			args,
 		});
-
-		console.log("created browser", this.browser);
 
 		this.page = await this.browser.newPage();
 
