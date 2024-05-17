@@ -1,4 +1,3 @@
-import { openAI } from "@lib/client/openai";
 import { replicate } from "@lib/client/replicate";
 import { replyPrompt } from "../prompts/reply-prompt-v2.5";
 import { LeadPlatformType, ReplyCharacterLimit } from "@sweetreply/shared/features/leads/constants";

@@ -34,7 +34,7 @@ export const envSchema = z.object({
 	STRIPE_SECRET_KEY: z.string(),
 	STRIPE_WEBHOOK_SECRET: z.string(),
 	OPEN_AI_KEY: z.string(),
-	REPLICATE_KEY: z.string().optional(), // optional for now, until i decide whether to continue using
+	REPLICATE_KEY: z.string(),
 
 	STRIPE_PRICE_ID_HOBBY: z.string(),
 	STRIPE_PRICE_ID_STANDARD: z.string(),
