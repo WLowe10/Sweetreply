@@ -60,6 +60,8 @@ export class RedditBrowserBot implements IBot {
 			args,
 		});
 
+		console.log("created browser", this.browser);
+
 		this.page = await this.browser.newPage();
 
 		await this.page.setViewport({ width: 1280, height: 720 });
