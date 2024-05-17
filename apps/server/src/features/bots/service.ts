@@ -110,6 +110,7 @@ export async function executeBot(botAccount: Bot, execFn: (bot: IBot) => void): 
 	if (!bot) {
 		throw new Error("Failed to create bot instance, not supported");
 	}
+
 	try {
 		if (bot.setup) {
 			await bot.setup();

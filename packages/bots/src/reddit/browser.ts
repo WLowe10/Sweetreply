@@ -33,7 +33,7 @@ const redditSessionSchema = z.object({
 	),
 });
 
-export type RedditSessionType = z.infer<typeof redditSessionSchema>;
+type RedditSessionType = z.infer<typeof redditSessionSchema>;
 
 export class RedditBrowserBot implements IBot {
 	private browser: Browser | undefined;
@@ -47,7 +47,7 @@ export class RedditBrowserBot implements IBot {
 	public async setup() {
 		const botUsesProxy = botHasProxy(this.botAccount);
 
-		const args: string[] = [];
+		const args: string[] = ["--no-sandbox"];
 
 		if (botUsesProxy) {
 			args.push(`--proxy-server=${this.botAccount.proxy_host}:${this.botAccount.proxy_port}`);
@@ -86,7 +86,7 @@ export class RedditBrowserBot implements IBot {
 	}
 
 	public async loadSession(session: RedditSessionType) {
-		if (!this.browser || !this.page) {
+		if (!this.page) {
 			throw new Error("Browser is not initialized");
 		}
 
@@ -124,7 +124,7 @@ export class RedditBrowserBot implements IBot {
 	}
 
 	public async generateSession(): Promise<RedditSessionType> {
-		if (!this.browser || !this.page) {
+		if (!this.page) {
 			throw new Error("Browser is not initialized");
 		}
 
@@ -173,7 +173,7 @@ export class RedditBrowserBot implements IBot {
 
 	// ? doesn't work for replying to comments yet, only posts
 	public async reply(lead: Lead) {
-		if (!this.browser || !this.page) {
+		if (!this.page) {
 			throw new Error("Browser is not initialized");
 		}
 
@@ -264,7 +264,7 @@ export class RedditBrowserBot implements IBot {
 	}
 
 	public async deleteReply(lead: Lead) {
-		if (!this.browser || !this.page) {
+		if (!this.page) {
 			throw new Error("Browser is not initialized");
 		}
 
