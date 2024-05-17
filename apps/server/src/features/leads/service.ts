@@ -1,5 +1,4 @@
 import { prisma } from "@lib/db";
-import { Lead } from "@sweetreply/prisma";
 import { ReplyStatus } from "@sweetreply/shared/features/leads/constants";
 
 export async function userOwnsLead({ userID, leadID }: { userID: string; leadID: string }) {
@@ -37,7 +36,6 @@ export async function draft(leadId: string) {
 		},
 		data: {
 			reply_status: ReplyStatus.DRAFT,
-			locked: true,
 			reply_scheduled_at: null,
 			replied_at: null,
 		},

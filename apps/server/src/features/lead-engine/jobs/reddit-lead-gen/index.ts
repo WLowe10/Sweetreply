@@ -3,8 +3,8 @@ import { CronJob } from "cron";
 import { prisma } from "@lib/db";
 import { logger } from "@lib/logger";
 import { RedditPostsSlurper } from "./slurpers/posts";
-import * as leadEngineService from "../../service";
 import { testKeywords } from "@lib/utils";
+import * as leadEngineService from "../../service";
 
 // comments slurping is disabled for now due to the possibility of an infinite loop of bot replies,
 // since the bot replies will be picked up by the comment slurper

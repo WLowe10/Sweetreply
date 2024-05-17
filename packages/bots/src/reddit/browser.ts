@@ -94,6 +94,7 @@ export class RedditBrowserBot implements IBot {
 
 		await this.page.goto(redditURL, {
 			waitUntil: "networkidle0",
+			timeout: 10000,
 		});
 
 		const shredditApp = await this.page.waitForSelector("shreddit-app");

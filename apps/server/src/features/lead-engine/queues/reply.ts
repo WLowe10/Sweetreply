@@ -25,7 +25,7 @@ const replyQueue = new Queue<ReplyQueueJobData>("reply", {
 	},
 });
 
-replyQueue.process(3, async (job) => {
+replyQueue.process(1, async (job) => {
 	const jobData = job.data;
 
 	const lead = await prisma.lead.findUnique({

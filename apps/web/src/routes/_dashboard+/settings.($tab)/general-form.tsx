@@ -100,6 +100,7 @@ export const GeneralForm = () => {
 						render={({ field, fieldState }) => (
 							<TagsInput
 								label="Keywords"
+								description="Leads with any of these keywords will be detected"
 								clearable={true}
 								error={fieldState.error?.message}
 								value={field.value}
@@ -113,6 +114,7 @@ export const GeneralForm = () => {
 						render={({ field, fieldState }) => (
 							<TagsInput
 								label="Negative keywords"
+								description="Leads with any of these keywords will be excluded"
 								clearable={true}
 								error={fieldState.error?.message}
 								value={field.value}

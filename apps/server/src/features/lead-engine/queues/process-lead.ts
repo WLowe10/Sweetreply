@@ -54,12 +54,7 @@ processLeadQueue.process(async (job) => {
 	const project = lead.project;
 	const user = project.user;
 
-	if (
-		!project ||
-		!project.description ||
-		project.description.length < 10 ||
-		user.reply_credits <= 0
-	) {
+	if (!project.description || project.description.length < 10 || user.reply_credits <= 0) {
 		return;
 	}
 
@@ -74,8 +69,7 @@ processLeadQueue.process(async (job) => {
 	const outstandingReplies = await leadsService.countOutstandingRepliesForUser(user.id);
 
 	if (outstandingReplies >= user.reply_credits) {
-		logger.info(`${user.email} has reached the reply limit in outstanding replies`);
-
+		// the user will not have enough reply credits from their outstanding replies
 		return;
 	}
 
@@ -106,8 +100,6 @@ processLeadQueue.process(async (job) => {
 
 		if (repliesLast24Hours >= project.reply_daily_limit) {
 			// daily limit reached, don't generate a reply
-			logger.info(`${project.name} has reached the daily reply limit`);
-
 			return;
 		}
 	}
