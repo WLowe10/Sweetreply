@@ -111,11 +111,11 @@ export async function executeBot(botAccount: Bot, execFn: (bot: IBot) => void): 
 		throw new Error("Failed to create bot instance, not supported");
 	}
 
-	try {
-		if (bot.setup) {
-			await bot.setup();
-		}
+	if (bot.setup) {
+		await bot.setup();
+	}
 
+	try {
 		let sessionIsValid = false;
 
 		if (botAccount.session) {
@@ -158,12 +158,17 @@ export async function executeBot(botAccount: Bot, execFn: (bot: IBot) => void): 
 			});
 
 			await updateBotSession(botAccount.id, finalSession);
-		} catch {
-			// noop
-		}
+		} catch (err) {
+			if (err instanceof Error) {
+				handleBotError(botAccount.id, err);
+			}
 
-		if (bot.teardown) {
-			await bot.teardown();
+			throw err;
+		} finally {
+			if (bot.teardown) {
+				console.log("tearing down");
+				await bot.teardown();
+			}
 		}
 	}
 }
