@@ -166,7 +166,6 @@ export async function executeBot(botAccount: Bot, execFn: (bot: IBot) => void): 
 			throw err;
 		} finally {
 			if (bot.teardown) {
-				console.log("tearing down");
 				await bot.teardown();
 			}
 		}

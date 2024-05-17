@@ -47,7 +47,7 @@ export class RedditBrowserBot implements IBot {
 	public async setup() {
 		const botUsesProxy = botHasProxy(this.botAccount);
 
-		const args: string[] = ["--no-sandbox", "--disable-setuid-sandbox"];
+		const args: string[] = [];
 
 		if (botUsesProxy) {
 			args.push(`--proxy-server=${this.botAccount.proxy_host}:${this.botAccount.proxy_port}`);
@@ -92,7 +92,7 @@ export class RedditBrowserBot implements IBot {
 		this.page.setCookie(...session.cookies);
 
 		await this.page.goto(redditURL, {
-			waitUntil: "networkidle0",
+			waitUntil: "networkidle2",
 			timeout: 10000,
 		});
 
@@ -127,7 +127,10 @@ export class RedditBrowserBot implements IBot {
 			throw new Error("Browser is not initialized");
 		}
 
-		await this.page.goto(`${redditURL}/login`);
+		await this.page.goto(`${redditURL}/login`, {
+			waitUntil: "networkidle2",
+			timeout: 10000,
+		});
 
 		const usernameInput = await this.page.waitForSelector('input[name="username"]');
 		const passwordInput = await this.page.waitForSelector('input[name="password"]');
@@ -181,7 +184,8 @@ export class RedditBrowserBot implements IBot {
 		}
 
 		await this.page.goto(`${redditURL}/r/${lead.group}/comments/${lead.remote_id}`, {
-			waitUntil: "networkidle0",
+			waitUntil: "networkidle2",
+			timeout: 10000,
 		});
 
 		// this element exists if the post has been deleted
@@ -276,7 +280,8 @@ export class RedditBrowserBot implements IBot {
 		await this.page.goto(
 			`${redditURL}/r/${lead.group}/comments/${lead.remote_id}/comment/${lead.reply_remote_id}`,
 			{
-				waitUntil: "networkidle0",
+				waitUntil: "networkidle2",
+				timeout: 10000,
 			}
 		);
 
