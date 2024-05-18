@@ -43,7 +43,10 @@ export default function DashboardLayout() {
 				direction="column"
 				justify="space-between"
 				p="lg"
-				style={{ borderRight: "1px solid var(--mantine-color-default-border)" }}
+				style={{
+					overflow: "auto",
+					borderRight: "1px solid var(--mantine-color-default-border)",
+				}}
 			>
 				<Stack>
 					<ProjectSelector />
@@ -107,7 +110,7 @@ export default function DashboardLayout() {
 					<UserMenu />
 				</Stack>
 			</Flex>
-			<Box ml="280" flex={1} mih="100vh">
+			<Box ml="280" flex={1} mih="100vh" style={{ overflow: "auto" }}>
 				{hasNoProjects ? (
 					<ResourceContainer title="Create your first project">
 						<CreateProjectForm />

@@ -22,11 +22,6 @@ export const DataTable = (props: DataTableProps) => {
 				<Group>
 					<DataTableLimit />
 				</Group>
-
-				{/* <ActionIcon.Group>
-					<DataTableSort />
-					<DataTableFilter />
-				</ActionIcon.Group> */}
 			</Flex>
 			<Box>
 				{props.isLoading ? (

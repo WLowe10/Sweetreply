@@ -17,7 +17,7 @@ export type SimpleTableProps = {
 
 export const SimpleTable = ({ columns, data, getId }: SimpleTableProps) => {
 	return (
-		<Table.ScrollContainer minWidth={500}>
+		<Table.ScrollContainer minWidth={800}>
 			<Table>
 				<Table.Thead>
 					<Table.Tr>

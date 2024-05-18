@@ -7,6 +7,7 @@ import { buildPageTitle } from "@lib/utils";
 import {
 	ActionIcon,
 	Badge,
+	Box,
 	Button,
 	Flex,
 	Menu,
