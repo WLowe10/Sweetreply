@@ -1,5 +1,12 @@
 import { Prisma } from "@sweetreply/prisma";
 
+export const BotActions = {
+	REPLY: "reply",
+	REMOVE_REPLY: "remove_reply",
+};
+
+export type BotActionType = (typeof BotActions)[keyof typeof BotActions];
+
 export const singleLeadQuerySelect: Prisma.LeadSelect = {
 	id: true,
 	platform: true,

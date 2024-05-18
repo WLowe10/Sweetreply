@@ -43,7 +43,7 @@ export const sendReplyHandler = subscribedProcedure
 			});
 		}
 
-		ctx.leadEngineService.addReplyJob(lead.id, {
+		ctx.leadsService.addReplyJob(lead.id, {
 			date: input.data?.date ?? undefined,
 		});
 

@@ -2,18 +2,16 @@ import Queue from "bull";
 import { env } from "@env";
 import { prisma } from "@lib/db";
 import { addMinutes, isFuture, subDays } from "date-fns";
-import { logger } from "@lib/logger";
 import { ReplyStatus } from "@sweetreply/shared/features/leads/constants";
 import { shouldReplyCompletion } from "../utils/completions/should-reply-completion";
 import { replyCompletion } from "../utils/completions/reply-completion";
-import { addReplyJob } from "../service";
 import * as leadsService from "@features/leads/service";
 
 export type ProcessLeadQueueJobData = {
 	lead_id: string;
 };
 
-const processLeadQueue = new Queue<ProcessLeadQueueJobData>("process-lead", {
+export const processLeadQueue = new Queue<ProcessLeadQueueJobData>("process-lead", {
 	redis: env.REDIS_URL,
 	defaultJobOptions: {
 		attempts: 3,
@@ -125,7 +123,7 @@ processLeadQueue.process(async (job) => {
 	}
 
 	// send the lead to the reply queue
-	addReplyJob(lead.id, {
+	leadsService.addReplyJob(lead.id, {
 		date: scheduledAt,
 	});
 
@@ -143,5 +141,3 @@ processLeadQueue.process(async (job) => {
 		},
 	});
 });
-
-export { processLeadQueue };

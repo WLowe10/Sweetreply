@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { leadNotFound } from "../errors";
-import { replyCompletion } from "@features/lead-engine/utils/completions/reply-completion";
+import { replyCompletion } from "@features/leads/utils/completions/reply-completion";
 import { ReplyStatus } from "@sweetreply/shared/features/leads/constants";
 import { TRPCError } from "@trpc/server";
 import { canGenerateReply } from "@sweetreply/shared/features/leads/utils";

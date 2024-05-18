@@ -7,12 +7,14 @@ import { env } from "@env";
 import { ReplyStatus } from "@sweetreply/shared/features/leads/constants";
 import { ReplyResultData } from "@features/bots/types";
 import { BotError } from "@sweetreply/bots";
+// import { BotActionType } from "../constants";
 
-export type ReplyQueueJobData = {
+export type BotActionQueueJobData = {
 	lead_id: string;
+	// action: BotActionType;
 };
 
-const replyQueue = new Queue<ReplyQueueJobData>("reply", {
+export const botActionQueue = new Queue<BotActionQueueJobData>("bot-action", {
 	redis: env.REDIS_URL,
 	defaultJobOptions: {
 		attempts: 3,
@@ -25,7 +27,7 @@ const replyQueue = new Queue<ReplyQueueJobData>("reply", {
 	},
 });
 
-replyQueue.process(1, async (job) => {
+botActionQueue.process(1, async (job) => {
 	const jobData = job.data;
 
 	const lead = await prisma.lead.findUnique({
@@ -116,7 +118,7 @@ replyQueue.process(1, async (job) => {
 	}
 });
 
-replyQueue.on("active", async (job) => {
+botActionQueue.on("active", async (job) => {
 	const jobData = job.data;
 
 	logger.info(
@@ -136,7 +138,7 @@ replyQueue.on("active", async (job) => {
 	});
 });
 
-replyQueue.on("completed", async (job) => {
+botActionQueue.on("completed", async (job) => {
 	const jobData = job.data;
 
 	job.returnvalue;
@@ -149,7 +151,7 @@ replyQueue.on("completed", async (job) => {
 	);
 });
 
-replyQueue.on("failed", async (job, err) => {
+botActionQueue.on("failed", async (job, err) => {
 	const jobData = job.data;
 
 	logger.error(
@@ -176,5 +178,3 @@ replyQueue.on("failed", async (job, err) => {
 		} catch {}
 	}
 });
-
-export { replyQueue };

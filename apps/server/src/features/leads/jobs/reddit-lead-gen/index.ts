@@ -4,7 +4,7 @@ import { prisma } from "@lib/db";
 import { logger } from "@lib/logger";
 import { RedditPostsSlurper } from "./slurpers/posts";
 import { testKeywords } from "@lib/utils";
-import * as leadEngineService from "../../service";
+import * as leadsService from "../../service";
 
 // comments slurping is disabled for now due to the possibility of an infinite loop of bot replies,
 // since the bot replies will be picked up by the comment slurper
@@ -145,14 +145,14 @@ export const redditLeadGenJob = CronJob.from({
 								});
 
 								if (project.webhook_url) {
-									leadEngineService.addSendLeadWebhookJob(newLead.id);
+									leadsService.addSendLeadWebhookJob(newLead.id);
 								}
 
 								if (
 									project.reddit_replies_enabled &&
 									project.user.reply_credits > 0
 								) {
-									leadEngineService.addProcessLeadJob(newLead.id);
+									leadsService.addProcessLeadJob(newLead.id);
 								}
 							}
 						})

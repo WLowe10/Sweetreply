@@ -1,5 +1,5 @@
 import { authenticatedProcedure } from "@features/auth/procedures";
-import { replyQueue } from "@features/lead-engine/queues/reply";
+import { botActionQueue } from "@features/leads/queues/bot-action";
 import { failedToCancelReply, leadNotFound } from "../errors";
 import { ReplyStatus } from "@sweetreply/shared/features/leads/constants";
 import { canCancelReply } from "@sweetreply/shared/features/leads/utils";
@@ -26,7 +26,7 @@ export const cancelReplyHandler = authenticatedProcedure
 			throw failedToCancelReply();
 		}
 
-		const job = await replyQueue.getJob(input.lead_id);
+		const job = await botActionQueue.getJob(input.lead_id);
 
 		if (job) {
 			const isActive = await job.isActive();

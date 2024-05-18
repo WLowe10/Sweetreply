@@ -1,5 +1,5 @@
-import { replyCompletion } from "@features/lead-engine/utils/completions/reply-completion";
-import { shouldReplyCompletion } from "@features/lead-engine/utils/completions/should-reply-completion";
+import { replyCompletion } from "@features/leads/utils/completions/reply-completion";
+import { shouldReplyCompletion } from "@features/leads/utils/completions/should-reply-completion";
 import { generatePlaygroundReplyInputSchema } from "@sweetreply/shared/features/playground/schemas";
 import { ratelimitedPublicProcedure } from "@lib/trpc";
 

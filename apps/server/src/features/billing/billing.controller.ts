@@ -6,7 +6,7 @@ import { sendDiscordNotification } from "@lib/discord-notification";
 import { env } from "@env";
 import { PriceBillingPlan } from "./constants";
 import { BillingPlanReplyCredits } from "@sweetreply/shared/features/billing/constants";
-import * as leadEngineService from "@features/lead-engine/service";
+import * as leadsService from "@features/leads/service";
 import type { Request, Response } from "express";
 import type Stripe from "stripe";
 
@@ -136,7 +136,7 @@ async function handleSubscriptionDeleted(event: Stripe.Event) {
 	try {
 		// cancel all of a user's scheduled replies when their subscription ends
 
-		await leadEngineService.cancelUserScheduledReplies(updatedUser.id);
+		await leadsService.cancelUserScheduledReplies(updatedUser.id);
 	} catch {
 		// noop
 	}
