@@ -1,17 +1,14 @@
 import Queue from "bull";
-import * as botsService from "@features/bots/service";
 import * as leadsService from "@features/leads/service";
 import { logger } from "@lib/logger";
 import { prisma } from "@lib/db";
 import { env } from "@env";
 import { ReplyStatus } from "@sweetreply/shared/features/leads/constants";
-import { ReplyResultData } from "@features/bots/types";
-import { BotError } from "@sweetreply/bots";
-// import { BotActionType } from "../constants";
+import { BotAction, BotActionType } from "../constants";
 
 export type BotActionQueueJobData = {
 	lead_id: string;
-	// action: BotActionType;
+	action: BotActionType;
 };
 
 export const botActionQueue = new Queue<BotActionQueueJobData>("bot-action", {
@@ -28,127 +25,46 @@ export const botActionQueue = new Queue<BotActionQueueJobData>("bot-action", {
 });
 
 botActionQueue.process(1, async (job) => {
-	const jobData = job.data;
+	const leadID = job.data.lead_id;
+	const action = job.data.action;
 
-	const lead = await prisma.lead.findUnique({
-		where: {
-			id: jobData.lead_id,
-		},
-		include: {
-			project: {
-				include: {
-					user: true,
-				},
-			},
-		},
-	});
+	switch (action) {
+		case BotAction.REPLY:
+			await leadsService.reply(leadID);
+			break;
 
-	if (!lead) {
-		return;
-	}
-
-	const project = lead.project;
-	const user = project.user;
-
-	if (lead.reply_status === ReplyStatus.REPLIED) {
-		return;
-	}
-
-	if (user.reply_credits <= 0) {
-		await leadsService.draft(lead.id);
-
-		return;
-	}
-
-	if (lead.reply_text === null) {
-		job.opts.attempts = job.attemptsMade + 1;
-
-		throw new Error(`Lead ${jobData.lead_id} has insufficient reply text`);
-	}
-
-	// the bot service cycles through each bot
-	const botAccount = await botsService.dequeueBot(lead.platform);
-
-	// --- Automation ----
-
-	let replyResult: ReplyResultData | undefined;
-	let shouldLock = false;
-
-	await botsService.executeBot(botAccount, async (bot) => {
-		try {
-			replyResult = await bot.reply(lead as any);
-		} catch (err) {
-			if (err instanceof BotError && err.code === "REPLY_LOCKED") {
-				shouldLock = true;
-			} else {
-				throw err;
-			}
-		}
-	});
-
-	if (shouldLock) {
-		await leadsService.lock(lead.id);
-
-		return;
-	}
-
-	if (!replyResult) {
-		throw new Error("Failed to reply");
-	}
-
-	await prisma.lead.update({
-		where: {
-			id: lead.id,
-		},
-		data: {
-			reply_status: ReplyStatus.REPLIED,
-			replied_at: new Date(),
-			reply_bot_id: botAccount.id,
-			reply_remote_id: replyResult.reply_remote_id,
-			reply_remote_url: replyResult.reply_remote_url,
-			reply_scheduled_at: null,
-		},
-	});
-
-	try {
-		// deduct the reply credit from the user
-		await leadsService.deductReplyCreditFromUser(user.id);
-	} catch {
-		// noop, we won't redo a reply just because the deduction fails for some reason
+		case BotAction.REMOVE_REPLY:
+			await leadsService.removeReply(leadID);
+			break;
 	}
 });
 
 botActionQueue.on("active", async (job) => {
 	const jobData = job.data;
 
-	logger.info(
-		{
-			lead_id: jobData.lead_id,
-		},
-		"Reply job began"
-	);
+	logger.info(jobData, "Bot action began");
 
-	await prisma.lead.update({
-		where: {
-			id: jobData.lead_id,
-		},
-		data: {
-			reply_status: ReplyStatus.PENDING,
-		},
-	});
+	if (jobData.action === BotAction.REPLY) {
+		try {
+			// mark lead as pending (the reply is being sent)
+			await prisma.lead.update({
+				where: {
+					id: jobData.lead_id,
+				},
+				data: {
+					reply_status: ReplyStatus.PENDING,
+				},
+			});
+		} catch {
+			// noop
+		}
+	}
 });
 
 botActionQueue.on("completed", async (job) => {
 	const jobData = job.data;
 
-	job.returnvalue;
-
-	logger.info(
-		{
-			lead_id: jobData.lead_id,
-		},
-		"Reply job completed"
-	);
+	logger.info(jobData, "Bot action completed");
 });
 
 botActionQueue.on("failed", async (job, err) => {
@@ -156,25 +72,36 @@ botActionQueue.on("failed", async (job, err) => {
 
 	logger.error(
 		{
-			lead_id: jobData.lead_id,
-			message: err.message,
+			...jobData,
 			attempt: job.attemptsMade,
+			err,
 		},
-		`Reply job failed`
+		`Bot action failed`
 	);
 
 	if (job.attemptsMade === job.opts.attempts) {
 		try {
-			await prisma.lead.update({
-				where: {
-					id: jobData.lead_id,
-				},
-				data: {
-					reply_status: ReplyStatus.FAILED,
-					replied_at: null,
-					reply_scheduled_at: null,
-				},
-			});
+			if (jobData.action === BotAction.REPLY) {
+				await prisma.lead.update({
+					where: {
+						id: jobData.lead_id,
+					},
+					data: {
+						reply_status: ReplyStatus.FAILED,
+						replied_at: null,
+						reply_scheduled_at: null,
+					},
+				});
+			} else if (jobData.action === BotAction.REMOVE_REPLY) {
+				await prisma.lead.update({
+					where: {
+						id: jobData.lead_id,
+					},
+					data: {
+						reply_status: ReplyStatus.REPLIED,
+					},
+				});
+			}
 		} catch {}
 	}
 });

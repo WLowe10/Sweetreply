@@ -1,20 +1,20 @@
 import { prisma } from "@lib/db";
 import { subDays } from "date-fns";
 import { BotError, createBot, type IBot } from "@sweetreply/bots";
-import { Prisma, Bot } from "@sweetreply/prisma";
 import { sleepRange } from "@sweetreply/shared/lib/utils";
 import { RequestError } from "got";
 import { logger } from "@lib/logger";
+import { Prisma, type Bot } from "@sweetreply/prisma";
 
-export async function getBot(id: string) {
-	return prisma.bot.findUniqueOrThrow({
+export async function getBot(id: string): Promise<Bot | null> {
+	return prisma.bot.findUnique({
 		where: {
 			id,
 		},
 	});
 }
 
-export async function dequeueBot(platform: string) {
+export async function dequeueBot(platform: string): Promise<Bot> {
 	const topBot = await prisma.bot.findFirst({
 		where: {
 			platform,
@@ -32,7 +32,7 @@ export async function dequeueBot(platform: string) {
 		throw new Error("Could not find an active bot");
 	}
 
-	const updatedBot = prisma.bot.update({
+	const updatedBot = await prisma.bot.update({
 		where: {
 			id: topBot.id,
 		},

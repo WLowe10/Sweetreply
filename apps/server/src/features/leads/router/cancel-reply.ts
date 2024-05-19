@@ -3,8 +3,8 @@ import { botActionQueue } from "@features/leads/queues/bot-action";
 import { failedToCancelReply, leadNotFound } from "../errors";
 import { ReplyStatus } from "@sweetreply/shared/features/leads/constants";
 import { canCancelReply } from "@sweetreply/shared/features/leads/utils";
-import { z } from "zod";
 import { singleLeadQuerySelect } from "../constants";
+import { z } from "zod";
 
 const cancelReplyInputSchema = z.object({
 	lead_id: z.string(),
@@ -34,9 +34,7 @@ export const cancelReplyHandler = authenticatedProcedure
 			if (isActive) {
 				throw failedToCancelReply();
 			}
-		}
 
-		if (job) {
 			try {
 				await job.remove();
 			} catch {

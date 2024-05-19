@@ -18,6 +18,7 @@ export const ReplyStatus = {
 	DRAFT: "draft",
 	REPLIED: "replied",
 	FAILED: "failed",
+	REMOVING: "removing",
 	NONE: null,
 } as const;
 
@@ -29,6 +30,7 @@ export const ReplyStatusColor = {
 	[ReplyStatus.DRAFT]: "gray",
 	[ReplyStatus.REPLIED]: "green",
 	[ReplyStatus.FAILED]: "red",
+	[ReplyStatus.REMOVING]: "orange",
 	NONE: "gray",
 } as const;
 

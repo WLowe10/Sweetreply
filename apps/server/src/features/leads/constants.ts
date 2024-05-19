@@ -1,11 +1,11 @@
 import { Prisma } from "@sweetreply/prisma";
 
-export const BotActions = {
+export const BotAction = {
 	REPLY: "reply",
 	REMOVE_REPLY: "remove_reply",
-};
+} as const;
 
-export type BotActionType = (typeof BotActions)[keyof typeof BotActions];
+export type BotActionType = (typeof BotAction)[keyof typeof BotAction];
 
 export const singleLeadQuerySelect: Prisma.LeadSelect = {
 	id: true,

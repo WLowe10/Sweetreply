@@ -1,9 +1,9 @@
-import * as botsService from "@features/bots/service";
-import { failedToDeleteReply, failedToUndoReply, leadHasNoReply, leadNotFound } from "../errors";
+import { failedToUndoReply, leadHasNoReply, leadNotFound } from "../errors";
 import { ReplyStatus } from "@sweetreply/shared/features/leads/constants";
 import { canUndoReply } from "@sweetreply/shared/features/leads/utils";
 import { subscribedProcedure } from "@features/billing/procedures";
-import { singleLeadQuerySelect } from "../constants";
+import { BotAction, singleLeadQuerySelect } from "../constants";
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 const undoReplyInputSchema = z.object({
@@ -22,7 +22,18 @@ export const undoReplyHandler = subscribedProcedure
 			throw leadNotFound();
 		}
 
-		if (lead.reply_bot_id === null || lead.reply_remote_id === null) {
+		if (lead.reply_status === ReplyStatus.REMOVING) {
+			throw new TRPCError({
+				code: "FORBIDDEN",
+				message: "Reply is already being removed",
+			});
+		}
+
+		if (
+			lead.reply_status !== ReplyStatus.REPLIED ||
+			lead.reply_bot_id === null ||
+			lead.reply_remote_id === null
+		) {
 			throw leadHasNoReply();
 		}
 
@@ -40,26 +51,14 @@ export const undoReplyHandler = subscribedProcedure
 			throw failedToUndoReply();
 		}
 
-		try {
-			await botsService.executeBot(botAccount, async (bot) => {
-				// @ts-ignore
-				await bot.deleteReply(lead);
-			});
-		} catch (err) {
-			throw failedToDeleteReply();
-		}
+		ctx.leadsService.addBotActionJob(lead.id, BotAction.REMOVE_REPLY);
 
 		return await ctx.prisma.lead.update({
 			where: {
 				id: lead.id,
 			},
 			data: {
-				replied_at: null,
-				reply_bot_id: null,
-				reply_remote_id: null,
-				reply_scheduled_at: null,
-				reply_remote_url: null,
-				reply_status: ReplyStatus.DRAFT,
+				reply_status: ReplyStatus.REMOVING,
 			},
 			select: singleLeadQuerySelect,
 		});

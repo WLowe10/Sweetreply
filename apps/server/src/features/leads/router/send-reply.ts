@@ -4,7 +4,7 @@ import { ReplyStatus } from "@sweetreply/shared/features/leads/constants";
 import { canSendReply } from "@sweetreply/shared/features/leads/utils";
 import { subscribedProcedure } from "@features/billing/procedures";
 import { outOfReplyCredits } from "@features/billing/errors";
-import { singleLeadQuerySelect } from "../constants";
+import { BotAction, singleLeadQuerySelect } from "../constants";
 import { TRPCError } from "@trpc/server";
 
 export const sendReplyHandler = subscribedProcedure
@@ -43,7 +43,7 @@ export const sendReplyHandler = subscribedProcedure
 			});
 		}
 
-		ctx.leadsService.addReplyJob(lead.id, {
+		ctx.leadsService.addBotActionJob(lead.id, BotAction.REPLY, {
 			date: input.data?.date ?? undefined,
 		});
 

@@ -6,6 +6,7 @@ import { ReplyStatus } from "@sweetreply/shared/features/leads/constants";
 import { shouldReplyCompletion } from "../utils/completions/should-reply-completion";
 import { replyCompletion } from "../utils/completions/reply-completion";
 import * as leadsService from "@features/leads/service";
+import { BotAction } from "../constants";
 
 export type ProcessLeadQueueJobData = {
 	lead_id: string;
@@ -123,7 +124,7 @@ processLeadQueue.process(async (job) => {
 	}
 
 	// send the lead to the reply queue
-	leadsService.addReplyJob(lead.id, {
+	leadsService.addBotActionJob(lead.id, BotAction.REPLY, {
 		date: scheduledAt,
 	});
 
