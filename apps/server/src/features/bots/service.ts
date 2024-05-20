@@ -5,6 +5,7 @@ import { sleepRange } from "@sweetreply/shared/lib/utils";
 import { RequestError } from "got";
 import { logger } from "@lib/logger";
 import { Prisma, type Bot } from "@sweetreply/prisma";
+import { sendDiscordNotification } from "@lib/discord-notification";
 
 export async function getBot(id: string): Promise<Bot | null> {
 	return prisma.bot.findUnique({
@@ -63,9 +64,8 @@ export async function appendError(botId: string, err: BotError, limit?: number) 
 		},
 	});
 
-	// if there are more than 3 errors in the last 24 hours, the bot will become inactive, requiring manual verification
 	if (limit && errorCountLast24Hours >= limit) {
-		await prisma.bot.update({
+		const updatedBot = await prisma.bot.update({
 			where: {
 				id: botId,
 			},
@@ -73,6 +73,48 @@ export async function appendError(botId: string, err: BotError, limit?: number) 
 				active: false,
 				status: err.code,
 			},
+		});
+
+		const platformBotCount = await prisma.bot.count({
+			where: {
+				platform: updatedBot.platform,
+			},
+		});
+
+		const activePlatformBots = await prisma.bot.count({
+			where: {
+				active: true,
+				platform: updatedBot.platform,
+			},
+		});
+
+		await sendDiscordNotification({
+			title: "Bot became inactive",
+			description: "A bot has been automatically made inactive due to too many errors",
+			fields: [
+				{
+					name: "Reason",
+					value: err.code,
+				},
+				{
+					name: "ID",
+					value: updatedBot.id,
+				},
+				{
+					name: "Username",
+					value: updatedBot.username,
+					inline: true,
+				},
+				{
+					name: "Platform",
+					value: updatedBot.platform,
+					inline: true,
+				},
+				{
+					name: `Active ${updatedBot.platform} bots`,
+					value: `${activePlatformBots}/${platformBotCount}`,
+				},
+			],
 		});
 	}
 
