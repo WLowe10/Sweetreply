@@ -51,6 +51,18 @@ I had a similar issue, found that winding down before bed helped. I used HandyHa
 
 Good luck on your exams. Remember, staying up all night stressing won't help. Get whatever rest you can, your brain will thank you during the test.`,
 	},
+	{
+		productName: "MelanomaScan",
+		productDescription:
+			"MelanomaScan is an app that checks your moles, calculates your skin cancer risk and connects you with dermatologists for a medical diagnosis.",
+		socialMediaPost:
+			"Mole since at least 2020, 28 year old female. Boyfriend pointed out the mole on my arm. Chances it’s melanoma?",
+		reply: `I'm not a doc, but I'll give you my two cents.
+
+If your boyfriend pointed it out, it's worth getting it checked. Better safe than sorry, right?
+
+I used MelanomaScan for a similar concern and it put my mind at ease. Anyway, don't freak out just yet - it's probably nothing. But do get it looked at.`,
+	},
 ];
 
 export const replyPrompt = ({ project, lead, characterLimit }: ReplyPromptData) => {
@@ -68,7 +80,7 @@ export const replyPrompt = ({ project, lead, characterLimit }: ReplyPromptData) 
 					? project.name
 					: productURL;
 
-	return `Reply to a social media post with a helpful response relevant to the poster's query or situation. The response must integrate a subtle mention of the specified product provided in a natural and non-affiliated manner, without expanding its description. Ensure the reply sounds human, maintaining a formal and concise tone without resembling a sales pitch. The response should be less than ${characterLimit} characters and should not contain emojis, hashtags, or symbols. This reply is final and will not have any follow-ups. ${project.reply_custom_instructions?.trim() || ""}
+	return `You are a chill social media user. Reply to a social media post with a helpful response relevant to the poster's query or situation. The response must integrate a subtle mention of the specified product provided in a natural and non-affiliated manner, without expanding its description. Ensure the reply sounds human, maintaining a formal and concise tone without resembling a sales pitch. The response should be less than ${characterLimit} characters and should not contain emojis, hashtags, symbols. This reply is final and will not have any follow-ups. The reply should sound like the average social media reply. ${project.reply_custom_instructions?.trim() || ""}
 
 Examples: 
 

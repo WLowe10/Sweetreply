@@ -1,5 +1,5 @@
-import { replicate } from "@lib/client/replicate";
-import { replyPrompt } from "../prompts/reply-prompt-v2.5";
+import { openAI } from "@lib/client/openai";
+import { replyPrompt } from "../prompts/reply-prompt-v3";
 import { LeadPlatformType, ReplyCharacterLimit } from "@sweetreply/shared/features/leads/constants";
 import type { ReplyPromptData } from "../prompts/reply-prompt-v2";
 
@@ -13,24 +13,21 @@ export const replyCompletion = async ({
 
 	const prompt = replyPrompt({ project, lead, characterLimit: replyCharacterLimit });
 
-	// await fs.writeFile("prompt.txt", prompt);
-	// throw "temp error"
-
 	// openai
 
-	// const completion = await openAI.chat.completions.create({
-	// 	model: "gpt-3.5-turbo",
-	// 	temperature: 0.25,
-	// 	max_tokens: maxTokens,
-	// 	messages: [
-	// 		{
-	// 			role: "user",
-	// 			content: prompt,
-	// 		},
-	// 	],
-	// });
+	const completion = await openAI.chat.completions.create({
+		model: "gpt-3.5-turbo",
+		temperature: 0.25,
+		max_tokens: maxTokens,
+		messages: [
+			{
+				role: "user",
+				content: prompt,
+			},
+		],
+	});
 
-	// let replyText = completion.choices[0].message.content as string;
+	let replyText = completion.choices[0].message.content as string;
 
 	// ollama
 
@@ -56,15 +53,16 @@ export const replyCompletion = async ({
 	// this model is generating good replies after a couple tests
 	// "meta/meta-llama-3-70b-instruct"
 
-	const result = (await replicate.run("meta/meta-llama-3-70b-instruct", {
-		input: {
-			prompt,
-			temperature: 0.25,
-			max_tokens: maxTokens,
-		},
-	})) as Array<string>;
+	// const result = (await replicate.run("meta/meta-llama-3-70b-instruct", {
+	// 	input: {
+	// 		prompt,
+	// 		top_p: 0.9,
+	// 		temperature: 0.25,
+	// 		max_tokens: maxTokens,
+	// 	},
+	// })) as Array<string>;
 
-	let replyText = result.join("");
+	// let replyText = result.join("");
 
 	//
 
