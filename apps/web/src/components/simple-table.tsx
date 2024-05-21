@@ -1,4 +1,4 @@
-import { Table } from "@mantine/core";
+import { Table, type TableProps } from "@mantine/core";
 import type { ReactNode } from "react";
 
 export type SimpleTableColumn<T = any> = {
@@ -12,13 +12,15 @@ export type SimpleTableColumns<T = any> = SimpleTableColumn<T>[];
 export type SimpleTableProps = {
 	columns: SimpleTableColumn[];
 	data: any[];
+	onRowClick?: (row: any) => void;
 	getId?: (row: any) => string;
+	tableProps?: TableProps;
 };
 
-export const SimpleTable = ({ columns, data, getId }: SimpleTableProps) => {
+export const SimpleTable = ({ columns, data, getId, tableProps }: SimpleTableProps) => {
 	return (
 		<Table.ScrollContainer minWidth={800}>
-			<Table>
+			<Table {...tableProps}>
 				<Table.Thead>
 					<Table.Tr>
 						{columns.map(({ id, Header }) => (

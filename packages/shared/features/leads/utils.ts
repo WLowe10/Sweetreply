@@ -6,7 +6,7 @@ export const getMaxFutureReplyDate = () => endOfDay(addDays(new Date(), 30));
 
 export const canDeleteLead = (lead: Pick<Lead, "reply_status">) =>
 	lead.reply_status === ReplyStatus.REPLIED ||
-	lead.reply_status === ReplyStatus.NONE ||
+	lead.reply_status === null ||
 	lead.reply_status === ReplyStatus.FAILED ||
 	lead.reply_status === ReplyStatus.DRAFT;
 
@@ -23,7 +23,7 @@ export const canEditReply = (lead: Pick<Lead, "reply_status">) =>
 	lead.reply_status === ReplyStatus.DRAFT ||
 	lead.reply_status === ReplyStatus.SCHEDULED ||
 	lead.reply_status === ReplyStatus.FAILED ||
-	lead.reply_status === ReplyStatus.NONE;
+	lead.reply_status === null;
 
 export const canGenerateReply = (lead: Pick<Lead, "reply_status" | "replies_generated">) =>
 	canEditReply(lead) && lead.replies_generated < 2;
@@ -32,5 +32,5 @@ export const canCancelReply = (lead: Pick<Lead, "reply_status">) =>
 	lead.reply_status === ReplyStatus.SCHEDULED;
 
 export const getReplyStatusColor = (status: string | null): string | undefined =>
-	//@ts-ignore
-	status === null ? ReplyStatusColor.NONE : ReplyStatusColor[status];
+	// @ts-ignore
+	status === null ? ReplyStatusColor[ReplyStatus.NONE] : ReplyStatusColor[status];

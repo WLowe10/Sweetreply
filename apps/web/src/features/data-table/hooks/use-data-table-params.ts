@@ -14,8 +14,8 @@ export const useDataTableParams = (opts?: { defaultLimit: number }) => {
 	const limit = (Number(params.get(limitParamKey)) || opts?.defaultLimit) ?? 25;
 	const query = params.get(queryParamKey);
 
-	const rawFilter = params.get(filterParamKey);
-	const filter = rawFilter ? JSON.parse(rawFilter) : {};
+	const rawFilters = params.get(filterParamKey);
+	const filters = rawFilters ? JSON.parse(rawFilters) : {};
 
 	const setPage = (newPage: number | null) => {
 		setParams((prev) => {
@@ -53,7 +53,11 @@ export const useDataTableParams = (opts?: { defaultLimit: number }) => {
 		});
 	};
 
-	const setFilter = (newFilter: object | ((prevFilter: object) => object)) => {
+	const getFilter = (name: string) => {
+		return filters[name];
+	};
+
+	const setFilters = (newFilter: object | ((prevFilter: object) => object)) => {
 		setParams((prev) => {
 			const prevRawFilter = prev.get(filterParamKey);
 			const prevFilter = prevRawFilter ? JSON.parse(prevRawFilter) : {};
@@ -61,10 +65,25 @@ export const useDataTableParams = (opts?: { defaultLimit: number }) => {
 				typeof newFilter === "function" ? newFilter(prevFilter) : newFilter;
 
 			if (Object.keys(newFilterData).length === 0) {
-				clearFilter();
+				clearFilters();
 			} else {
-				prev.set(filterParamKey, JSON.stringify(newFilter));
+				prev.set(filterParamKey, JSON.stringify(newFilterData));
 			}
+
+			return prev;
+		});
+	};
+
+	const setFilter = (name: string, value: any) => {
+		setFilters((prev) => {
+			return { ...prev, [name]: value };
+		});
+	};
+
+	const clearFilter = (name: string) => {
+		setFilters((prev) => {
+			// @ts-ignore
+			delete prev[name];
 
 			return prev;
 		});
@@ -91,35 +110,44 @@ export const useDataTableParams = (opts?: { defaultLimit: number }) => {
 		});
 	};
 
-	const clearFilter = () => {
+	const clearFilters = () => {
 		setParams((prev) => {
 			prev.delete(filterParamKey);
 			return prev;
 		});
 	};
 
+	//! causes infinite render
+
 	// useEffect(() => {
-	// 	if (page === 1) {
+	// 	if (page <= 1) {
 	// 		clearPage();
 	// 	}
 
 	// 	if (limit === defaultLimit) {
-
+	// 		clearLimit();
 	// 	}
-	// }, [page, limit, defaultLimit]);
+
+	// 	if (Object.keys(filters).length === 0) {
+	// 		clearFilters();
+	// 	}
+	// }, [page, limit, defaultLimit, filters]);
 
 	return {
 		page,
 		limit,
 		query,
-		filter,
+		filters,
 		setPage,
 		setLimit,
 		setQuery,
+		setFilters,
+		getFilter,
 		setFilter,
 		clearPage,
 		clearLimit,
 		clearQuery,
+		clearFilters,
 		clearFilter,
 	};
 };

@@ -1,7 +1,8 @@
 import { authenticatedProcedure } from "@features/auth/procedures";
 import { paginationSchema, orderBySchema, skip } from "@lib/pagination";
-import { z } from "zod";
 import { projectNotFound } from "@features/projects/errors";
+import { ReplyStatus } from "@sweetreply/shared/features/leads/constants";
+import { z } from "zod";
 import type { Prisma } from "@sweetreply/prisma";
 
 const getManyLeadsInputSchema = z.object({
@@ -10,15 +11,13 @@ const getManyLeadsInputSchema = z.object({
 	query: z.string().optional(),
 	filter: z
 		.object({
-			platform: z.enum(["reddit"]),
-			replied: z.boolean(),
+			reply_status: z.nativeEnum(ReplyStatus),
 		})
 		.partial()
 		.optional(),
 	sort: z
 		.object({
 			date: orderBySchema,
-			replied_at: orderBySchema,
 		})
 		.partial()
 		.optional(),
@@ -40,6 +39,10 @@ export const getManyLeadsHandler = authenticatedProcedure
 
 		const queryWhere: Prisma.LeadWhereInput = {
 			project_id: input.projectId,
+		};
+
+		const queryOrderBy: Prisma.LeadOrderByWithRelationInput = {
+			date: "desc",
 		};
 
 		if (query && query.length > 0) {
@@ -72,23 +75,19 @@ export const getManyLeadsHandler = authenticatedProcedure
 		}
 
 		if (filter) {
-			if (filter.platform) {
-				queryWhere.platform = filter.platform;
-			}
-
-			if (typeof filter.replied === "boolean") {
-				if (filter.replied === true) {
-					queryWhere.replied_at = {
-						not: null,
-					};
+			if (filter.reply_status) {
+				if (filter.reply_status === ReplyStatus.NONE) {
+					queryWhere.reply_status = null;
 				} else {
-					queryWhere.replied_at = null;
+					queryWhere.reply_status = filter.reply_status;
 				}
 			}
 		}
 
 		if (sort) {
-			// todo
+			if (sort.date) {
+				queryOrderBy.date = sort.date;
+			}
 		}
 
 		const leadsCount = await ctx.prisma.lead.count({
@@ -97,11 +96,9 @@ export const getManyLeadsHandler = authenticatedProcedure
 
 		const leads = await ctx.prisma.lead.findMany({
 			where: queryWhere,
+			orderBy: queryOrderBy,
 			take: pagination.limit,
 			skip: skip(pagination.page, pagination.limit),
-			orderBy: {
-				date: "desc",
-			},
 			select: {
 				id: true,
 				username: true,

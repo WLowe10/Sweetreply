@@ -2,7 +2,7 @@ import { leadModel } from "@sweetreply/prisma/zod";
 import { isBefore, isFuture } from "date-fns";
 import { getMaxFutureReplyDate } from "./utils";
 import { z } from "zod";
-import { LeadPlatform, ReplyCharacterLimit } from "./constants";
+import { LeadPlatform } from "./constants";
 
 export const leadPlatformSchema = z.enum([LeadPlatform.REDDIT]);
 

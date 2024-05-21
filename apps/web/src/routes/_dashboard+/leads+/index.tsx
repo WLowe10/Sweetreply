@@ -4,27 +4,13 @@ import { ResourceContainer } from "@components/resource-container";
 import { useDataTableParams } from "@features/data-table/hooks/use-data-table-params";
 import { trpc } from "@lib/trpc";
 import { buildPageTitle } from "@lib/utils";
-import {
-	ActionIcon,
-	Badge,
-	Box,
-	Button,
-	Flex,
-	Menu,
-	Popover,
-	PopoverDropdown,
-	Select,
-	Skeleton,
-	Table,
-	Text,
-	Tooltip,
-	UnstyledButton,
-} from "@mantine/core";
+import { ActionIcon, Badge, Menu, Text, Tooltip } from "@mantine/core";
 import { IconArrowRight, IconClock, IconDots } from "@tabler/icons-react";
 import { useLocalProject } from "@features/projects/hooks/use-local-project";
 import { RelativeDate } from "@components/relative-date";
 import { getReplyStatusColor } from "@sweetreply/shared/features/leads/utils";
 import { DataTable } from "@features/data-table/components/data-table";
+import { ReplyStatus } from "@sweetreply/shared/features/leads/constants";
 import type { SimpleTableColumns } from "@components/simple-table";
 import type { RouterOutput } from "@server/router";
 
@@ -117,6 +103,9 @@ export default function LeadsPage() {
 		{
 			projectId: projectId,
 			query: params.query ?? undefined,
+			filter: {
+				reply_status: params.getFilter("reply_status"),
+			},
 			pagination: {
 				page: params.page - 1,
 				limit: params.limit,
@@ -132,12 +121,28 @@ export default function LeadsPage() {
 			<DataTable
 				data={getLeadsQuery.data?.data ?? []}
 				total={getLeadsQuery.data?.total || 0}
-				params={params}
 				columns={columns}
 				isLoading={getLeadsQuery.isLoading}
+				params={params}
 				options={{
 					noun: "lead",
 				}}
+				filters={[
+					{
+						name: "reply_status",
+						label: "Reply status",
+						type: "select",
+						options: [
+							ReplyStatus.REPLIED,
+							ReplyStatus.SCHEDULED,
+							ReplyStatus.FAILED,
+							ReplyStatus.PENDING,
+							ReplyStatus.REMOVING,
+							ReplyStatus.DRAFT,
+							ReplyStatus.NONE,
+						],
+					},
+				]}
 			/>
 		</ResourceContainer>
 	);

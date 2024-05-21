@@ -40,16 +40,17 @@ botActionQueue.process(1, async (job) => {
 });
 
 botActionQueue.on("active", async (job) => {
-	const jobData = job.data;
+	const leadID = job.data.lead_id;
+	const action = job.data.action;
 
-	logger.info(jobData, "Bot action began");
+	logger.info(job.data, "Bot action began");
 
-	if (jobData.action === BotAction.REPLY) {
+	if (action === BotAction.REPLY) {
 		try {
 			// mark lead as pending (the reply is being sent)
 			await prisma.lead.update({
 				where: {
-					id: jobData.lead_id,
+					id: leadID,
 				},
 				data: {
 					reply_status: ReplyStatus.PENDING,

@@ -19,7 +19,7 @@ export const ReplyStatus = {
 	REPLIED: "replied",
 	FAILED: "failed",
 	REMOVING: "removing",
-	NONE: null,
+	NONE: "none",
 } as const;
 
 export type ReplyStatusType = (typeof ReplyStatus)[keyof typeof ReplyStatus];
@@ -31,7 +31,7 @@ export const ReplyStatusColor = {
 	[ReplyStatus.REPLIED]: "green",
 	[ReplyStatus.FAILED]: "red",
 	[ReplyStatus.REMOVING]: "orange",
-	NONE: "gray",
+	[ReplyStatus.NONE]: "gray",
 } as const;
 
 export const ReplyCharacterLimit = {
