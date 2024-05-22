@@ -5,6 +5,7 @@ export interface BaseDataTableFilterItemType {
 	name: string;
 	type: string;
 	label?: string;
+	placeholder?: string;
 }
 
 export interface SelectDataTableFilterItemType extends BaseDataTableFilterItemType {
@@ -12,12 +13,18 @@ export interface SelectDataTableFilterItemType extends BaseDataTableFilterItemTy
 	options: (string | { label: string; value: string })[];
 }
 
+export interface MultiSelectDataTableFilterItemType extends BaseDataTableFilterItemType {
+	type: "multi-select";
+	options: (string | { label: string; value: string })[];
+}
+
 export interface DateRangeDataTableFilterItemType extends BaseDataTableFilterItemType {
-	type: "date";
+	type: "date-range";
 }
 
 export type DataTableFiltersItemType =
 	| SelectDataTableFilterItemType
+	| MultiSelectDataTableFilterItemType
 	| DateRangeDataTableFilterItemType;
 
 export type DataTableFiltersType = DataTableFiltersItemType[];

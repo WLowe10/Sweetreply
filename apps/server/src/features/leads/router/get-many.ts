@@ -3,6 +3,7 @@ import { paginationSchema, orderBySchema, skip } from "@lib/pagination";
 import { projectNotFound } from "@features/projects/errors";
 import { ReplyStatus } from "@sweetreply/shared/features/leads/constants";
 import { z } from "zod";
+import { uniqueSchema } from "@sweetreply/shared/lib/utils";
 import type { Prisma } from "@sweetreply/prisma";
 
 const getManyLeadsInputSchema = z.object({
@@ -11,7 +12,8 @@ const getManyLeadsInputSchema = z.object({
 	query: z.string().optional(),
 	filter: z
 		.object({
-			reply_status: z.nativeEnum(ReplyStatus),
+			reply_status: uniqueSchema(z.array(z.nativeEnum(ReplyStatus)).min(1)),
+			date: z.tuple([z.date(), z.date().nullish()]),
 		})
 		.partial()
 		.optional(),
@@ -75,11 +77,36 @@ export const getManyLeadsHandler = authenticatedProcedure
 		}
 
 		if (filter) {
-			if (filter.reply_status) {
-				if (filter.reply_status === ReplyStatus.NONE) {
-					queryWhere.reply_status = null;
+			if (filter.reply_status && filter.reply_status.length > 0) {
+				const replyStatusIn = filter.reply_status.filter(
+					(status) => status !== ReplyStatus.NONE
+				);
+
+				if (filter.reply_status.includes(ReplyStatus.NONE)) {
+					queryWhere.OR = [
+						{
+							reply_status: null,
+						},
+						{
+							reply_status: {
+								in: replyStatusIn,
+							},
+						},
+					];
 				} else {
-					queryWhere.reply_status = filter.reply_status;
+					queryWhere.reply_status = {
+						in: replyStatusIn,
+					};
+				}
+			}
+
+			if (filter.date) {
+				queryWhere.date = {
+					gte: filter.date[0],
+				};
+
+				if (filter.date[1]) {
+					queryWhere.date.lte = filter.date[1];
 				}
 			}
 		}

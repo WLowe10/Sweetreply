@@ -1,40 +1,70 @@
-import { ActionIcon, Button, Indicator, Popover, Select, Stack, TextInput } from "@mantine/core";
+import { ActionIcon, Button, Indicator, MultiSelect, Popover, Select, Stack } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
-import { IconFilter } from "@tabler/icons-react";
+import { IconCalendar, IconFilter } from "@tabler/icons-react";
 import { useDataTableContext } from "../hooks/use-data-table-context";
 import type { DataTableFiltersItemType } from "../context";
+
+// date-range is broken, read the comment in the onChange
 
 const FilterItem = ({ item }: { item: DataTableFiltersItemType }) => {
 	const { params } = useDataTableContext();
 	const name = item.name;
 	const value = params.getFilter(name);
 	const label = item.label || name;
+	const placeholder = item.placeholder;
 
 	return item.type === "select" ? (
 		<Select
 			label={label}
+			placeholder={placeholder}
 			comboboxProps={{ withinPortal: false }}
-			allowDeselect={false}
 			data={item.options as any}
-			value={value || null}
-			onChange={(newValue) => params.setFilter(name, newValue)}
+			value={value}
+			onChange={(newValue) => {
+				if (newValue === null) {
+					params.clearFilter(name);
+				} else {
+					params.setFilter(name, newValue);
+				}
+			}}
 		/>
-	) : item.type === "date" ? (
+	) : item.type === "multi-select" ? (
+		<MultiSelect
+			label={label}
+			placeholder={!value || value.length === 0 ? placeholder : undefined}
+			comboboxProps={{ withinPortal: false }}
+			clearable={true}
+			data={item.options as any}
+			value={value || []}
+			onChange={(newValue) => {
+				if (newValue.length > 0) {
+					params.setFilter(name, newValue);
+				} else {
+					params.clearFilter(name);
+				}
+			}}
+		/>
+	) : item.type === "date-range" ? (
 		<DatePickerInput
 			type="range"
-			placeholder="Filter by date"
-			allowSingleDateInRange={true}
-			popoverProps={{ withinPortal: false }}
 			label={label}
+			placeholder={placeholder}
+			allowSingleDateInRange={true}
+			clearable={true}
+			popoverProps={{ withinPortal: false }}
+			leftSection={<IconCalendar size={18} />}
 			value={
-				value && [
-					value[0] ? new Date(value[0]) : null,
-					value[1] ? new Date(value[1]) : null,
-				]
+				value
+					? [value[0] ? new Date(value[0]) : null, value[1] ? new Date(value[1]) : null]
+					: [null, null]
 			}
 			onChange={(newValue) => {
+				// instantly fires with [null, null] when fully selecting both dates. Does not occur when directly using state
+
 				if (newValue && (newValue[0] !== null || newValue[1] !== null)) {
 					params.setFilter(name, newValue);
+				} else {
+					params.clearFilter(name);
 				}
 			}}
 		/>

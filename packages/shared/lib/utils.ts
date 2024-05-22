@@ -1,3 +1,5 @@
+import type { ZodArray, ZodCustomIssue } from "zod";
+
 export const sleep = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
 export const sleepRange = (min: number, max: number) =>
@@ -19,3 +21,6 @@ export const buildProxyURL = (opts: ProxyURLConfig) =>
 export const isDev = (): boolean => {
 	return process.env.NODE_ENV === "development";
 };
+
+export const uniqueSchema = (schema: ZodArray<any>, issue?: ZodCustomIssue) =>
+	schema.refine((data) => new Set(data).size === data.length, issue);

@@ -97,14 +97,23 @@ const columns: SimpleTableColumns<RouterOutput["leads"]["getMany"]["data"][0]> =
 
 export default function LeadsPage() {
 	const [projectId] = useLocalProject();
+
 	const params = useDataTableParams();
+	const replyStatusFilter = params.getFilter("reply_status");
+	const dateFilter = params.getFilter("date");
 
 	const getLeadsQuery = trpc.leads.getMany.useQuery(
 		{
 			projectId: projectId,
 			query: params.query ?? undefined,
 			filter: {
-				reply_status: params.getFilter("reply_status"),
+				reply_status: replyStatusFilter,
+				date: dateFilter
+					? [
+							dateFilter[0] && new Date(dateFilter[0]),
+							dateFilter[1] && new Date(dateFilter[1]),
+						]
+					: undefined,
 			},
 			pagination: {
 				page: params.page - 1,
@@ -131,7 +140,8 @@ export default function LeadsPage() {
 					{
 						name: "reply_status",
 						label: "Reply status",
-						type: "select",
+						placeholder: "All",
+						type: "multi-select",
 						options: [
 							ReplyStatus.REPLIED,
 							ReplyStatus.SCHEDULED,
