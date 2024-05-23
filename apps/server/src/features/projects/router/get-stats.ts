@@ -93,5 +93,6 @@ export const getStatsHandler = authenticatedProcedure
 				last24HoursCount: repliesLast24Hours,
 				mostRecent: mostRecentReply?.replied_at,
 			},
+			// chart: chartData,
 		};
 	});

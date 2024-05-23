@@ -6,8 +6,8 @@ import { buildPageTitle } from "@lib/utils";
 import { SimpleGrid, Skeleton } from "@mantine/core";
 import { IconCalendar, IconMessage, IconRadar } from "@tabler/icons-react";
 import { StatCard } from "@components/stat-card";
-import type { MetaFunction } from "@remix-run/react";
 import { useCurrentProjectQuery } from "@features/projects/hooks/use-current-project-query";
+import type { MetaFunction } from "@remix-run/react";
 
 export const meta: MetaFunction = () => [{ title: buildPageTitle("Dashboard") }];
 

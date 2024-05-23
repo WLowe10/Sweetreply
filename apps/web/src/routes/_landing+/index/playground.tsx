@@ -99,7 +99,11 @@ export const Playground = (boxProps: BoxProps) => {
 										<Box>
 											{generateReplyMutation.data && (
 												<>
-													<Text size="sm" mb="md">
+													<Text
+														size="sm"
+														mb="md"
+														style={{ whiteSpace: "pre-wrap" }}
+													>
 														{generateReplyMutation.data.reply}
 													</Text>
 													<Alert

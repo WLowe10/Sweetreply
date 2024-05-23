@@ -257,7 +257,12 @@ export const RedditLead = () => {
 					) : lead.generateReplyMutation.isLoading ? (
 						<Skeleton height={100} />
 					) : lead.data.reply_text ? (
-						<Spoiler maxHeight={120} showLabel="Show more" hideLabel="hide">
+						<Spoiler
+							maxHeight={120}
+							showLabel="Show more"
+							hideLabel="hide"
+							style={{ whiteSpace: "pre-wrap" }}
+						>
 							{lead.data.reply_text}
 						</Spoiler>
 					) : (
