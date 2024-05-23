@@ -79,12 +79,6 @@ export class RedditRequestBot implements IBot {
 		});
 	}
 
-	static async isBanned(username: string) {
-		const response = await got.get(`https://www.reddit.com/user/${username}`);
-
-		return response.body.includes('<span slot="title">This account has been suspended</span>');
-	}
-
 	public async generateSession(): Promise<RedditBotSession> {
 		const formData = {
 			op: "login",

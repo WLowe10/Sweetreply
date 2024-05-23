@@ -45,10 +45,10 @@ export async function dequeueBot(platform: string): Promise<Bot> {
 	return updatedBot;
 }
 
-export async function appendError(botId: string, err: BotError, limit?: number) {
+export async function appendError(botID: string, err: BotError, limit?: number) {
 	const newError = await prisma.botError.create({
 		data: {
-			bot_id: botId,
+			bot_id: botID,
 			code: err.code,
 			message: err.message,
 		},
@@ -56,7 +56,7 @@ export async function appendError(botId: string, err: BotError, limit?: number) 
 
 	const errorCountLast24Hours = await prisma.botError.count({
 		where: {
-			bot_id: botId,
+			bot_id: botID,
 			code: err.code,
 			date: {
 				gte: subDays(new Date(), 1),
@@ -65,60 +65,64 @@ export async function appendError(botId: string, err: BotError, limit?: number) 
 	});
 
 	if (limit && errorCountLast24Hours >= limit) {
-		const updatedBot = await prisma.bot.update({
-			where: {
-				id: botId,
-			},
-			data: {
-				active: false,
-				status: err.code,
-			},
-		});
-
-		const platformBotCount = await prisma.bot.count({
-			where: {
-				platform: updatedBot.platform,
-			},
-		});
-
-		const activePlatformBots = await prisma.bot.count({
-			where: {
-				active: true,
-				platform: updatedBot.platform,
-			},
-		});
-
-		await sendDiscordNotification({
-			title: "Bot became inactive",
-			description: "A bot has been automatically made inactive due to too many errors",
-			fields: [
-				{
-					name: "Reason",
-					value: err.code,
-				},
-				{
-					name: "ID",
-					value: updatedBot.id,
-				},
-				{
-					name: "Username",
-					value: updatedBot.username,
-					inline: true,
-				},
-				{
-					name: "Platform",
-					value: updatedBot.platform,
-					inline: true,
-				},
-				{
-					name: `Active ${updatedBot.platform} bots`,
-					value: `${activePlatformBots}/${platformBotCount}`,
-				},
-			],
-		});
+		await deactivateBot(botID, err.code);
 	}
 
 	return newError;
+}
+
+export async function deactivateBot(botID: string, reason: string) {
+	const updatedBot = await prisma.bot.update({
+		where: {
+			id: botID,
+		},
+		data: {
+			active: false,
+			status: reason,
+		},
+	});
+
+	const platformBotCount = await prisma.bot.count({
+		where: {
+			platform: updatedBot.platform,
+		},
+	});
+
+	const activePlatformBots = await prisma.bot.count({
+		where: {
+			active: true,
+			platform: updatedBot.platform,
+		},
+	});
+
+	await sendDiscordNotification({
+		title: "Bot became inactive",
+		description: "A bot has been automatically made inactive due to too many errors",
+		fields: [
+			{
+				name: "Reason",
+				value: reason,
+			},
+			{
+				name: "ID",
+				value: updatedBot.id,
+			},
+			{
+				name: "Username",
+				value: updatedBot.username,
+				inline: true,
+			},
+			{
+				name: "Platform",
+				value: updatedBot.platform,
+				inline: true,
+			},
+			{
+				name: `Active ${updatedBot.platform} bots`,
+				value: `${activePlatformBots}/${platformBotCount}`,
+			},
+		],
+	});
 }
 
 export async function handleBotError(botID: string, err: Error) {
