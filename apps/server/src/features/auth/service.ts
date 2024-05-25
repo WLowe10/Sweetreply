@@ -7,7 +7,7 @@
 
 import jwt from "jsonwebtoken";
 import argon2 from "argon2";
-import { prisma } from "@lib/db";
+import { prisma } from "@lib/prisma";
 import * as emailService from "../email/service";
 import { nanoid } from "nanoid";
 import { ok, err, type ResultAsync, Result } from "@sweetreply/shared/lib/result";

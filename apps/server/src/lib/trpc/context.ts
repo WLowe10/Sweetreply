@@ -1,4 +1,4 @@
-import { prisma } from "@lib/db";
+import { prisma } from "@lib/prisma";
 import { logger } from "@lib/logger";
 import { stripe } from "@lib/client/stripe";
 import * as authService from "@features/auth/service";

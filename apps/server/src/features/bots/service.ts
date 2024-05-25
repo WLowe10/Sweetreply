@@ -1,4 +1,4 @@
-import { prisma } from "@lib/db";
+import { prisma } from "@lib/prisma";
 import { subDays } from "date-fns";
 import { BotError, createBot, type IBot } from "@sweetreply/bots";
 import { sleepRange } from "@sweetreply/shared/lib/utils";

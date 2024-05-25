@@ -1,4 +1,4 @@
-import { prisma } from "@lib/db";
+import { prisma } from "@lib/prisma";
 import { ReplyStatus } from "@sweetreply/shared/features/leads/constants";
 import { differenceInMilliseconds, isFuture } from "date-fns";
 import { botActionQueue } from "./queues/bot-action";

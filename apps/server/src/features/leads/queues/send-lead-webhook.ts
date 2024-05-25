@@ -1,6 +1,6 @@
 import axios from "axios";
 import Queue from "bull";
-import { prisma } from "@lib/db";
+import { prisma } from "@lib/prisma";
 import { isDiscordWebhookURL } from "@lib/regex";
 import { buildFrontendUrl } from "@lib/utils";
 import { env } from "@env";

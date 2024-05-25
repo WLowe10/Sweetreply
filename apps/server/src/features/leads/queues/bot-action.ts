@@ -1,7 +1,7 @@
 import Queue from "bull";
 import * as leadsService from "@features/leads/service";
 import { logger } from "@lib/logger";
-import { prisma } from "@lib/db";
+import { prisma } from "@lib/prisma";
 import { env } from "@env";
 import { ReplyStatus } from "@sweetreply/shared/features/leads/constants";
 import { BotAction, BotActionType } from "../constants";

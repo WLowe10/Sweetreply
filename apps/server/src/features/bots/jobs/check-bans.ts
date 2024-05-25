@@ -1,5 +1,5 @@
 import { CronJob } from "cron";
-import { prisma } from "@lib/db";
+import { prisma } from "@lib/prisma";
 import { LeadPlatform } from "@sweetreply/shared/features/leads/constants";
 import { checkRedditBan } from "../utils/check-reddit-ban";
 import * as botsService from "../service";

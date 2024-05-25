@@ -1,6 +1,6 @@
 import { Controller, Post, Req, Res } from "routing-controllers";
 import { stripe } from "@lib/client/stripe";
-import { prisma } from "@lib/db";
+import { prisma } from "@lib/prisma";
 import { logger } from "@lib/logger";
 import { sendDiscordNotification } from "@lib/discord-notification";
 import { env } from "@env";
@@ -15,10 +15,12 @@ async function handleInvoicePaid(event: Stripe.Event) {
 	const subscriptionId = invoice.subscription;
 	const customerId = invoice.customer;
 
+	// todo reconsider this logic for downgrades and proration
+
 	// don't remove reply credits if a user downgrades
-	if (invoice.amount_paid <= 0) {
-		return;
-	}
+	// if (invoice.amount_paid <= 0) {
+	// 	return;
+	// }
 
 	if (typeof subscriptionId !== "string" || typeof customerId !== "string") {
 		return;

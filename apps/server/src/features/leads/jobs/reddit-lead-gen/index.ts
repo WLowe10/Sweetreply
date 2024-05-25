@@ -1,6 +1,6 @@
 import pLimit from "p-limit";
 import { CronJob } from "cron";
-import { prisma } from "@lib/db";
+import { prisma } from "@lib/prisma";
 import { logger } from "@lib/logger";
 import { RedditPostsSlurper } from "./slurpers/posts";
 import { testKeywords } from "@lib/utils";
