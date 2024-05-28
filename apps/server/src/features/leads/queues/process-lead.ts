@@ -5,9 +5,9 @@ import { addHours, addMinutes, isFuture, subDays } from "date-fns";
 import { ReplyStatus } from "@sweetreply/shared/features/leads/constants";
 import { shouldReplyCompletion } from "../utils/completions/should-reply-completion";
 import { replyCompletion } from "../utils/completions/reply-completion";
-import * as leadsService from "@features/leads/service";
 import { BotAction } from "../constants";
 import { randomRange } from "@sweetreply/shared/lib/utils";
+import * as leadsService from "@features/leads/service";
 
 export type ProcessLeadQueueJobData = {
 	lead_id: string;
@@ -24,7 +24,7 @@ export const processLeadQueue = new Queue<ProcessLeadQueueJobData>("process-lead
 			delay: 4000,
 		},
 	},
-	// this lines up with half the openAI rate limit,
+	// this lines up with half of the openAI rate limit,
 	limiter: {
 		max: 40,
 		duration: 1000,
@@ -119,12 +119,11 @@ processLeadQueue.process(async (job) => {
 	// add random minutes to the scheduled date so the replies aren't exactly n hours after the post
 	let scheduledDate = addMinutes(lead.date, randomRange(1, 30));
 
-	if (typeof project.reply_delay === "number") {
-		scheduledDate = addHours(scheduledDate, project.reply_delay);
-	} else {
-		// add a random delay between 6 and 12 hours
-		scheduledDate = addHours(scheduledDate, randomRange(6, 12));
-	}
+	// add either the project's reply delay, or between 6 and 12 hours
+	addHours(
+		scheduledDate,
+		typeof project.reply_delay === "number" ? project.reply_delay : randomRange(6, 12)
+	);
 
 	// send the lead to the reply queue
 	leadsService.addBotActionJob(lead.id, BotAction.REPLY, {
