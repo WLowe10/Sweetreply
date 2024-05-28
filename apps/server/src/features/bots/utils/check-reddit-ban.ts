@@ -1,7 +1,7 @@
 import axios from "axios";
 import { getAxiosScrapingProxy } from "@lib/utils";
 
-export async function checkRedditBan(username: string): Promise<Boolean> {
+export async function checkRedditBan(username: string): Promise<boolean> {
 	const response = await axios.get(`https://www.reddit.com/user/${username}`, {
 		proxy: getAxiosScrapingProxy(),
 	});

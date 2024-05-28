@@ -17,12 +17,14 @@ export const checkBansJob = CronJob.from({
 		});
 
 		for (const bot of bots) {
-			if (bot.platform === LeadPlatform.REDDIT) {
-				const isBanned = await checkRedditBan(bot.username);
+			let isBanned = false;
 
-				if (isBanned) {
-					await botsService.deactivateBot(bot.id, "BANNED");
-				}
+			if (bot.platform === LeadPlatform.REDDIT) {
+				isBanned = await checkRedditBan(bot.username);
+			}
+
+			if (isBanned) {
+				await botsService.deactivateBot(bot.id, "BANNED");
 			}
 		}
 	},
