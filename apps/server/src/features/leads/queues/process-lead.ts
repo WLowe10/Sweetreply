@@ -119,10 +119,10 @@ processLeadQueue.process(async (job) => {
 	// add random minutes to the scheduled date so the replies aren't exactly n hours after the post
 	let scheduledDate = addMinutes(lead.date, randomRange(1, 30));
 
-	// add either the project's reply delay, or between 6 and 12 hours
-	addHours(
+	// add either the project's reply delay, or between 8 and 10 hours
+	scheduledDate = addHours(
 		scheduledDate,
-		typeof project.reply_delay === "number" ? project.reply_delay : randomRange(6, 12)
+		typeof project.reply_delay === "number" ? project.reply_delay : randomRange(8, 10)
 	);
 
 	// send the lead to the reply queue
