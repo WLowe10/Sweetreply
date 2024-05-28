@@ -73,7 +73,9 @@ export default function LandingLayout() {
 				>
 					<Stack>
 						<Box>
-							<Image src="/logo-dark.png" alt="Sweetreply" h="32" w="100" />
+							<Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
+								<Image src="/logo-dark.png" alt="Sweetreply" h="32" w="100" />
+							</Link>
 						</Box>
 						<Box>
 							<Text size="sm" fw="bold">
@@ -100,21 +102,12 @@ export default function LandingLayout() {
 						<Anchor component={Link} c="dimmed" to="/pricing">
 							Pricing
 						</Anchor>
-						{/* <Anchor component={Link} c="dimmed" to="/pricing">
-							What's new
-						</Anchor>
-						<Anchor component={Link} c="dimmed" to="/pricing">
-							Roadmap
-						</Anchor> */}
 					</Stack>
 					<Stack gap="xs">
 						<Text fw="bold">Help</Text>
 						<Anchor component={Link} c="dimmed" to="/help/get-started">
 							Get started
 						</Anchor>
-						{/* <Anchor component={Link} c="dimmed" to="">
-							How-to guides
-						</Anchor> */}
 					</Stack>
 					<Stack>
 						<Stack gap="xs">
@@ -126,12 +119,6 @@ export default function LandingLayout() {
 								Privacy Policy
 							</Anchor>
 						</Stack>
-						{/* <Stack gap="xs">
-							<Text fw="bold">Compare</Text>
-							<Anchor component={Link} c="dimmed" to="/compare/reply-guy">
-								ReplyGuy alternative
-							</Anchor>
-						</Stack> */}
 					</Stack>
 				</Flex>
 			</Box>
