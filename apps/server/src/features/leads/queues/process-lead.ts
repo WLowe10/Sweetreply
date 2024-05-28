@@ -122,6 +122,7 @@ processLeadQueue.process(async (job) => {
 	if (typeof project.reply_delay === "number") {
 		scheduledDate = addHours(scheduledDate, project.reply_delay);
 	} else {
+		// add a random delay between 6 and 12 hours
 		scheduledDate = addHours(scheduledDate, randomRange(6, 12));
 	}
 
