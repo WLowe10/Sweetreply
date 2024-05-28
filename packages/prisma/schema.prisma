@@ -146,7 +146,7 @@ model Project {
 
     reply_mention_mode        String  @default("name")
     reply_with_domain         Boolean @default(true)
-    reply_delay               Int     @default(10)
+    reply_delay               Int?
     reply_daily_limit         Int     @default(25)
     reply_custom_instructions String?
 

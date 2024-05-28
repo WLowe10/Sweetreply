@@ -33,10 +33,18 @@ export const baseProjectSchema = projectModel.extend({
 
 	reply_mention_mode: z.enum(["name", "name_or_url", "url"]),
 	reply_delay: z
-		.number()
-		.int()
-		.nonnegative()
-		.max(1440, { message: "Delay can not be longer than a day" }),
+		.union([
+			z.literal(1),
+			z.literal(2),
+			z.literal(4),
+			z.literal(8),
+			z.literal(12),
+			z.literal(16),
+			z.literal(20),
+			z.literal(24),
+			z.literal(48),
+		])
+		.nullable(),
 	reply_daily_limit: z.number().int().nonnegative().safe(),
 	reply_custom_instructions: z.string().max(1024),
 	webhook_url: z.string().url().max(128).nullable(),

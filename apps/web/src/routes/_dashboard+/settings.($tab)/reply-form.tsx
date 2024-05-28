@@ -1,6 +1,7 @@
 import { useCurrentProjectQuery } from "@features/projects/hooks/use-current-project-query";
 import { trpc } from "@lib/trpc";
 import {
+	Anchor,
 	Box,
 	Button,
 	Checkbox,
@@ -8,9 +9,11 @@ import {
 	InputWrapper,
 	NumberInput,
 	Radio,
+	Select,
 	Slider,
 	Stack,
 	Switch,
+	Text,
 	TextInput,
 	Textarea,
 } from "@mantine/core";
@@ -20,6 +23,7 @@ import {
 	type UpdateProjectInputType,
 } from "@sweetreply/shared/features/projects/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Link } from "@remix-run/react";
 
 export const ReplyForm = () => {
 	const { data: project } = useCurrentProjectQuery();
@@ -31,7 +35,7 @@ export const ReplyForm = () => {
 		values: {
 			reply_mention_mode: (project?.reply_mention_mode as any) ?? "name",
 			reply_with_domain: project?.reply_with_domain ?? true,
-			reply_delay: project?.reply_delay ?? 10,
+			reply_delay: (project?.reply_delay as unknown as any) ?? null,
 			reply_daily_limit: project?.reply_daily_limit ?? 0,
 			reply_custom_instructions: project?.reply_custom_instructions ?? "",
 		},
@@ -67,11 +71,6 @@ export const ReplyForm = () => {
 		<Box mt={"sm"}>
 			<form onSubmit={handleSubmit}>
 				<Stack>
-					{/* <Switch
-						label="Engagement (COMING SOON)"
-						description="When enabled, our bot will like the post and follow the user after replying"
-						disabled={true}
-					/> */}
 					<Controller
 						name="reply_mention_mode"
 						control={form.control}
@@ -107,15 +106,77 @@ export const ReplyForm = () => {
 						name="reply_delay"
 						control={form.control}
 						render={({ field, fieldState }) => (
-							<NumberInput
+							<Select
 								label="Reply delay"
-								description="The minimum amount of minutes between a lead and an auto reply. Default is 480 minutes (8 hours)."
-								value={field.value}
-								onChange={field.onChange}
-								error={fieldState.error?.message}
-								allowDecimal={false}
-								allowNegative={false}
+								clearable={true}
+								description={
+									<>
+										The minimum amount of time between a lead and an auto reply.{" "}
+										<Anchor
+											component={Link}
+											size="xs"
+											to="/help/get-started#reply-delay"
+										>
+											Learn more
+										</Anchor>
+									</>
+								}
+								data={[
+									{
+										value: "auto",
+										label: "auto (recommended)",
+									},
+									{
+										value: "1",
+										label: "1 hour",
+									},
+									{
+										value: "2",
+										label: "2 hours",
+									},
+									{
+										value: "4",
+										label: "4 hours",
+									},
+									{
+										value: "8",
+										label: "8 hours",
+									},
+									{
+										value: "12",
+										label: "12 hours",
+									},
+									{
+										value: "16",
+										label: "16 hours",
+									},
+									{
+										value: "20",
+										label: "20 hours",
+									},
+									{
+										value: "24",
+										label: "24 hours (1 day)",
+									},
+									{
+										value: "48",
+										label: "48 hours (2 days)",
+									},
+								]}
+								value={field.value === null ? "auto" : String(field.value)}
+								onChange={(val) =>
+									field.onChange(val === "auto" ? null : Number(val))
+								}
 							/>
+							// <NumberInput
+							// 	label="Reply delay"
+							// 	description="The minimum amount of minutes between a lead and an auto reply. Default is 480 minutes (8 hours)."
+							// 	value={field.value}
+							// 	onChange={field.onChange}
+							// 	error={fieldState.error?.message}
+							// 	allowDecimal={false}
+							// 	allowNegative={false}
+							// />
 						)}
 					/>
 					<Controller

@@ -1,12 +1,13 @@
 import Queue from "bull";
 import { env } from "@env";
 import { prisma } from "@lib/prisma";
-import { addMinutes, isFuture, subDays } from "date-fns";
+import { addHours, addMinutes, isFuture, subDays } from "date-fns";
 import { ReplyStatus } from "@sweetreply/shared/features/leads/constants";
 import { shouldReplyCompletion } from "../utils/completions/should-reply-completion";
 import { replyCompletion } from "../utils/completions/reply-completion";
 import * as leadsService from "@features/leads/service";
 import { BotAction } from "../constants";
+import { randomRange } from "@sweetreply/shared/lib/utils";
 
 export type ProcessLeadQueueJobData = {
 	lead_id: string;
@@ -113,19 +114,20 @@ processLeadQueue.process(async (job) => {
 	// generate the reply using AI
 	const generatedReply = await replyCompletion({ lead, project });
 
-	let scheduledAt: Date | undefined;
+	// --- schedule a date to send the reply ---
 
-	if (project.reply_delay > 0) {
-		const replyDate = addMinutes(lead.date, project.reply_delay);
+	// add random minutes to the scheduled date so the replies aren't exactly n hours after the post
+	let scheduledDate = addMinutes(lead.date, randomRange(1, 30));
 
-		if (isFuture(replyDate)) {
-			scheduledAt = replyDate;
-		}
+	if (typeof project.reply_delay === "number") {
+		scheduledDate = addHours(scheduledDate, project.reply_delay);
+	} else {
+		scheduledDate = addHours(scheduledDate, randomRange(6, 12));
 	}
 
 	// send the lead to the reply queue
 	leadsService.addBotActionJob(lead.id, BotAction.REPLY, {
-		date: scheduledAt,
+		date: isFuture(scheduledDate) ? scheduledDate : undefined,
 	});
 
 	await prisma.lead.update({
@@ -135,7 +137,7 @@ processLeadQueue.process(async (job) => {
 		data: {
 			reply_status: ReplyStatus.SCHEDULED,
 			reply_text: generatedReply,
-			reply_scheduled_at: scheduledAt,
+			reply_scheduled_at: scheduledDate,
 			replies_generated: {
 				increment: 1,
 			},
