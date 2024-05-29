@@ -185,6 +185,7 @@ export async function executeBot(botAccount: Bot, execFn: (bot: IBot) => void): 
 
 			await bot.generateSession();
 
+			// this sleeping logic may make more sense inside the bot strategies
 			await sleepRange(5000, 7500);
 		}
 
@@ -198,10 +199,6 @@ export async function executeBot(botAccount: Bot, execFn: (bot: IBot) => void): 
 	} finally {
 		try {
 			const finalSession = await bot.dumpSession();
-
-			logger.debug("Updating bot session", {
-				bot_id: botAccount.id,
-			});
 
 			await updateBotSession(botAccount.id, finalSession);
 		} catch (err) {

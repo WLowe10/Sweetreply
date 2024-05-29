@@ -105,10 +105,9 @@ export const ReplyForm = () => {
 					<Controller
 						name="reply_delay"
 						control={form.control}
-						render={({ field, fieldState }) => (
+						render={({ field }) => (
 							<Select
 								label="Reply delay"
-								clearable={true}
 								description={
 									<>
 										The minimum amount of time between a lead and an auto reply.{" "}
@@ -168,15 +167,6 @@ export const ReplyForm = () => {
 									field.onChange(val === "auto" ? null : Number(val))
 								}
 							/>
-							// <NumberInput
-							// 	label="Reply delay"
-							// 	description="The minimum amount of minutes between a lead and an auto reply. Default is 480 minutes (8 hours)."
-							// 	value={field.value}
-							// 	onChange={field.onChange}
-							// 	error={fieldState.error?.message}
-							// 	allowDecimal={false}
-							// 	allowNegative={false}
-							// />
 						)}
 					/>
 					<Controller
