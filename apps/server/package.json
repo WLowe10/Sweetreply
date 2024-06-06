@@ -7,7 +7,7 @@
 		"start": "NODE_ENV=production tsx ./src/main.ts",
 		"build": "pnpm clean:dist && tsc",
 		"type-check": "tsc --pretty --noEmit",
-		"install-chrome": "pnpm dlx puppeteer browsers install chrome",
+		"install-chrome": "pnpm dlx puppeteer browsers install chrome@125.0.6422.60",
 		"email:preview": "tsx watch ./scripts/email/preview.ts",
 		"openapi:generate": "tsx ./scripts/openapi/generate.ts",
 		"db:migrate": "pnpm --filter @sweetreply/prisma db:migrate",
