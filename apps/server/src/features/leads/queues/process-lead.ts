@@ -92,6 +92,7 @@ processLeadQueue.process(async (job) => {
 					{
 						reply_scheduled_at: {
 							gte: subDays(new Date(), 1),
+							lt: new Date(),
 						},
 					},
 				],
