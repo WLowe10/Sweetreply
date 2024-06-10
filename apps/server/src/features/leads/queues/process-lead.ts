@@ -80,19 +80,18 @@ processLeadQueue.process(async (job) => {
 		const repliesLast24Hours = await prisma.lead.count({
 			where: {
 				project_id: project.id,
-				reply_status: {
-					in: [ReplyStatus.SCHEDULED, ReplyStatus.REPLIED],
-				},
 				OR: [
 					{
+						reply_status: ReplyStatus.REPLIED,
 						replied_at: {
 							gte: subDays(new Date(), 1),
 						},
 					},
 					{
+						reply_status: ReplyStatus.SCHEDULED,
 						reply_scheduled_at: {
 							gte: subDays(new Date(), 1),
-							lt: new Date(),
+							lte: new Date(),
 						},
 					},
 				],
