@@ -73,32 +73,44 @@ processLeadQueue.process(async (job) => {
 		return;
 	}
 
+	// --- schedule a date to send the reply ---
+
+	// add random minutes to the scheduled date so the replies aren't exactly n hours after the post
+	let scheduledDate = addMinutes(lead.date, randomRange(1, 30));
+
+	// add either the project's reply delay, or between 8 and 10 hours
+	scheduledDate = addHours(
+		scheduledDate,
+		typeof project.reply_delay === "number" ? project.reply_delay : randomRange(8, 10)
+	);
+
 	// if the daily limit is zero, it means that the project does not have a reply limit
 	if (project.reply_daily_limit >= 0) {
 		// counts all of the scheduled and sent replies within the last 24 hours
 
-		const repliesLast24Hours = await prisma.lead.count({
+		const repliesInScheduled24HourPeriod = await prisma.lead.count({
 			where: {
 				project_id: project.id,
 				OR: [
 					{
 						reply_status: ReplyStatus.REPLIED,
 						replied_at: {
-							gte: subDays(new Date(), 1),
+							gte: subDays(scheduledDate, 1),
+							lte: scheduledDate,
 						},
 					},
 					{
 						reply_status: ReplyStatus.SCHEDULED,
 						reply_scheduled_at: {
-							gte: subDays(new Date(), 1),
-							lte: new Date(),
+							gte: subDays(scheduledDate, 1),
+							lte: scheduledDate,
 						},
 					},
 				],
 			},
 		});
 
-		if (repliesLast24Hours >= project.reply_daily_limit) {
+		if (repliesInScheduled24HourPeriod >= project.reply_daily_limit) {
 			// daily limit reached, don't generate a reply
 			return;
 		}
@@ -113,17 +125,6 @@ processLeadQueue.process(async (job) => {
 
 	// generate the reply using AI
 	const generatedReply = await replyCompletion({ lead, project });
-
-	// --- schedule a date to send the reply ---
-
-	// add random minutes to the scheduled date so the replies aren't exactly n hours after the post
-	let scheduledDate = addMinutes(lead.date, randomRange(1, 30));
-
-	// add either the project's reply delay, or between 8 and 10 hours
-	scheduledDate = addHours(
-		scheduledDate,
-		typeof project.reply_delay === "number" ? project.reply_delay : randomRange(8, 10)
-	);
 
 	// send the lead to the reply queue
 	leadsService.addBotActionJob(lead.id, BotAction.REPLY, {
