@@ -1,4 +1,0 @@
-{
-	"extends": "@sweetreply/tsconfig/react-library.json",
-	"include": ["src"]
-}

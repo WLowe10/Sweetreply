@@ -1,5 +1,3 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
 # Dependencies
 node_modules
 .pnp
@@ -22,10 +20,14 @@ coverage
 .vercel
 
 # Build Outputs
-.next/
 out/
 build
+builds
 dist
+
+# prisma generators
+prisma/zod
+prisma/dmbl
 
 
 # Debug
@@ -35,4 +37,5 @@ yarn-error.log*
 
 # Misc
 .DS_Store
+.cache
 *.pem

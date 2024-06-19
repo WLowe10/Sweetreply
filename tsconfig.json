@@ -1,3 +1,28 @@
 {
-	"extends": "@sweetreply/tsconfig/base.json"
+	"include": ["**/*.ts", "**/*.tsx"],
+	"compilerOptions": {
+		"lib": ["DOM", "DOM.Iterable", "ES2022"],
+		"types": ["@remix-run/node", "vite/client"],
+		"experimentalDecorators": true,
+		"emitDecoratorMetadata": true,
+		"isolatedModules": true,
+		"esModuleInterop": true,
+		"noEmit": true,
+		"jsx": "react-jsx",
+		"module": "ESNext",
+		"moduleResolution": "Bundler",
+		"resolveJsonModule": true,
+		"target": "ES2022",
+		"strict": true,
+		"allowJs": true,
+		"skipLibCheck": true,
+		"forceConsistentCasingInFileNames": true,
+		"baseUrl": ".",
+		"paths": {
+			"~/*": ["server/*"],
+			"@/*": ["app/*"],
+			"@shared/*": ["shared/*"],
+			"@prisma-zod": ["prisma/zod/index.ts"]
+		}
+	}
 }

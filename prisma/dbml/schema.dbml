@@ -1,0 +1,126 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Table auth_user {
+  id String [pk]
+  role String [not null, default: 'user']
+  email String [unique, not null]
+  first_name String [not null]
+  last_name String [not null]
+  password_hash String [not null]
+  verified_at DateTime
+  verification_requested_at DateTime
+  password_reset_requested_at DateTime
+  password_reset_code String [unique]
+  password_reset_code_expires_at DateTime
+  plan String
+  stripe_customer_id String [unique]
+  stripe_subscription_id String [unique]
+  subscription_ends_at DateTime
+  stripe_subscription_status String
+  reply_credits Int [not null, default: 0]
+  created_at DateTime [default: `now()`, not null]
+  updated_at DateTime
+  sessions session [not null]
+  projects project [not null]
+}
+
+Table session {
+  id String [pk]
+  user_id String [not null]
+  expires_at DateTime [not null]
+  user auth_user [not null]
+}
+
+Table bot {
+  id String [pk]
+  platform String [not null]
+  username String [not null]
+  password String [not null]
+  status String [not null]
+  active Boolean [not null, default: true]
+  session Json
+  proxy_host String
+  proxy_port Int
+  proxy_user String
+  proxy_pass String
+  created_at DateTime [default: `now()`, not null]
+  last_used_at DateTime
+  errors bot_error [not null]
+  leads lead [not null]
+}
+
+Table bot_error {
+  id String [pk]
+  bot_id String [not null]
+  code String [not null, default: 'unknown']
+  message String
+  date DateTime [default: `now()`, not null]
+  bot bot [not null]
+}
+
+Table project {
+  id String [pk]
+  user_id String [not null]
+  name String [not null]
+  description String
+  website_url String
+  keywords String[] [not null]
+  negative_keywords String[] [not null]
+  reply_mention_mode String [not null, default: 'name']
+  reply_with_domain Boolean [not null, default: true]
+  reply_delay Int
+  reply_daily_limit Int [not null, default: 25]
+  reply_custom_instructions String
+  reddit_monitor_enabled Boolean [not null, default: true]
+  reddit_allow_nsfw Boolean [not null, default: false]
+  reddit_replies_enabled Boolean [not null, default: true]
+  reddit_included_subreddits String[] [not null]
+  reddit_excluded_subreddits String[] [not null]
+  webhook_url String
+  created_at DateTime [default: `now()`, not null]
+  updated_at DateTime
+  user auth_user [not null]
+  leads lead [not null]
+}
+
+Table lead {
+  id String [pk]
+  type String [not null, default: 'post']
+  project_id String [not null]
+  platform String [not null]
+  locked Boolean [not null, default: false]
+  username String [not null]
+  name String
+  title String
+  content String [not null]
+  date DateTime [not null]
+  group String
+  remote_user_id String [not null]
+  remote_url String
+  remote_id String [not null]
+  remote_parent_id String
+  remote_group_id String
+  created_at DateTime [default: `now()`, not null]
+  reply_status String
+  reply_remote_id String
+  reply_remote_url String
+  reply_text String
+  reply_bot_id String
+  replied_at DateTime
+  reply_scheduled_at DateTime
+  replies_generated Int [not null, default: 0]
+  project project [not null]
+  reply_bot bot
+}
+
+Ref: session.user_id > auth_user.id [delete: Cascade]
+
+Ref: bot_error.bot_id > bot.id [delete: Cascade]
+
+Ref: project.user_id > auth_user.id [delete: Cascade]
+
+Ref: lead.project_id > project.id [delete: Cascade]
+
+Ref: lead.reply_bot_id > bot.id
