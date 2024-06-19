@@ -16,7 +16,7 @@
         "db:migrate": "prisma migrate deploy",
         "db:push": "prisma db push",
         "db:genpush": "pnpm db:generate && pnpm db:push",
-        "postinstall": "npm db:generate"
+        "postinstall": "npm run db:generate"
     },
     "dependencies": {
         "@prisma/client": "^5.10.2",
