@@ -16,7 +16,8 @@
 		"paths": {
 			"@features/*": ["./features/*"],
 			"@lib/*": ["./lib/*"],
-			"@env": ["./env.ts"]
+			"@env": ["./env.ts"],
+			"@utils": ["./utils.ts"]
 		}
 	}
 }
