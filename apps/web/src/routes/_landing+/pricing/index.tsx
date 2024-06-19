@@ -46,7 +46,7 @@ export default function PricingPage() {
 						No hidden fees, cancel anytime
 					</Text>
 				</Box>
-				<SimpleGrid cols={{ base: 1, md: 2, lg: 4 }}>
+				<SimpleGrid cols={{ base: 1, md: 2, lg: 3 }}>
 					<PricingCard
 						{...freePlan}
 						cta={

@@ -35,6 +35,7 @@ export const envSchema = z.object({
 	STRIPE_WEBHOOK_SECRET: z.string(),
 	OPEN_AI_KEY: z.string(),
 
+	STRIPE_PRICE_ID_MICRO: z.string(),
 	STRIPE_PRICE_ID_HOBBY: z.string(),
 	STRIPE_PRICE_ID_STANDARD: z.string(),
 	STRIPE_PRICE_ID_ENTERPRISE: z.string(),

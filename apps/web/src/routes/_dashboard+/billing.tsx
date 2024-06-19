@@ -1,15 +1,15 @@
-import { RelativeDate } from "@components/relative-date";
-import { ResourceContainer } from "@components/resource-container";
+import { useState } from "react";
+import { Button, SimpleGrid, Skeleton, Table } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
+import { getMonthlyReplies } from "@sweetreply/shared/features/billing/utils";
 import { useMe } from "@features/auth/hooks/use-me";
 import { PricingCard } from "@features/billing/components/pricing-card";
 import { ThankYouModal } from "@features/billing/components/thank-you-modal";
 import { plans } from "@features/billing/constants";
+import { ResourceContainer } from "@components/resource-container";
+import { RelativeDate } from "@components/relative-date";
+import { buildPageTitle } from "@utils";
 import { trpc } from "@lib/trpc";
-import { Button, SimpleGrid, Skeleton, Stack, Table } from "@mantine/core";
-import { notifications } from "@mantine/notifications";
-import { useState } from "react";
-import { getMonthlyReplies } from "@sweetreply/shared/features/billing/utils";
-import { buildPageTitle } from "utils";
 import type { MetaFunction } from "@remix-run/react";
 
 export const meta: MetaFunction = () => [{ title: buildPageTitle("Billing") }];
@@ -18,7 +18,6 @@ export default function BillingPage() {
 	const { me, isSubscribed } = useMe();
 	const subscribeMutation = trpc.billing.subscribe.useMutation();
 	const createBillingPortalMutation = trpc.billing.createBillingPortal.useMutation();
-
 	const [planCheckoutLoading, setPlanCheckoutLoading] = useState<string | null>(null);
 
 	const subscribe = (plan: string) => {

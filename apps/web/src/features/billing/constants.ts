@@ -3,18 +3,27 @@ import type { PricingItem } from "./components/pricing-card";
 
 export const plans: PricingItem[] = [
 	{
+		id: BillingPlan.MICRO,
+		title: "Micro",
+		description: "For expirements and small projects",
+		interval: "mo",
+		price: 10,
+		featuresTitle: "Everything in Free, plus:",
+		features: ["20 replies/mo"],
+	},
+	{
 		id: BillingPlan.HOBBY,
 		title: "Hobby",
-		description: "For small projects and experiments",
+		description: "For small businesses",
 		interval: "mo",
 		price: 19,
-		featuresTitle: "Everything in Free, plus:",
-		features: ["40 replies/mo", "Auto replies", "AI generated replies", "Scheduled replies"],
+		featuresTitle: "Everything in Micro, plus:",
+		features: ["40 replies/mo"],
 	},
 	{
 		id: BillingPlan.STANDARD,
 		title: "Standard",
-		description: "Best for small businesses",
+		description: "Best for midsized businesses",
 		interval: "mo",
 		price: 49,
 		featuresTitle: "Everything in Hobby, plus:",
