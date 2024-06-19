@@ -5,7 +5,7 @@ export const plans: PricingItem[] = [
 	{
 		id: BillingPlan.MICRO,
 		title: "Micro",
-		description: "For expirements and small projects",
+		description: "For experiments and small projects",
 		interval: "mo",
 		price: 10,
 		featuresTitle: "Everything in Free, plus:",
