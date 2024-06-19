@@ -10,6 +10,7 @@
 		"db:migrate": "pnpm --filter @sweetreply/prisma db:migrate",
 		"db:migrate-create": "pnpm --filter @sweetreply/prisma db:migrate-create",
 		"db:migrate-dev": "pnpm --filter @sweetreply/prisma db:migrate-dev",
+		"db:generate": "pnpm --filter @sweetreply/prisma db:generate",
 		"clean:modules": "rm -rf node_modules",
 		"clean:out": "rm -rf out",
 		"clean:dist": "rm -rf dist",
