@@ -1,6 +1,6 @@
 import { Link, useNavigate, useParams, type MetaFunction } from "@remix-run/react";
 import { ResourceContainer } from "@components/resource-container";
-import { buildPageTitle } from "@lib/utils";
+import { buildPageTitle } from "utils";
 import { Alert, Anchor, List, Skeleton, Tabs } from "@mantine/core";
 import { GeneralForm } from "./general-form";
 import { SitesForm } from "./sites-form";

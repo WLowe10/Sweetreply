@@ -1,5 +1,5 @@
 import { authenticatedProcedure } from "@features/auth/procedures";
-import { buildFrontendUrl } from "@lib/utils";
+import { buildFrontendUrl } from "@utils";
 import { TRPCError } from "@trpc/server";
 import { billingPlanSchema } from "@sweetreply/shared/features/billing/schemas";
 import { BillingPlanPrice } from "../constants";

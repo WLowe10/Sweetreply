@@ -21,7 +21,7 @@ import { useClipboard, useDisclosure } from "@mantine/hooks";
 import { IconCheck, IconCopy, IconDots, IconX } from "@tabler/icons-react";
 import { EditBotModal } from "@features/admin/components/edit-bot-modal";
 import { MetaFunction } from "@remix-run/react";
-import { buildPageTitle } from "@lib/utils";
+import { buildPageTitle } from "utils";
 import { CreateBotModal } from "@features/admin/components/create-bot-modal";
 import { DataTable } from "@features/data-table/components/data-table";
 import { RouterOutput } from "@server/router";

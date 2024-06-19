@@ -3,7 +3,7 @@ import { CronJob } from "cron";
 import { prisma } from "@lib/prisma";
 import { logger } from "@lib/logger";
 import { RedditPostsSlurper } from "./slurpers/posts";
-import { testKeywords } from "@lib/utils";
+import { testKeywords } from "@utils";
 import * as leadsService from "../../service";
 
 // comments slurping is disabled for now due to the possibility of an infinite loop of bot replies,

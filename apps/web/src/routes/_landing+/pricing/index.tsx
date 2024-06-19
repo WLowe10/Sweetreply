@@ -2,7 +2,7 @@ import { Box, Button, Center, Container, SimpleGrid, Text, Title } from "@mantin
 import { PricingCard, type PricingItem } from "../../../features/billing/components/pricing-card";
 import { Link } from "@remix-run/react";
 import { plans } from "@features/billing/constants";
-import { buildPageTitle, mergeMeta } from "@lib/utils";
+import { buildPageTitle, mergeMeta } from "utils";
 import classes from "./pricing.module.css";
 import type { MetaFunction } from "@remix-run/react";
 

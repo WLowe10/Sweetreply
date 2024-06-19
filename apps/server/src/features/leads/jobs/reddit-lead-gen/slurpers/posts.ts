@@ -4,7 +4,7 @@ import { generateDescendingRedditIds, generateBatchedRedditInfoUrls } from "../.
 import { RedditThing } from "@sweetreply/shared/features/reddit/constants";
 import { extractIdFromThing } from "@sweetreply/shared/features/reddit/utils";
 import { LeadPlatform, LeadType } from "@sweetreply/shared/features/leads/constants";
-import { getAxiosScrapingProxy } from "@lib/utils";
+import { getAxiosScrapingProxy } from "@utils";
 
 export class RedditPostsSlurper {
 	private client: Axios;

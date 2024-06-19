@@ -1,5 +1,5 @@
 import { AuthFormContainer } from "@features/auth/components/auth-form-container";
-import { buildPageTitle } from "@lib/utils";
+import { buildPageTitle } from "utils";
 import { useNavigate, useSearchParams, type MetaFunction } from "@remix-run/react";
 import { useMe } from "@features/auth/hooks/use-me";
 import { trpc } from "@lib/trpc";

@@ -13,7 +13,7 @@
 			"cache": false,
 			"persistent": true
 		},
-		"type-check": {
+		"typecheck": {
 			"cache": false
 		}
 	}

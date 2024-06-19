@@ -1,6 +1,6 @@
 import { MjmlSpacer, MjmlText } from "@faire/mjml-react";
 import { Button, Container, Footer, Header } from "../components";
-import { buildFrontendUrl } from "@lib/utils";
+import { buildFrontendUrl } from "@utils";
 import { appConfig } from "@sweetreply/shared/config";
 
 export type TeamInvitationEmailProps = {

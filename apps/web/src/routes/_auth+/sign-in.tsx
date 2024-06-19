@@ -16,7 +16,7 @@ import { signInInputSchema, type SignInInputType } from "@sweetreply/shared/feat
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSignIn } from "@features/auth/hooks/use-sign-in";
 import { AuthFormContainer } from "@features/auth/components/auth-form-container";
-import { buildPageTitle } from "@lib/utils";
+import { buildPageTitle } from "utils";
 import { useMe } from "@features/auth/hooks/use-me";
 import { useEffect } from "react";
 

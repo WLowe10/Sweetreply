@@ -4,10 +4,9 @@
 	"scripts": {
 		"dev": "NODE_ENV=development tsx watch --env-file=.env ./src/main.ts",
 		"start": "NODE_ENV=production tsx ./src/main.ts",
-		"build": "pnpm clean:dist && tsup --format cjs src/main.ts",
+		"build": "pnpm clean:dist && tsup --format cjs --target node20 src/main.ts",
 		"install-chrome": "pnpm dlx puppeteer browsers install chrome@125.0.6422.60",
 		"email:preview": "tsx watch ./scripts/email/preview.ts",
-		"openapi:generate": "tsx ./scripts/openapi/generate.ts",
 		"db:migrate": "pnpm --filter @sweetreply/prisma db:migrate",
 		"db:migrate-create": "pnpm --filter @sweetreply/prisma db:migrate-create",
 		"db:migrate-dev": "pnpm --filter @sweetreply/prisma db:migrate-dev",
@@ -48,8 +47,6 @@
 		"routing-controllers": "^0.10.4",
 		"stripe": "^14.21.0",
 		"superjson": "1.13.3",
-		"trpc-openapi": "^1.2.0",
-		"tsx": "^4.7.1",
 		"zod": "^3.22.4"
 	},
 	"devDependencies": {
@@ -62,6 +59,7 @@
 		"pino-pretty": "^10.3.1",
 		"trpc-panel": "^1.3.4",
 		"tsup": "^8.1.0",
-		"typescript": "^5"
+		"typescript": "^5",
+		"tsx": "^4.7.1"
 	}
 }
