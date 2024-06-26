@@ -10,7 +10,7 @@
 		"db:migrate-create": "pnpm --filter @sweetreply/prisma db:migrate-create",
 		"db:migrate-dev": "pnpm --filter @sweetreply/prisma db:migrate-dev",
 		"db:generate": "pnpm --filter @sweetreply/prisma db:generate",
-		"install-chrome": "pnpm --filter @sweetreply/bots install-chrome",
+		"install-chrome": "puppeteer browsers install chrome",
 		"clean:modules": "rm -rf node_modules",
 		"clean:out": "rm -rf out",
 		"clean:dist": "rm -rf dist",

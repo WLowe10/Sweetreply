@@ -4,7 +4,6 @@
 	"main": "./src/index.ts",
 	"types": "./src/index.ts",
 	"scripts": {
-		"install-chrome": "puppeteer browsers install chrome",
 		"reddit:test": "tsx ./scripts/reddit/test.ts",
 		"reddit:test-bot": "tsx ./scripts/reddit/test-bot.ts",
 		"hn:test": "tsx ./scripts/hn/test.ts",
