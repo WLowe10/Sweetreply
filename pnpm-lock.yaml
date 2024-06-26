@@ -296,7 +296,7 @@ importers:
         specifier: ^6.1.13
         version: 6.1.13
       puppeteer:
-        specifier: 22.8.0
+        specifier: ^22.8.0
         version: 22.8.0(typescript@5.4.5)
       puppeteer-extra:
         specifier: ^3.3.6
