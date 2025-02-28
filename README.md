@@ -7,6 +7,8 @@
 -   Low latency Reddit post filtering that detects relevant reddit posts within 1 minute of them being published.
 -   Automated reply generation using LLMs
 -   Automated reply sending via headless browser automation.
+-   Subscription billing plans with Stripe
+-   Notification webhooks
 
 ## Technical qualities
 
@@ -21,7 +23,7 @@ This monorepo contains several _packages_ and _applications_.
 
 ### Web
 
-The web app for Sweetreply, located [here](./apps/web), is built with Remix and React. It serves as the primary landing page and dashboard for Sweetreply users.
+The web app for Sweetreply, located [here](./apps/web), is built with Remix, React, and Mantine UI. It serves as the primary landing page and dashboard for Sweetreply users.
 
 ### Server
 
