@@ -144,6 +144,18 @@ async function handleSubscriptionDeleted(event: Stripe.Event) {
 	}
 }
 
+// pay as you go
+async function handleCheckoutSessionCompleted(event: Stripe.Event) {
+	const checkoutSession = event.data.object as Stripe.Checkout.Session;
+
+	// this event is also fired for subscriptions, but we only handle the pay as you go case here
+	if (checkoutSession.mode !== "subscription") {
+		return;
+	}
+
+	console.log(checkoutSession);
+}
+
 @Controller("/billing")
 export class BillingController {
 	@Post("/webhook")
@@ -180,6 +192,10 @@ export class BillingController {
 				case "invoice.paid":
 					await handleInvoicePaid(event);
 					break;
+
+				// case "checkout.session.completed":
+				// 	await handleCheckoutSessionCompleted(event);
+				// 	break;
 			}
 		} catch (err) {
 			logger.error(err, "Error handling stripe webhook");

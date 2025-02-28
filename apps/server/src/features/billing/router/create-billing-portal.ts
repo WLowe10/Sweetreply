@@ -1,4 +1,4 @@
-import { buildFrontendUrl } from "@lib/utils";
+import { buildFrontendUrl } from "@utils";
 import { TRPCError } from "@trpc/server";
 import { subscribedProcedure } from "../procedures";
 

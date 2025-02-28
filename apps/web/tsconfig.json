@@ -10,6 +10,7 @@
 			"@hooks/*": ["./hooks/*"],
 			"@features/*": ["./features/*"],
 			"@lib/*": ["./lib/*"],
+			"@utils": ["./utils.ts"],
 			"@env": ["./env.ts"]
 		}
 	}

@@ -6,7 +6,7 @@ import {
 	ForgotPasswordInputType,
 	forgotPasswordInputSchema,
 } from "@sweetreply/shared/features/auth/schemas";
-import { buildPageTitle } from "@lib/utils";
+import { buildPageTitle } from "utils";
 import { useNavigate, type MetaFunction } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import { useMe } from "@features/auth/hooks/use-me";

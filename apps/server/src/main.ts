@@ -1,4 +1,3 @@
-import "dotenv/config";
 import "reflect-metadata";
 import express from "express";
 import helmet from "helmet";
@@ -6,7 +5,6 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import * as trpcExpress from "@trpc/server/adapters/express";
 import { useExpressServer } from "routing-controllers";
-import { createOpenApiExpressMiddleware } from "trpc-openapi";
 import { renderTrpcPanel } from "trpc-panel";
 import { env } from "./env";
 import { createContext } from "./lib/trpc";
@@ -44,8 +42,6 @@ async function bootstrap() {
 	useExpressServer(app, {
 		controllers: [CommonController, BillingController],
 	});
-
-	app.use("/api", createOpenApiExpressMiddleware({ router: appRouter, createContext }));
 
 	app.use(
 		"/trpc",

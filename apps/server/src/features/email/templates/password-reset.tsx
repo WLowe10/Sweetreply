@@ -1,7 +1,7 @@
 import { MjmlSpacer, MjmlText } from "@faire/mjml-react";
 import { Button, Container, Footer, Header } from "../components";
 import { appConfig } from "@sweetreply/shared/config";
-import { buildFrontendUrl } from "@lib/utils";
+import { buildFrontendUrl } from "@utils";
 
 export const subject = "Reset your password";
 

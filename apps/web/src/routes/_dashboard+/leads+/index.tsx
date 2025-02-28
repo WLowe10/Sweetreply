@@ -3,7 +3,7 @@ import { PlatformIcon } from "@components/platform-icon";
 import { ResourceContainer } from "@components/resource-container";
 import { useDataTableParams } from "@features/data-table/hooks/use-data-table-params";
 import { trpc } from "@lib/trpc";
-import { buildPageTitle } from "@lib/utils";
+import { buildPageTitle } from "utils";
 import { ActionIcon, Badge, Menu, Text, Tooltip } from "@mantine/core";
 import { IconArrowRight, IconClock, IconDots } from "@tabler/icons-react";
 import { useLocalProject } from "@features/projects/hooks/use-local-project";

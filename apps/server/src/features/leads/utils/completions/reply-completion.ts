@@ -1,7 +1,6 @@
 import { openAI } from "@lib/client/openai";
-import { replyPrompt } from "../prompts/reply-prompt-v3";
+import { replyPrompt, type ReplyPromptData } from "../prompts/reply-prompt-v3";
 import { LeadPlatformType, ReplyCharacterLimit } from "@sweetreply/shared/features/leads/constants";
-import type { ReplyPromptData } from "../prompts/reply-prompt-v2";
 
 export const replyCompletion = async ({
 	lead,
@@ -12,6 +11,29 @@ export const replyCompletion = async ({
 		typeof replyCharacterLimit === "number" ? Math.ceil(replyCharacterLimit / 4) : 250;
 
 	const prompt = replyPrompt({ project, lead, characterLimit: replyCharacterLimit });
+
+	// anthropic
+
+	// const completion = await anthropic.messages.create({
+	// 	model: "claude-3-5-sonnet-20240620",
+	// 	temperature: 0.2,
+	// 	max_tokens: maxTokens,
+	// 	system: prompt.system,
+	// 	messages: [
+	// 		{
+	// 			role: "user",
+	// 			content: prompt.user,
+	// 		},
+	// 	],
+	// });
+
+	// let replyText = "";
+
+	// for (const chunk of completion.content) {
+	// 	if (chunk.type === "text") {
+	// 		replyText += chunk.text;
+	// 	}
+	// }
 
 	// openai
 

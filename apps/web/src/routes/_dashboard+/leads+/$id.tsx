@@ -1,7 +1,7 @@
 import { RedditLead } from "@features/leads/components/reddit-lead";
 import { LeadContext } from "@features/leads/context";
 import { useLead } from "@features/leads/hooks/use-lead";
-import { buildPageTitle } from "@lib/utils";
+import { buildPageTitle } from "utils";
 import { Box, Container, Flex, Skeleton } from "@mantine/core";
 import { useParams, type MetaFunction } from "@remix-run/react";
 import { LeadPlatform } from "@sweetreply/shared/features/leads/constants";

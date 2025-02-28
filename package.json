@@ -5,19 +5,19 @@
 		"build": "turbo build",
 		"dev": "turbo dev",
 		"lint": "turbo lint",
-		"type-check": "turbo run type-check",
 		"format": "prettier --write \"**/*.{ts,tsx,md}\"",
 		"clean": "pnpm clean:modules && pnpm clean:turbo && pnpm -r clean",
 		"clean:modules": "rm -rf node_modules",
 		"clean:turbo": "rm -rf .turbo",
 		"db:generate": "pnpm --filter @sweetreply/prisma db:generate",
 		"db:push": "pnpm --filter @sweetreply/prisma db:push",
-		"db:genpush": "pnpm --filter @sweetreply/prisma db:genpush"
+		"db:genpush": "pnpm --filter @sweetreply/prisma db:genpush",
+		"typecheck": "turbo run typecheck"
 	},
 	"devDependencies": {
 		"@sweetreply/tsconfig": "workspace:*",
 		"prettier": "^3.1.1",
-		"turbo": "latest"
+		"turbo": "^2.0.4"
 	},
 	"packageManager": "pnpm@8.9.0",
 	"engines": {

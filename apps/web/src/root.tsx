@@ -6,7 +6,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { env } from "@env";
 import { TRPCProvider } from "@lib/trpc";
 import { theme } from "@lib/theme";
-import { buildPageTitle } from "@lib/utils";
+import { buildPageTitle } from "utils";
 import { isDev } from "@sweetreply/shared/lib/utils";
 import type { PropsWithChildren } from "react";
 

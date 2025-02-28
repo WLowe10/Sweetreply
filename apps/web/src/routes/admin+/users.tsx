@@ -1,6 +1,6 @@
 import { trpc } from "@lib/trpc";
 import { ResourceContainer } from "@components/resource-container";
-import { buildPageTitle } from "@lib/utils";
+import { buildPageTitle } from "utils";
 import { MetaFunction } from "@remix-run/react";
 import { SimpleTableColumns } from "@components/simple-table";
 import { DataTable } from "@features/data-table/components/data-table";

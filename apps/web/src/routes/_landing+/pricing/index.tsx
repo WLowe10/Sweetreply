@@ -2,7 +2,7 @@ import { Box, Button, Center, Container, SimpleGrid, Text, Title } from "@mantin
 import { PricingCard, type PricingItem } from "../../../features/billing/components/pricing-card";
 import { Link } from "@remix-run/react";
 import { plans } from "@features/billing/constants";
-import { buildPageTitle, mergeMeta } from "@lib/utils";
+import { buildPageTitle, mergeMeta } from "utils";
 import classes from "./pricing.module.css";
 import type { MetaFunction } from "@remix-run/react";
 
@@ -46,7 +46,7 @@ export default function PricingPage() {
 						No hidden fees, cancel anytime
 					</Text>
 				</Box>
-				<SimpleGrid cols={{ base: 1, md: 2, lg: 4 }}>
+				<SimpleGrid cols={{ base: 1, md: 2, lg: 3 }}>
 					<PricingCard
 						{...freePlan}
 						cta={

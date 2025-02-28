@@ -1,22 +1,20 @@
+import { z } from "zod";
+import { TRPCError } from "@trpc/server";
 import { authenticatedProcedure } from "@features/auth/procedures";
 import { buildFrontendUrl } from "@utils";
-import { TRPCError } from "@trpc/server";
-import { billingPlanSchema } from "@sweetreply/shared/features/billing/schemas";
-import { BillingPlanPrice } from "../constants";
-import { z } from "zod";
 import { env } from "@env";
 
 const subscribeInputSchema = z.object({
-	plan: billingPlanSchema,
+	amount: z.number().min(10).max(1000),
 });
 
-export const subscribeHandler = authenticatedProcedure
+export const createTokenCheckoutHandler = authenticatedProcedure
 	.input(subscribeInputSchema)
 	.mutation(async ({ input, ctx }) => {
 		if (env.CHECKOUT_DISABLED) {
 			throw new TRPCError({
 				code: "FORBIDDEN",
-				message: "New subscriptions are currently disabled",
+				message: "New checkouts are currently disabled",
 			});
 		}
 
@@ -35,11 +33,7 @@ export const subscribeHandler = authenticatedProcedure
 			});
 		}
 
-		const plan = input.plan;
-		const priceID = BillingPlanPrice[input.plan];
-
 		const checkout = await ctx.stripe.checkout.sessions.create({
-			mode: "subscription",
 			payment_method_types: ["card"],
 			customer: ctx.user.stripe_customer_id,
 			consent_collection: {
@@ -48,7 +42,7 @@ export const subscribeHandler = authenticatedProcedure
 			success_url: buildFrontendUrl({
 				path: "/billing",
 				query: {
-					plan: plan,
+					tokens: input.amount.toString(),
 					status: "success",
 				},
 			}),
@@ -57,8 +51,14 @@ export const subscribeHandler = authenticatedProcedure
 			}),
 			line_items: [
 				{
-					price: priceID,
-					quantity: 1,
+					price_data: {
+						currency: "usd",
+						product_data: {
+							name: "Token",
+						},
+						unit_amount: 50, // 50 cents per token
+					},
+					quantity: input.amount,
 				},
 			],
 		});

@@ -4,7 +4,9 @@ import { ProjectSelector } from "@features/projects/components/project-selector"
 import { Box, Center, Container, Divider, Flex, NavLink, Stack } from "@mantine/core";
 import {
 	IconBook,
+	IconBrandTwitter,
 	IconCreditCard,
+	IconHelp,
 	IconLayoutDashboard,
 	IconMessageReply,
 	IconSettings,
@@ -101,6 +103,17 @@ export default function DashboardLayout() {
 							color="gray"
 							to="/help/get-started"
 							leftSection={<IconBook size={18} color="var(--mantine-color-gray-6)" />}
+						/>
+						<Divider />
+						<NavLink
+							component="a"
+							href="https://twitter.com/messages/compose?recipient_id=1605259157376061443"
+							label="Support"
+							description="Ask us anything"
+							color="gray"
+							leftSection={
+								<IconBrandTwitter size={18} color="var(--mantine-color-gray-6)" />
+							}
 						/>
 					</Box>
 				</Stack>

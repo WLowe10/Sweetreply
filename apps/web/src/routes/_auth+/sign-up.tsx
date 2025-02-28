@@ -18,7 +18,7 @@ import { useSignUp } from "@features/auth/hooks/use-sign-up";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AuthFormContainer } from "@features/auth/components/auth-form-container";
 import { signUpInputSchema } from "@sweetreply/shared/features/auth/schemas";
-import { buildPageTitle } from "@lib/utils";
+import { buildPageTitle } from "utils";
 import { useEffect } from "react";
 import { useMe } from "@features/auth/hooks/use-me";
 

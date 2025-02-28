@@ -1,7 +1,7 @@
 {
 	"extends": "@sweetreply/tsconfig/base.json",
 	"exclude": ["node_modules", "dist"],
-	"include": ["./src", "../../packages/bots/src/bots/proxy-is-defined.ts"],
+	"include": ["./src"],
 	"compilerOptions": {
 		"outDir": "./dist",
 		"types": ["node"],
@@ -16,7 +16,8 @@
 		"paths": {
 			"@features/*": ["./features/*"],
 			"@lib/*": ["./lib/*"],
-			"@env": ["./env.ts"]
+			"@env": ["./env.ts"],
+			"@utils": ["./utils.ts"]
 		}
 	}
 }

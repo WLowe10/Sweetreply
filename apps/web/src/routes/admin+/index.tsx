@@ -2,7 +2,7 @@ import { ResourceContainer } from "@components/resource-container";
 import { StatCard } from "@components/stat-card";
 import { useMe } from "@features/auth/hooks/use-me";
 import { trpc } from "@lib/trpc";
-import { buildPageTitle } from "@lib/utils";
+import { buildPageTitle } from "utils";
 import { Sparkline } from "@mantine/charts";
 import { Box, SimpleGrid, Skeleton } from "@mantine/core";
 import { Link, MetaFunction } from "@remix-run/react";
