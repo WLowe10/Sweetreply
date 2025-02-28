@@ -17,7 +17,6 @@ export default function VerifyPage() {
 	const [submitted, setSubmitted] = useState(false);
 
 	const trpcUtils = trpc.useUtils();
-
 	const verifyAccountMutation = trpc.auth.verifyAccount.useMutation();
 	const requestVerificationMutation = trpc.auth.requestVerification.useMutation();
 
