@@ -8,9 +8,6 @@ importers:
 
   .:
     devDependencies:
-      '@sweetreply/tsconfig':
-        specifier: workspace:*
-        version: link:packages/tsconfig
       prettier:
         specifier: ^3.1.1
         version: 3.3.2

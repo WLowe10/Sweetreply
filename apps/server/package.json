@@ -4,7 +4,6 @@
 	"scripts": {
 		"dev": "NODE_ENV=development tsx watch --env-file=.env ./src/main.ts",
 		"start": "NODE_ENV=production tsx ./src/main.ts",
-		"build": "pnpm clean:dist && tsup --format cjs --target node20 src/main.ts",
 		"email:preview": "tsx watch ./scripts/email/preview.ts",
 		"db:migrate": "pnpm --filter @sweetreply/prisma db:migrate",
 		"db:migrate-create": "pnpm --filter @sweetreply/prisma db:migrate-create",
@@ -18,7 +17,6 @@
 		"typecheck": "tsc --noEmit"
 	},
 	"dependencies": {
-		"@anthropic-ai/sdk": "^0.24.0",
 		"@aws-sdk/client-s3": "^3.536.0",
 		"@aws-sdk/client-ses": "^3.535.0",
 		"@faire/mjml-react": "^3.3.0",
